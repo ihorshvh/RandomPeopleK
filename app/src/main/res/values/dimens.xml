@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="profile_image_height">160dp</dimen>
+    <dimen name="profile_image_width">160dp</dimen>
+
+    <dimen name="card_margin_general">8dp</dimen>
+
+    <dimen name="padding_small">5dp</dimen>
+    <dimen name="padding_medium">10dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+
+    <!--margin-->
+    <dimen name="margin_small">5dp</dimen>
+    <dimen name="margin_medium">10dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
+    <dimen name="margin_extra_large">24dp</dimen>
+
+    <!--text dimens-->
+    <dimen name="text_size_medium">20sp</dimen>
+
+    <dimen name="text_size_primary_large">24sp</dimen>
+    <dimen name="text_size_primary">16sp</dimen>
+    <dimen name="text_size_secondary">14sp</dimen>
+
+    <!--row user-->
+    <dimen name="row_user_padding_large">16dp</dimen>
+    <dimen name="row_user_padding_medium">10dp</dimen>
+    <dimen name="row_user_padding_small">5dp</dimen>
+
+    <dimen name="row_user_default_image_width">40dp</dimen>
+    <dimen name="row_user_default_image_height">40dp</dimen>
+
+    <dimen name="row_user_item_height">88dp</dimen>
+    <dimen name="row_user_margin_offset">-6dp</dimen>
+
+    <dimen name="refresh_image_width">100dp</dimen>
+    <dimen name="refresh_image_height">100dp</dimen>
+
+    <dimen name="text_margin">16dp</dimen>
+
+</resources>

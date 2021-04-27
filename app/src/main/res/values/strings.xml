@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">RandomPeopleK</string>
+    <string name="app_name">Random People</string>
+    <string name="label_country">Country:</string>
+    <string name="label_contact_info">Contact information:</string>
+    <string name="label_no_users">Push update button in order to obtain your random users list!</string>
+    <string name="warning_empty_cache">Cache is empty</string>
 </resources>
