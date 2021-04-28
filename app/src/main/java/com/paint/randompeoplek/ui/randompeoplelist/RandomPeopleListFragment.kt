@@ -43,15 +43,15 @@ class RandomPeopleListFragment : Fragment() {
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolBar)
 
         // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
-                adapter = RandomPeopleListRecyclerViewAdapter(DummyContent.ITEMS)
+        val recycleView : RecyclerView = view.findViewById(R.id.list)
+        with(recycleView) {
+            layoutManager = when {
+                columnCount <= 1 -> LinearLayoutManager(context)
+                else -> GridLayoutManager(context, columnCount)
             }
+            adapter = RandomPeopleListRecyclerViewAdapter(DummyContent.ITEMS)
         }
+
         return view
     }
 
