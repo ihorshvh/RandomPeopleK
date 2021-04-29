@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="transition_profile_image">ProfileImage</string>
+    <string name="transition_profile_location">ProfileLocation</string>
+    <string name="transition_profile_name">ProfileName</string>
+
+</resources>
