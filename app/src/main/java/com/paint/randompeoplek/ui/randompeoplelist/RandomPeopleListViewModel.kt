@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.User
 import com.paint.randompeoplek.repository.RandomPeopleListRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListRepository : RandomPeopleListRepository) : ViewModel() {
 
-    val users : MutableLiveData<List<User>> by lazy {
+    val usersResponse : MutableLiveData<LiveDataResponse<List<User>>> by lazy {
         MutableLiveData()
     }
 
@@ -23,11 +24,12 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
             result.onSuccess {
                 Log.d("myTag", "SUCCESS")
-                users.value = it.users
+                usersResponse.value = LiveDataResponse(it.users)
             }
 
             result.onFailure {
                 Log.d("myTag", "ERROR " + it.message.toString())
+                usersResponse.value = LiveDataResponse(it.message.toString())
             }
         }
     }

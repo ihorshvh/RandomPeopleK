@@ -62,13 +62,17 @@ class RandomPeopleListFragment : Fragment() {
         Log.d("myTag", "onViewCreated")
         viewModel = ViewModelProvider(this).get(RandomPeopleListViewModel::class.java)
 
-        viewModel.users.observe(viewLifecycleOwner, { users ->
-            Log.d("myTag", users.size.toString())
+        viewModel.usersResponse.observe(viewLifecycleOwner, { usersResponse ->
 
-            if(users.isNotEmpty()){
-                Log.d("myTag", users[0].toString())
+            if(usersResponse.error != null){
+                Log.d("myTag", usersResponse.error.toString())
+            } else {
+                Log.d("myTag", usersResponse.response?.size.toString())
+
+                if(usersResponse.response?.isNotEmpty() == true){
+                    Log.d("myTag", usersResponse.response!![0].toString())
+                }
             }
-
         })
 
         viewModel.getRandomPeopleList()
