@@ -1,4 +1,4 @@
-package com.paint.randompeoplek.model
+package com.paint.randompeoplek.service.model
 
 import com.google.gson.annotations.SerializedName
 

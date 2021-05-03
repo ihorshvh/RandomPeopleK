@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.model.LiveDataResponse
-import com.paint.randompeoplek.model.User
 import com.paint.randompeoplek.repository.RandomPeopleListRepository
+import com.paint.randompeoplek.service.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

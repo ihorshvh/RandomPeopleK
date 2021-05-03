@@ -1,6 +1,6 @@
 package com.paint.randompeoplek.service
 
-import com.paint.randompeoplek.model.UserResponse
+import com.paint.randompeoplek.service.model.UserResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
