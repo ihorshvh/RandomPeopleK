@@ -13,10 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.ui.randompeoplelist.dummy.DummyContent
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * A fragment representing a list of Items.
  */
+@AndroidEntryPoint
 class RandomPeopleListFragment : Fragment() {
 
     private var columnCount = 1
@@ -54,22 +56,6 @@ class RandomPeopleListFragment : Fragment() {
 
         return view
     }
-
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        super.onActivityCreated(savedInstanceState)
-//
-//        //viewModel = ViewModelProvider(this).get(RandomPeopleListViewModel::class.java)
-//        Log.d("myTag", "onActivityCreated")
-////        viewModel.users.observe(this, { users ->
-////            Log.d("myTag", users.size.toString())
-////
-////            if(users.isNotEmpty()){
-////                Log.d("myTag", users[0].toString())
-////            }
-////
-////        })
-//
-//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -1,9 +1,10 @@
 package com.paint.randompeoplek
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class App : Application() {
 
-    private var appContext: App = this
 
 }

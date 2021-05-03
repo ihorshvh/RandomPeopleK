@@ -23,11 +23,17 @@ class RandomPeopleProfileFragment : Fragment() {
         return inflater.inflate(R.layout.random_people_profile_fragment, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(RandomPeopleProfileViewModel::class.java)
-        // TODO: Use the ViewModel
     }
+
+//    override fun onCreated(savedInstanceState: Bundle?) {
+//        super.onActivityCreated(savedInstanceState)
+//
+//        viewModel = ViewModelProvider(this).get(RandomPeopleProfileViewModel::class.java)
+//        // TODO: Use the ViewModel
+//    }
 
 }
