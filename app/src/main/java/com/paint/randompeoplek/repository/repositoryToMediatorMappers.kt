@@ -3,7 +3,8 @@ package com.paint.randompeoplek.repository
 import com.paint.randompeoplek.repository.model.*
 
 fun Name.toMediatorName() =
-    com.paint.randompeoplek.mediator.model.Name(this.title, this.firstName, this.lastName)
+    com.paint.randompeoplek.mediator.model.Name(this.firstName + " " + this.lastName,
+        this.title + " " + this.firstName + " " + this.lastName)
 
 fun Picture.toMediatorPicture() =
     com.paint.randompeoplek.mediator.model.Picture(this.medium, this.thumbnail)
@@ -19,9 +20,10 @@ fun UserResponse.toMediatorUserResponse() =
 fun Location.getAddress() : String {
     val sb : StringBuilder = StringBuilder()
 
-    return sb.append(this.street).append(", ")
+    return sb.append(this.street.number).append(" ")
+        .append(this.street.name).append(", ")
         .append(this.city).append(", ")
         .append(this.state).append(", ")
-        .append(this.country).append(",")
+        .append(this.country).append(", ")
         .append(this.postCode).toString()
 }

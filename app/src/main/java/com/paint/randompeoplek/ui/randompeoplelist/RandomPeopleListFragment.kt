@@ -75,7 +75,7 @@ class RandomPeopleListFragment : Fragment() {
             }
         })
 
-        viewModel.getRandomPeopleList()
+        viewModel.getRandomPeopleList("5")
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
