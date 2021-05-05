@@ -4,17 +4,21 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.paint.randompeoplek.storage.entity.User
+import java.util.*
 
 @Dao
 interface UserDao {
 
     @Query("SELECT * FROM user")
-    fun getAll() : List<User>
+    suspend fun getAll() : List<User>
 
     @Insert
-    fun insertAll(users : List<User>)
+    suspend fun insertAll(users : List<User>)
+
+    @Query("SELECT COUNT(*) FROM user WHERE lastUpdated >= :timeout")
+    suspend fun hasUser(timeout : Date) : Int
 
     @Query("DELETE FROM user")
-    fun deleteAll()
+    suspend fun deleteAll()
 
 }
