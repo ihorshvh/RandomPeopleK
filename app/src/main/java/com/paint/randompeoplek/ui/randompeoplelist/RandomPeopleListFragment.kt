@@ -66,13 +66,16 @@ class RandomPeopleListFragment : Fragment() {
 
             if(usersResponse.error != null){
                 Log.d("myTag", usersResponse.error.toString())
-            } else {
+            }
+
+            if(usersResponse.response != null){
                 Log.d("myTag", usersResponse.response?.size.toString())
 
                 if(usersResponse.response?.isNotEmpty() == true){
                     Log.d("myTag", usersResponse.response!![0].toString())
                 }
             }
+
         })
 
         viewModel.getRandomPeopleList("5")

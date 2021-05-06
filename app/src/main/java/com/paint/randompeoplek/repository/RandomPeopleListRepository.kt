@@ -20,10 +20,14 @@ class RandomPeopleListRepository @Inject constructor(
         val freshUsersNumber = userDao.hasUser(getTimeout())
 
         if (freshUsersNumber <= 0) {
-            val userResponse = randomPeopleService.getUserList(userQuantity)
+            try {
+                val userResponse = randomPeopleService.getUserList(userQuantity)
 
-            userDao.deleteAll()
-            userDao.insertAll(userResponse.users.toStorageUsers())
+                userDao.deleteAll()
+                userDao.insertAll(userResponse.users.toStorageUsers())
+            } catch (e : Exception) {
+                return UserResponse(userDao.getAll().toRepositoryUsers(), e)
+            }
         }
 
         return UserResponse(userDao.getAll().toRepositoryUsers())
@@ -31,7 +35,7 @@ class RandomPeopleListRepository @Inject constructor(
 
     companion object {
 
-        private val FRESH_TIMEOUT = TimeUnit.MINUTES.toMillis(1)
+        private val FRESH_TIMEOUT = TimeUnit.SECONDS.toMillis(15)
 
         fun getTimeout() = Date(Calendar.getInstance().time.time - FRESH_TIMEOUT)
 

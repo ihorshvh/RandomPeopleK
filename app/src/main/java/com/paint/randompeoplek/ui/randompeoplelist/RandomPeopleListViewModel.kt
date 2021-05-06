@@ -24,7 +24,12 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
             result.onSuccess {
                 Log.d("myTag", "SUCCESS")
-                usersResponse.value = LiveDataResponse(it.users)
+
+                if(it.throwable != null) {
+                    usersResponse.value = LiveDataResponse(it.users, it.throwable!!.message.toString())
+                } else {
+                    usersResponse.value = LiveDataResponse(it.users)
+                }
             }
 
             result.onFailure {

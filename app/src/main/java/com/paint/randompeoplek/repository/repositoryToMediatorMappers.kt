@@ -14,8 +14,14 @@ fun User.toMediatorUser() = com.paint.randompeoplek.mediator.model.User(this.nam
 
 fun List<User>.toRepositoryUsers() = this.map { it.toMediatorUser() }
 
-fun UserResponse.toMediatorUserResponse() =
-    com.paint.randompeoplek.mediator.model.UserResponse(this.users.toRepositoryUsers())
+fun UserResponse.toMediatorUserResponse() : com.paint.randompeoplek.mediator.model.UserResponse {
+    return if(this.throwable != null) {
+        com.paint.randompeoplek.mediator.model.UserResponse(this.users.toRepositoryUsers(), this.throwable!!)
+    } else {
+        com.paint.randompeoplek.mediator.model.UserResponse(this.users.toRepositoryUsers())
+    }
+}
+
 
 fun Location.getAddress() : String {
     val sb : StringBuilder = StringBuilder()
