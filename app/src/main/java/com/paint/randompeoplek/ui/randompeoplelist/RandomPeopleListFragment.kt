@@ -50,6 +50,7 @@ class RandomPeopleListFragment : Fragment() {
         (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
 
         binding.swipeRefreshLayout.setOnRefreshListener { getUsers() }
+        binding.imgBtnObtainList.setOnClickListener { getUsers() }
 
         with(binding.list) {
             layoutManager = LinearLayoutManager(context)
@@ -81,6 +82,26 @@ class RandomPeopleListFragment : Fragment() {
         if(response.response?.isNotEmpty() == true){
             randomPeopleListRecyclerViewAdapter.updateUsersList(response.response!!)
         }
+
+        checkLayoutVisibilityConditions()
+    }
+
+    private fun checkLayoutVisibilityConditions() {
+        if(randomPeopleListRecyclerViewAdapter.itemCount == 0) {
+            toEmptyListMode()
+        } else {
+            toNonEmptyListMode()
+        }
+    }
+
+    private fun toEmptyListMode() {
+        binding.llNoUsers.visibility = View.VISIBLE
+        binding.swipeRefreshLayout.visibility = View.GONE
+    }
+
+    private fun toNonEmptyListMode(){
+        binding.llNoUsers.visibility = View.GONE
+        binding.swipeRefreshLayout.visibility = View.VISIBLE
     }
 
     private fun getUsers() {
