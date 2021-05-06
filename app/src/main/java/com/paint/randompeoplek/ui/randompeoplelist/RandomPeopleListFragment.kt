@@ -5,13 +5,12 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.paint.randompeoplek.R
+import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
 import com.paint.randompeoplek.ui.randompeoplelist.dummy.DummyContent
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,6 +21,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class RandomPeopleListFragment : Fragment() {
 
     private var columnCount = 1
+
+    private var randomPeopleListFragmentBinding : RandomPeopleListFragmentBinding? = null
+
+    private val binding get() = randomPeopleListFragmentBinding!!
 
     private lateinit var viewModel: RandomPeopleListViewModel
 
@@ -38,15 +41,13 @@ class RandomPeopleListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.random_people_list_fragment, container, false)
+    ): View {
 
-        val toolBar : Toolbar = view.findViewById(R.id.toolbar);
-        (activity as AppCompatActivity?)!!.setSupportActionBar(toolBar)
+        randomPeopleListFragmentBinding = RandomPeopleListFragmentBinding.inflate(inflater, container, false)
 
-        // Set the adapter
-        val recycleView : RecyclerView = view.findViewById(R.id.list)
-        with(recycleView) {
+        (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
+
+        with(binding.list) {
             layoutManager = when {
                 columnCount <= 1 -> LinearLayoutManager(context)
                 else -> GridLayoutManager(context, columnCount)
@@ -54,7 +55,7 @@ class RandomPeopleListFragment : Fragment() {
             adapter = RandomPeopleListRecyclerViewAdapter(DummyContent.ITEMS)
         }
 
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,6 +80,11 @@ class RandomPeopleListFragment : Fragment() {
         })
 
         viewModel.getRandomPeopleList("5")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        randomPeopleListFragmentBinding = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
