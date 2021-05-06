@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
-import com.paint.randompeoplek.ui.randompeoplelist.dummy.DummyContent
+import com.paint.randompeoplek.mediator.model.Name
+import com.paint.randompeoplek.mediator.model.Picture
+import com.paint.randompeoplek.mediator.model.User
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -52,7 +54,18 @@ class RandomPeopleListFragment : Fragment() {
                 columnCount <= 1 -> LinearLayoutManager(context)
                 else -> GridLayoutManager(context, columnCount)
             }
-            adapter = RandomPeopleListRecyclerViewAdapter(DummyContent.ITEMS)
+
+            val name : Name = Name("Debbie Jackson", "Mrs Debbie Jackson")
+
+            val list : List<User> = arrayListOf(User(name,
+                "8345 Park Avenue, Winchester, County Antrim, United Kingdom, R8G 4DT",
+                "email=debbie.jackson@example.com",
+                "016974 28710", Picture(
+                    "https://randomuser.me/api/portraits/med/women/89.jpg",
+                    "https://randomuser.me/api/portraits/thumb/women/89.jpg")
+            ))
+
+            adapter = RandomPeopleListRecyclerViewAdapter(list)
         }
 
         return binding.root
