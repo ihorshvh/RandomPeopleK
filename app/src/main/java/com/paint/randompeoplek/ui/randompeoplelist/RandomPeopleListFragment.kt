@@ -1,7 +1,6 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -10,20 +9,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
+import com.paint.randompeoplek.mediator.model.User
+import com.paint.randompeoplek.model.LiveDataResponse
 import dagger.hilt.android.AndroidEntryPoint
 
-/**
- * A fragment representing a list of Items.
- */
 @AndroidEntryPoint
 class RandomPeopleListFragment : Fragment() {
 
-    private var columnCount = 1
+    private val userQuantity = "10"
 
     private val binding get() = randomPeopleListFragmentBinding!!
+    private val randomPeopleListRecyclerViewAdapter :
+            RandomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter()
+
 
     private var randomPeopleListFragmentBinding : RandomPeopleListFragmentBinding? = null
-    private var randomPeopleListRecyclerViewAdapter : RandomPeopleListRecyclerViewAdapter? = null
 
     private lateinit var viewModel: RandomPeopleListViewModel
 
@@ -32,21 +32,24 @@ class RandomPeopleListFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
+//        arguments?.let {
+//            //columnCount = it.getInt(ARG_COLUMN_COUNT)
+//        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         randomPeopleListFragmentBinding = RandomPeopleListFragmentBinding.inflate(inflater, container, false)
 
+        return initializeViews()
+    }
+
+    private fun initializeViews() : View {
         (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
 
-        randomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter()
+        binding.swipeRefreshLayout.setOnRefreshListener { getUsers() }
 
         with(binding.list) {
             layoutManager = LinearLayoutManager(context)
@@ -58,31 +61,36 @@ class RandomPeopleListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("myTag", "onViewCreated")
+
         viewModel = ViewModelProvider(this).get(RandomPeopleListViewModel::class.java)
 
         viewModel.usersResponse.observe(viewLifecycleOwner, { usersResponse ->
+            handleResponse(usersResponse)
 
-            if(usersResponse.error != null){
-                Log.d("myTag", usersResponse.error.toString())
-            }
-
-            if(usersResponse.response != null){
-                Log.d("myTag", usersResponse.response?.size.toString())
-
-                if(usersResponse.response?.isNotEmpty() == true){
-                    randomPeopleListRecyclerViewAdapter?.updateUsersList(usersResponse.response!!)
-                    Log.d("myTag", usersResponse.response!![0].toString())
-                }
-            }
-
+            binding.swipeRefreshLayout.isRefreshing = false
         })
 
-        viewModel.getRandomPeopleList("5")
+        getUsers()
+    }
+
+    private fun handleResponse(response : LiveDataResponse<List<User>>) {
+        if(response.error != null){
+            Toast.makeText(activity, response.error.toString(), Toast.LENGTH_LONG).show()
+        }
+
+        if(response.response?.isNotEmpty() == true){
+            randomPeopleListRecyclerViewAdapter.updateUsersList(response.response!!)
+        }
+    }
+
+    private fun getUsers() {
+        binding.swipeRefreshLayout.isRefreshing = true
+        viewModel.getRandomPeopleList(userQuantity)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         randomPeopleListFragmentBinding = null
     }
 
@@ -92,7 +100,7 @@ class RandomPeopleListFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_update -> {
-            Toast.makeText(activity, "Test", Toast.LENGTH_LONG).show()
+            getUsers()
             true
         }
 
@@ -102,9 +110,6 @@ class RandomPeopleListFragment : Fragment() {
     }
 
     companion object {
-
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
 
         // TODO: Customize parameter initialization
         @JvmStatic
