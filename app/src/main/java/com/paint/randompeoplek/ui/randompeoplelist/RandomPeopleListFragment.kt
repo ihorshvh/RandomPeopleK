@@ -7,13 +7,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
-import com.paint.randompeoplek.mediator.model.Name
-import com.paint.randompeoplek.mediator.model.Picture
-import com.paint.randompeoplek.mediator.model.User
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -24,9 +20,10 @@ class RandomPeopleListFragment : Fragment() {
 
     private var columnCount = 1
 
-    private var randomPeopleListFragmentBinding : RandomPeopleListFragmentBinding? = null
-
     private val binding get() = randomPeopleListFragmentBinding!!
+
+    private var randomPeopleListFragmentBinding : RandomPeopleListFragmentBinding? = null
+    private var randomPeopleListRecyclerViewAdapter : RandomPeopleListRecyclerViewAdapter? = null
 
     private lateinit var viewModel: RandomPeopleListViewModel
 
@@ -49,23 +46,11 @@ class RandomPeopleListFragment : Fragment() {
 
         (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
 
+        randomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter()
+
         with(binding.list) {
-            layoutManager = when {
-                columnCount <= 1 -> LinearLayoutManager(context)
-                else -> GridLayoutManager(context, columnCount)
-            }
-
-            val name : Name = Name("Debbie Jackson", "Mrs Debbie Jackson")
-
-            val list : List<User> = arrayListOf(User(name,
-                "8345 Park Avenue, Winchester, County Antrim, United Kingdom, R8G 4DT",
-                "email=debbie.jackson@example.com",
-                "016974 28710", Picture(
-                    "https://randomuser.me/api/portraits/med/women/89.jpg",
-                    "https://randomuser.me/api/portraits/thumb/women/89.jpg")
-            ))
-
-            adapter = RandomPeopleListRecyclerViewAdapter(list)
+            layoutManager = LinearLayoutManager(context)
+            adapter = randomPeopleListRecyclerViewAdapter
         }
 
         return binding.root
@@ -86,6 +71,7 @@ class RandomPeopleListFragment : Fragment() {
                 Log.d("myTag", usersResponse.response?.size.toString())
 
                 if(usersResponse.response?.isNotEmpty() == true){
+                    randomPeopleListRecyclerViewAdapter?.updateUsersList(usersResponse.response!!)
                     Log.d("myTag", usersResponse.response!![0].toString())
                 }
             }

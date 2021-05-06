@@ -8,10 +8,9 @@ import com.paint.randompeoplek.mediator.model.User
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem].
- * TODO: Replace the implementation with code for your data type.
  */
 class RandomPeopleListRecyclerViewAdapter(
-    private val users: List<User>
+    private val users: MutableList<User> = arrayListOf()
 ) : RecyclerView.Adapter<RandomPeopleListRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,11 +22,21 @@ class RandomPeopleListRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = users[position]
+
         holder.binding.tvUserName.text = user.name.shortName
         holder.binding.tvAddress.text = user.location
+
+        // TODO add image
     }
 
     override fun getItemCount(): Int = users.size
+
+    fun updateUsersList(users: List<User>) {
+        this.users.clear()
+        this.users.addAll(users)
+
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(val binding : RandomPeopleListItemBinding)
         : RecyclerView.ViewHolder(binding.root)
