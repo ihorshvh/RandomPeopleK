@@ -3,6 +3,8 @@ package com.paint.randompeoplek.ui.randompeoplelist
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.Navigation
+import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListItemBinding
 import com.paint.randompeoplek.mediator.model.User
 
@@ -26,6 +28,10 @@ class RandomPeopleListRecyclerViewAdapter(
         holder.binding.tvUserName.text = user.name.shortName
         holder.binding.tvAddress.text = user.location
 
+        holder.binding.root.setOnClickListener {
+            Navigation.findNavController(holder.binding.root)
+                .navigate(R.id.action_randomPeopleListFragment_to_randomPeopleProfileFragment)
+        }
         // TODO add image
     }
 
