@@ -2,14 +2,16 @@ package com.paint.randompeoplek.ui.randompeoplelist
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListItemBinding
-import com.paint.randompeoplek.mediator.model.User
+import com.paint.randompeoplek.ui.model.User
 
 /**
- * [RecyclerView.Adapter] that can display a [DummyItem].
+ * [RecyclerView.Adapter] that can display a [User].
  */
 class RandomPeopleListRecyclerViewAdapter(
     private val users: MutableList<User> = arrayListOf()
@@ -28,10 +30,6 @@ class RandomPeopleListRecyclerViewAdapter(
         holder.binding.tvUserName.text = user.name.shortName
         holder.binding.tvAddress.text = user.location
 
-        holder.binding.root.setOnClickListener {
-            Navigation.findNavController(holder.binding.root)
-                .navigate(R.id.action_randomPeopleListFragment_to_randomPeopleProfileFragment)
-        }
         // TODO add image
     }
 
@@ -45,5 +43,18 @@ class RandomPeopleListRecyclerViewAdapter(
     }
 
     inner class ViewHolder(val binding : RandomPeopleListItemBinding)
-        : RecyclerView.ViewHolder(binding.root)
+        : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+
+        init {
+            binding.root.setOnClickListener(this)
+        }
+
+        override fun onClick(p0: View?) {
+            val bundle = bundleOf("test" to users[absoluteAdapterPosition])
+
+            Navigation.findNavController(binding.root)
+                .navigate(R.id.action_randomPeopleListFragment_to_randomPeopleProfileFragment, bundle)
+        }
+
+    }
 }

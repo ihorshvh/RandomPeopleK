@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
-import com.paint.randompeoplek.mediator.model.User
 import com.paint.randompeoplek.model.LiveDataResponse
+import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -5,8 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.mediator.RandomPeopleListMediator
-import com.paint.randompeoplek.mediator.model.User
+import com.paint.randompeoplek.mediator.toUiParcelableUsers
 import com.paint.randompeoplek.model.LiveDataResponse
+import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,9 +27,11 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
                 Log.d("myTag", "SUCCESS")
 
                 if(it.throwable != null) {
-                    usersResponse.value = LiveDataResponse(it.users, it.throwable!!.message.toString())
+                    usersResponse.value = LiveDataResponse(
+                        it.users.toUiParcelableUsers(),
+                        it.throwable!!.message.toString())
                 } else {
-                    usersResponse.value = LiveDataResponse(it.users)
+                    usersResponse.value = LiveDataResponse(it.users.toUiParcelableUsers())
                 }
             }
 
