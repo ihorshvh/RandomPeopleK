@@ -2,7 +2,9 @@ package com.paint.randompeoplek.ui.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.Keep
 
+@Keep
 data class User(val name : Name,
                 val location : String,
                 val email : String,
