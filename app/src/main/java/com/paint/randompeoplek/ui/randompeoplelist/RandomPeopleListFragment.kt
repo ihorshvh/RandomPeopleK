@@ -23,7 +23,7 @@ class RandomPeopleListFragment : Fragment() {
     private val randomPeopleListRecyclerViewAdapter :
             RandomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter()
 
-
+    private var isFragmentInitiallyLaunched = true
     private var randomPeopleListFragmentBinding : RandomPeopleListFragmentBinding? = null
 
     private lateinit var viewModel: RandomPeopleListViewModel
@@ -33,9 +33,9 @@ class RandomPeopleListFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-//        arguments?.let {
-//            //columnCount = it.getInt(ARG_COLUMN_COUNT)
-//        }
+        savedInstanceState?.let {
+            isFragmentInitiallyLaunched = savedInstanceState.getBoolean(ARG_FRAGMENT_LAUNCHED, true)
+        }
     }
 
     override fun onCreateView(
@@ -43,7 +43,11 @@ class RandomPeopleListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         Log.d("myTag", "onCreateView")
-        randomPeopleListFragmentBinding = RandomPeopleListFragmentBinding.inflate(inflater, container, false)
+        randomPeopleListFragmentBinding = RandomPeopleListFragmentBinding.inflate(
+            inflater,
+            container,
+            false
+        )
 
         return initializeViews()
     }
@@ -73,10 +77,25 @@ class RandomPeopleListFragment : Fragment() {
             binding.swipeRefreshLayout.isRefreshing = false
         })
 
-        getUsers()
+        handleUserRetrieve()
     }
 
-    private fun handleResponse(response : LiveDataResponse<List<User>>) {
+    private fun handleUserRetrieve() {
+        if(isFragmentInitiallyLaunched) {
+            getUsers()
+            isFragmentInitiallyLaunched = false
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.apply {
+            putBoolean(ARG_FRAGMENT_LAUNCHED, isFragmentInitiallyLaunched)
+        }
+    }
+
+    private fun handleResponse(response: LiveDataResponse<List<User>>) {
         if(response.error != null){
             Toast.makeText(activity, response.error.toString(), Toast.LENGTH_LONG).show()
         }
@@ -133,6 +152,9 @@ class RandomPeopleListFragment : Fragment() {
     }
 
     companion object {
+
+        const val ARG_FRAGMENT_LAUNCHED = "ARG_FRAGMENT_LAUNCHED"
+
 
         // TODO: Customize parameter initialization
         @JvmStatic

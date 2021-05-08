@@ -35,11 +35,17 @@ class RandomPeopleProfileFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(RandomPeopleProfileViewModel::class.java)
     }
 
-//    override fun onCreated(savedInstanceState: Bundle?) {
-//        super.onActivityCreated(savedInstanceState)
-//
-//        viewModel = ViewModelProvider(this).get(RandomPeopleProfileViewModel::class.java)
-//        // TODO: Use the ViewModel
-//    }
+
+    override fun onResume() {
+        super.onResume()
+
+//        findNavController().p
+//            .navigate(R.id.action_randomPeopleProfileFragment_to_randomPeopleListFragment)
+//        findNavController().
+
+
+    }
+
+
 
 }

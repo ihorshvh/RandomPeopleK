@@ -19,6 +19,12 @@
             android:id="@+id/randomPeopleProfileFragment"
             android:name="com.paint.randompeoplek.ui.randompeopleprofile.RandomPeopleProfileFragment"
             android:label="RandomPeopleProfileFragment"
-            tools:layout="@layout/random_people_profile_fragment"/>
+            tools:layout="@layout/random_people_profile_fragment">
+        <action
+                android:id="@+id/action_randomPeopleProfileFragment_to_randomPeopleListFragment"
+                app:destination="@id/randomPeopleListFragment"
+                app:popUpTo="@id/randomPeopleListFragment"
+                app:popUpToInclusive="true" />
+    </fragment>
 
 </navigation>
