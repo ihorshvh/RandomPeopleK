@@ -1,14 +1,15 @@
 package com.paint.randompeoplek.ui.randompeopleprofile
 
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.paint.randompeoplek.R
-import com.paint.randompeoplek.ui.model.User
 import com.paint.randompeoplek.databinding.RandomPeopleProfileFragmentBinding
+import com.paint.randompeoplek.ui.model.User
 
 class RandomPeopleProfileFragment : Fragment() {
 
@@ -19,6 +20,13 @@ class RandomPeopleProfileFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
+        setUpAnimation()
+    }
+
+    private fun setUpAnimation() {
+        val transition = TransitionInflater.from(activity)
+                .inflateTransition(R.transition.changebounds_with_arcmotion)
+        activity?.window?.sharedElementEnterTransition = transition
     }
 
     override fun onCreateView(
@@ -26,9 +34,9 @@ class RandomPeopleProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         randomPeopleProfileFragmentBinding = RandomPeopleProfileFragmentBinding.inflate(
-                inflater,
-                container,
-                false
+            inflater,
+            container,
+            false
         )
 
         return initializeViews()
@@ -47,10 +55,10 @@ class RandomPeopleProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUserData()
+        mapData()
     }
 
-    private fun setUserData() {
+    private fun mapData() {
         val user = arguments?.getParcelable<User>(ARG_USER)
         Log.d("myLogs", user.toString())
 

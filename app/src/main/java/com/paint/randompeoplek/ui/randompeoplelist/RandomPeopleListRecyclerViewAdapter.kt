@@ -1,11 +1,11 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.RecyclerView
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListItemBinding
 import com.paint.randompeoplek.ui.model.User
@@ -43,7 +43,7 @@ class RandomPeopleListRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(val binding : RandomPeopleListItemBinding)
+    inner class ViewHolder(val binding: RandomPeopleListItemBinding)
         : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
         init {
@@ -54,7 +54,10 @@ class RandomPeopleListRecyclerViewAdapter(
             val bundle = bundleOf(RandomPeopleProfileFragment.ARG_USER to users[absoluteAdapterPosition])
 
             Navigation.findNavController(binding.root)
-                .navigate(R.id.action_randomPeopleListFragment_to_randomPeopleProfileFragment, bundle)
+                .navigate(
+                    R.id.action_randomPeopleListFragment_to_randomPeopleProfileFragment,
+                    bundle
+                )
         }
 
     }
