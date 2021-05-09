@@ -9,6 +9,7 @@ import androidx.navigation.Navigation
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListItemBinding
 import com.paint.randompeoplek.ui.model.User
+import com.paint.randompeoplek.ui.randompeopleprofile.RandomPeopleProfileFragment
 
 /**
  * [RecyclerView.Adapter] that can display a [User].
@@ -50,7 +51,7 @@ class RandomPeopleListRecyclerViewAdapter(
         }
 
         override fun onClick(p0: View?) {
-            val bundle = bundleOf("test" to users[absoluteAdapterPosition])
+            val bundle = bundleOf(RandomPeopleProfileFragment.ARG_USER to users[absoluteAdapterPosition])
 
             Navigation.findNavController(binding.root)
                 .navigate(R.id.action_randomPeopleListFragment_to_randomPeopleProfileFragment, bundle)

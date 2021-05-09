@@ -137,7 +137,7 @@ class RandomPeopleListFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.toolbar_menu, menu)
+        inflater.inflate(R.menu.people_list_fragment_toolbar_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -155,17 +155,5 @@ class RandomPeopleListFragment : Fragment() {
 
         const val ARG_FRAGMENT_LAUNCHED = "ARG_FRAGMENT_LAUNCHED"
 
-
-        // TODO: Customize parameter initialization
-        @JvmStatic
-        fun newInstance() = RandomPeopleListFragment()
-
-//        @JvmStatic
-//        fun newInstance(columnCount: Int) =
-//            RandomPeopleListFragment().apply {
-//                arguments = Bundle().apply {
-//                    putInt(ARG_COLUMN_COUNT, columnCount)
-//                }
-//            }
     }
 }

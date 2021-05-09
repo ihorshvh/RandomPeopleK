@@ -1,51 +1,81 @@
 package com.paint.randompeoplek.ui.randompeopleprofile
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.ui.model.User
+import com.paint.randompeoplek.databinding.RandomPeopleProfileFragmentBinding
 
 class RandomPeopleProfileFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = RandomPeopleProfileFragment()
-    }
+    private val binding get() = randomPeopleProfileFragmentBinding!!
+    private var randomPeopleProfileFragmentBinding : RandomPeopleProfileFragmentBinding? = null
 
-    private lateinit var viewModel: RandomPeopleProfileViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        randomPeopleProfileFragmentBinding = RandomPeopleProfileFragmentBinding.inflate(
+                inflater,
+                container,
+                false
+        )
 
-        val user = arguments?.getParcelable<User>("test")
-        Log.d("myLogs", user.toString())
+        return initializeViews()
+    }
 
-        return inflater.inflate(R.layout.random_people_profile_fragment, container, false)
+    private fun initializeViews() : View {
+        (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
+
+        binding.toolbar.setNavigationIcon(R.drawable.ic_back_img)
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(this).get(RandomPeopleProfileViewModel::class.java)
+        setUserData()
     }
 
+    private fun setUserData() {
+        val user = arguments?.getParcelable<User>(ARG_USER)
+        Log.d("myLogs", user.toString())
 
-    override fun onResume() {
-        super.onResume()
+        binding.tvProfileName.text = user?.name?.fullName
+        binding.tvProfileLocation.text = user?.location
+        binding.tvProfileEmail.text = user?.email
+        binding.tvProfilePhone.text = user?.phone
 
-//        findNavController().p
-//            .navigate(R.id.action_randomPeopleProfileFragment_to_randomPeopleListFragment)
-//        findNavController().
-
-
+        // TODO add image
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
 
+        randomPeopleProfileFragmentBinding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.people_profile_fragment_toolbar_menu, menu)
+    }
+
+    companion object {
+
+        const val ARG_USER = "ARG_USER"
+
+    }
 
 }
