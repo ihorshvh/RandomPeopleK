@@ -1,12 +1,13 @@
 package com.paint.randompeoplek.ui.randompeopleprofile
 
 import android.os.Bundle
-import android.transition.TransitionInflater
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleProfileFragmentBinding
 import com.paint.randompeoplek.ui.model.User
@@ -20,13 +21,6 @@ class RandomPeopleProfileFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
-        setUpAnimation()
-    }
-
-    private fun setUpAnimation() {
-        val transition = TransitionInflater.from(activity)
-                .inflateTransition(R.transition.changebounds_with_arcmotion)
-        activity?.window?.sharedElementEnterTransition = transition
     }
 
     override fun onCreateView(
@@ -67,7 +61,22 @@ class RandomPeopleProfileFragment : Fragment() {
         binding.tvProfileEmail.text = user?.email
         binding.tvProfilePhone.text = user?.phone
 
-        // TODO add image
+        mapPicture(binding.ivProfileImage, user?.picture?.medium)
+    }
+
+    private fun mapPicture(imageView : ImageView, url : String?) {
+        val imageWidth: Int =
+            imageView.context.resources.getDimensionPixelSize(R.dimen.profile_image_width)
+        val imageHeight: Int =
+            imageView.context.resources.getDimensionPixelSize(R.dimen.profile_image_height)
+
+        Glide.with(imageView.context)
+            .load(url)
+            .override(imageWidth, imageHeight)
+            .circleCrop()
+            .error(R.drawable.ic_user_default_picture)
+            .placeholder(R.drawable.ic_user_default_picture)
+            .into(imageView);
     }
 
     override fun onDestroyView() {
