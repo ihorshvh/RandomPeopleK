@@ -21,11 +21,11 @@ class RandomPeopleListFragment : Fragment() {
     private val userQuantity = "10"
 
     private val binding get() = randomPeopleListFragmentBinding!!
-    private val randomPeopleListRecyclerViewAdapter :
+    private val randomPeopleListRecyclerViewAdapter:
             RandomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter()
 
     private var isFragmentInitiallyCreated = true
-    private var randomPeopleListFragmentBinding : RandomPeopleListFragmentBinding? = null
+    private var randomPeopleListFragmentBinding: RandomPeopleListFragmentBinding? = null
 
     private lateinit var viewModel: RandomPeopleListViewModel
 
@@ -36,6 +36,14 @@ class RandomPeopleListFragment : Fragment() {
 
         savedInstanceState?.let {
             isFragmentInitiallyCreated = savedInstanceState.getBoolean(ARG_FRAGMENT_LAUNCHED, true)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.apply {
+            putBoolean(ARG_FRAGMENT_LAUNCHED, isFragmentInitiallyCreated)
         }
     }
 
@@ -53,7 +61,7 @@ class RandomPeopleListFragment : Fragment() {
         return initializeViews()
     }
 
-    private fun initializeViews() : View {
+    private fun initializeViews(): View {
         (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
 
         binding.swipeRefreshLayout.setOnRefreshListener { getUsers() }
@@ -72,8 +80,12 @@ class RandomPeopleListFragment : Fragment() {
         Log.d("myTag", "onViewCreated")
         viewModel = ViewModelProvider(this).get(RandomPeopleListViewModel::class.java)
 
+        viewModel.oneTimeErrorMessage.observe(viewLifecycleOwner, { oneTimeErrorMessage ->
+            handleOneTimeErrorMessageShowing(oneTimeErrorMessage)
+        })
+
         viewModel.usersResponse.observe(viewLifecycleOwner, { usersResponseResource ->
-            handleResponse(usersResponseResource)
+            handleUserListResponse(usersResponseResource)
         })
 
         retrieveUsersIfFragmentCreated()
@@ -81,25 +93,34 @@ class RandomPeopleListFragment : Fragment() {
 
     // Trigger the users retrieve in the fragment was just created
     private fun retrieveUsersIfFragmentCreated() {
-        if(isFragmentInitiallyCreated) {
+        if (isFragmentInitiallyCreated) {
             getUsers()
             isFragmentInitiallyCreated = false
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+    private fun handleOneTimeErrorMessageShowing(errorMessage: String) {
+        if (errorMessage.isNotEmpty()) {
+            val oneTimeErrorMessage = getOneTimeErrorMessage(errorMessage)
+            Toast.makeText(activity, oneTimeErrorMessage, Toast.LENGTH_LONG).show()
 
-        outState.apply {
-            putBoolean(ARG_FRAGMENT_LAUNCHED, isFragmentInitiallyCreated)
+            viewModel.oneTimeErrorMessage.value = ""
         }
     }
 
-    private fun handleResponse(response: Resource<LiveDataResponse<List<User>>>) {
-        when(response) {
-            is Resource.Loading -> handleUserListWhenLoading(response.data)
-            is Resource.Success -> handleUserListWhenSuccess(response.data)
-            is Resource.Error -> Toast.makeText(activity, response.message.toString(), Toast.LENGTH_LONG).show()
+    private fun getOneTimeErrorMessage(errorMessage: String) =
+        if (errorMessage.startsWith(getString(R.string.error_lost_connection))) {
+            getString(R.string.error_outdated_users_loaded)
+        } else {
+            getString(R.string.error_unknown)
+        }
+
+
+    private fun handleUserListResponse(response: Resource<LiveDataResponse<List<User>>>) {
+        when (response) {
+            is Resource.Loading -> handleUserListWhenLoading(response)
+            is Resource.Success -> handleUserListWhenSuccess(response)
+            is Resource.Error -> handleUserListWhenError(response)
         }
 
         if (response !is Resource.Loading) {
@@ -108,30 +129,30 @@ class RandomPeopleListFragment : Fragment() {
         }
     }
 
-    private fun handleUserListWhenLoading(response: LiveDataResponse<List<User>>?) {
+    private fun handleUserListWhenLoading(response: Resource<LiveDataResponse<List<User>>>) {
         binding.swipeRefreshLayout.isRefreshing = true
-        mapUserList(response)
+        mapUserList(response.data)
     }
 
-    private fun handleUserListWhenSuccess(response: LiveDataResponse<List<User>>?) {
-        handleWarning(response?.warning)
-        mapUserList(response)
+    private fun handleUserListWhenSuccess(response: Resource<LiveDataResponse<List<User>>>) {
+        mapUserList(response.data)
     }
-    
-    private fun handleWarning(warning : String?) {
-        if(warning != null) {
-            Toast.makeText(activity, warning, Toast.LENGTH_LONG).show()
-        }
+
+    private fun handleUserListWhenError(response: Resource<LiveDataResponse<List<User>>>) {
+        // no need to handle error message at this time
+        // as it will be shown as a one time message only.
+        // See @RandomPeopleListViewModel for reference.
+        mapUserList(response.data)
     }
-    
+
     private fun mapUserList(response: LiveDataResponse<List<User>>?) {
-        if(response?.response?.isNotEmpty() == true){
+        if (response?.response?.isNotEmpty() == true) {
             randomPeopleListRecyclerViewAdapter.updateUsersList(response.response!!)
         }
     }
 
     private fun checkLayoutVisibilityConditions() {
-        if(randomPeopleListRecyclerViewAdapter.itemCount == 0) {
+        if (randomPeopleListRecyclerViewAdapter.itemCount == 0) {
             toEmptyListMode()
         } else {
             toNonEmptyListMode()
@@ -143,7 +164,7 @@ class RandomPeopleListFragment : Fragment() {
         binding.list.visibility = View.GONE
     }
 
-    private fun toNonEmptyListMode(){
+    private fun toNonEmptyListMode() {
         binding.llNoUsers.visibility = View.GONE
         binding.list.visibility = View.VISIBLE
     }

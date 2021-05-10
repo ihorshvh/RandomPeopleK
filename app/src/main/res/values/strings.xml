@@ -5,4 +5,11 @@
     <string name="label_no_users">Push update button in order to obtain your random users list!</string>
     <string name="warning_empty_cache">Cache is empty</string>
     <string name="action_update">Update</string>
+
+    <!--Error messages-->
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_outdated_users_loaded">Invoking local storage! Check the internet connection</string>
+    <!--Server errors-->
+    <string name="error_lost_connection">Unable to resolve host</string>
+
 </resources>

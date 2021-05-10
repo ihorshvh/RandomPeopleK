@@ -16,6 +16,10 @@ import javax.inject.Inject
 @HiltViewModel
 class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListMediator : RandomPeopleListMediator) : ViewModel() {
 
+    val oneTimeErrorMessage : MutableLiveData<String> by lazy {
+        MutableLiveData()
+    }
+
     val usersResponse : MutableLiveData<Resource<LiveDataResponse<List<User>>>> by lazy {
         MutableLiveData()
     }
@@ -29,10 +33,12 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
             result.onSuccess {
                 Log.d("myTag", "SUCCESS")
 
-                if(it.throwable != null) {
-                    usersResponse.value = Resource.Success(LiveDataResponse(
-                        it.users.toUiParcelableUsers(),
-                        it.throwable!!.message.toString()))
+                if (it.throwable != null) {
+                    val errorMessage = it.throwable!!.message.toString()
+
+                    oneTimeErrorMessage.value = errorMessage
+                    usersResponse.value =
+                        Resource.Error(errorMessage, LiveDataResponse(it.users.toUiParcelableUsers()))
                 } else {
                     usersResponse.value =
                         Resource.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
@@ -41,6 +47,7 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
             result.onFailure {
                 Log.d("myTag", "ERROR " + it.message.toString())
+                oneTimeErrorMessage.value = it.message.toString()
                 usersResponse.value = Resource.Error(it.message.toString())
             }
         }
