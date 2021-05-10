@@ -22,44 +22,47 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="?attr/actionBarSize">
 
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/list"
-                    android:name="com.paint.randompeoplek.ui.randompeoplelist.RandomPeopleListFragment"
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    app:layoutManager="LinearLayoutManager"
-                    tools:context=".ui.randompeoplelist.RandomPeopleListFragment"
-                    tools:listitem="@layout/random_people_list_item" />
+                    android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/list"
+                        android:name="com.paint.randompeoplek.ui.randompeoplelist.RandomPeopleListFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layoutManager="LinearLayoutManager"
+                        tools:context=".ui.randompeoplelist.RandomPeopleListFragment"
+                        tools:listitem="@layout/random_people_list_item"
+                        android:visibility="gone"/>
+
+                <LinearLayout
+                        android:id="@+id/ll_no_users"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                    <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/text_size_primary_large"
+                            android:text="@string/label_no_users"
+                            android:layout_marginTop="@dimen/margin_extra_large" />
+
+                    <ImageButton
+                            android:id="@+id/img_btn_obtain_list"
+                            android:layout_width="@dimen/refresh_image_width"
+                            android:layout_height="@dimen/refresh_image_height"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ic_update_img_layout" />
+                </LinearLayout>
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <LinearLayout
-                android:id="@+id/ll_no_users"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:visibility="gone">
-
-            <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size_primary_large"
-                    android:text="@string/label_no_users"
-                    android:layout_marginTop="@dimen/margin_extra_large" />
-
-            <ImageButton
-                    android:id="@+id/img_btn_obtain_list"
-                    android:layout_width="@dimen/refresh_image_width"
-                    android:layout_height="@dimen/refresh_image_height"
-                    android:layout_gravity="center"
-                    android:background="@drawable/ic_update_img_layout" />
-
-        </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -140,12 +140,12 @@ class RandomPeopleListFragment : Fragment() {
 
     private fun toEmptyListMode() {
         binding.llNoUsers.visibility = View.VISIBLE
-        binding.swipeRefreshLayout.visibility = View.GONE
+        binding.list.visibility = View.GONE
     }
 
     private fun toNonEmptyListMode(){
         binding.llNoUsers.visibility = View.GONE
-        binding.swipeRefreshLayout.visibility = View.VISIBLE
+        binding.list.visibility = View.VISIBLE
     }
 
     private fun getUsers() {
