@@ -33,14 +33,14 @@
                         android:layout_height="match_parent"
                         app:layoutManager="LinearLayoutManager"
                         tools:context=".ui.randompeoplelist.RandomPeopleListFragment"
-                        tools:listitem="@layout/random_people_list_item"
-                        android:visibility="gone"/>
+                        tools:listitem="@layout/random_people_list_item" />
 
                 <LinearLayout
                         android:id="@+id/ll_no_users"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                     <TextView
                             android:id="@+id/textView"
