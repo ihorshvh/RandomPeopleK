@@ -11,5 +11,6 @@
 
     <color name="colorAppBarSelect">#98ffffff</color>
     <color name="colorAppBarTextSize">#ffffff</color>
+    <color name="colorToolbarText">#ffffff</color>
 
 </resources>
