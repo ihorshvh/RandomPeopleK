@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.mediator.RandomPeopleListMediator
 import com.paint.randompeoplek.mediator.toUiParcelableUsers
 import com.paint.randompeoplek.model.LiveDataResponse
+import com.paint.randompeoplek.model.Resource
 import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,29 +16,32 @@ import javax.inject.Inject
 @HiltViewModel
 class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListMediator : RandomPeopleListMediator) : ViewModel() {
 
-    val usersResponse : MutableLiveData<LiveDataResponse<List<User>>> by lazy {
+    val usersResponse : MutableLiveData<Resource<LiveDataResponse<List<User>>>> by lazy {
         MutableLiveData()
     }
 
     fun getRandomPeopleList(userQuantity : String) {
         viewModelScope.launch {
+            usersResponse.value = Resource.Loading(usersResponse.value?.data)
+
             val result = runCatching { randomPeopleListMediator.getUserList(userQuantity) }
 
             result.onSuccess {
                 Log.d("myTag", "SUCCESS")
 
                 if(it.throwable != null) {
-                    usersResponse.value = LiveDataResponse(
+                    usersResponse.value = Resource.Success(LiveDataResponse(
                         it.users.toUiParcelableUsers(),
-                        it.throwable!!.message.toString())
+                        it.throwable!!.message.toString()))
                 } else {
-                    usersResponse.value = LiveDataResponse(it.users.toUiParcelableUsers())
+                    usersResponse.value =
+                        Resource.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
                 }
             }
 
             result.onFailure {
                 Log.d("myTag", "ERROR " + it.message.toString())
-                usersResponse.value = LiveDataResponse(it.message.toString())
+                usersResponse.value = Resource.Error(it.message.toString())
             }
         }
     }

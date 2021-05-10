@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
 import com.paint.randompeoplek.model.LiveDataResponse
+import com.paint.randompeoplek.model.Resource
 import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,7 +24,7 @@ class RandomPeopleListFragment : Fragment() {
     private val randomPeopleListRecyclerViewAdapter :
             RandomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter()
 
-    private var isFragmentInitiallyLaunched = true
+    private var isFragmentInitiallyCreated = true
     private var randomPeopleListFragmentBinding : RandomPeopleListFragmentBinding? = null
 
     private lateinit var viewModel: RandomPeopleListViewModel
@@ -34,7 +35,7 @@ class RandomPeopleListFragment : Fragment() {
         setHasOptionsMenu(true)
 
         savedInstanceState?.let {
-            isFragmentInitiallyLaunched = savedInstanceState.getBoolean(ARG_FRAGMENT_LAUNCHED, true)
+            isFragmentInitiallyCreated = savedInstanceState.getBoolean(ARG_FRAGMENT_LAUNCHED, true)
         }
     }
 
@@ -71,19 +72,18 @@ class RandomPeopleListFragment : Fragment() {
         Log.d("myTag", "onViewCreated")
         viewModel = ViewModelProvider(this).get(RandomPeopleListViewModel::class.java)
 
-        viewModel.usersResponse.observe(viewLifecycleOwner, { usersResponse ->
-            handleResponse(usersResponse)
-
-            binding.swipeRefreshLayout.isRefreshing = false
+        viewModel.usersResponse.observe(viewLifecycleOwner, { usersResponseResource ->
+            handleResponse(usersResponseResource)
         })
 
-        handleUserRetrieve()
+        retrieveUsersIfFragmentCreated()
     }
 
-    private fun handleUserRetrieve() {
-        if(isFragmentInitiallyLaunched) {
+    // Trigger the users retrieve in the fragment was just created
+    private fun retrieveUsersIfFragmentCreated() {
+        if(isFragmentInitiallyCreated) {
             getUsers()
-            isFragmentInitiallyLaunched = false
+            isFragmentInitiallyCreated = false
         }
     }
 
@@ -91,20 +91,43 @@ class RandomPeopleListFragment : Fragment() {
         super.onSaveInstanceState(outState)
 
         outState.apply {
-            putBoolean(ARG_FRAGMENT_LAUNCHED, isFragmentInitiallyLaunched)
+            putBoolean(ARG_FRAGMENT_LAUNCHED, isFragmentInitiallyCreated)
         }
     }
 
-    private fun handleResponse(response: LiveDataResponse<List<User>>) {
-        if(response.error != null){
-            Toast.makeText(activity, response.error.toString(), Toast.LENGTH_LONG).show()
+    private fun handleResponse(response: Resource<LiveDataResponse<List<User>>>) {
+        when(response) {
+            is Resource.Loading -> handleUserListWhenLoading(response.data)
+            is Resource.Success -> handleUserListWhenSuccess(response.data)
+            is Resource.Error -> Toast.makeText(activity, response.message.toString(), Toast.LENGTH_LONG).show()
         }
 
-        if(response.response?.isNotEmpty() == true){
+        if (response !is Resource.Loading) {
+            binding.swipeRefreshLayout.isRefreshing = false
+            checkLayoutVisibilityConditions()
+        }
+    }
+
+    private fun handleUserListWhenLoading(response: LiveDataResponse<List<User>>?) {
+        binding.swipeRefreshLayout.isRefreshing = true
+        mapUserList(response)
+    }
+
+    private fun handleUserListWhenSuccess(response: LiveDataResponse<List<User>>?) {
+        handleWarning(response?.warning)
+        mapUserList(response)
+    }
+    
+    private fun handleWarning(warning : String?) {
+        if(warning != null) {
+            Toast.makeText(activity, warning, Toast.LENGTH_LONG).show()
+        }
+    }
+    
+    private fun mapUserList(response: LiveDataResponse<List<User>>?) {
+        if(response?.response?.isNotEmpty() == true){
             randomPeopleListRecyclerViewAdapter.updateUsersList(response.response!!)
         }
-
-        checkLayoutVisibilityConditions()
     }
 
     private fun checkLayoutVisibilityConditions() {

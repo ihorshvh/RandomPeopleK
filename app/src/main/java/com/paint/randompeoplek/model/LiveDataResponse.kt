@@ -4,19 +4,19 @@ class LiveDataResponse<Response> {
 
     var response: Response? = null
 
-    var error: String? = null
+    var warning: String? = null
 
     constructor(response: Response) {
         this.response = response
     }
 
     constructor(error: String?) {
-        this.error = error
+        this.warning = error
     }
 
     constructor(response: Response, error: String) {
         this.response = response
-        this.error = error
+        this.warning = error
     }
 
 }
