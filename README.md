@@ -3,7 +3,7 @@
 Application for rendering information using RandomPeopleApi. Communication with API implemented with the help
 of Retrofit.
 Features:
-  1. Designing according to the Android test practices.
+  1. Designing according to the Android best practices.
   2. MVVM architecture (google architecture components)
   3. Offline mode enabled
   4. Cache mechanism implemented with the bunch of Kotlin coroutines + LocalStorage
