@@ -1,6 +1,5 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,8 +30,6 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
             val result = runCatching { randomPeopleListMediator.getUserList(userQuantity) }
 
             result.onSuccess {
-                Log.d("myTag", "SUCCESS")
-
                 if (it.throwable != null) {
                     val errorMessage = it.throwable!!.message.toString()
 
@@ -46,7 +43,6 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
             }
 
             result.onFailure {
-                Log.d("myTag", "ERROR " + it.message.toString())
                 oneTimeErrorMessage.value = it.message.toString()
                 usersResponse.value = Resource.Error(it.message.toString())
             }

@@ -1,7 +1,6 @@
 package com.paint.randompeoplek.ui.randompeopleprofile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -54,7 +53,6 @@ class RandomPeopleProfileFragment : Fragment() {
 
     private fun mapData() {
         val user = arguments?.getParcelable<User>(ARG_USER)
-        Log.d("myLogs", user.toString())
 
         binding.tvProfileName.text = user?.name?.fullName
         binding.tvProfileLocation.text = user?.location

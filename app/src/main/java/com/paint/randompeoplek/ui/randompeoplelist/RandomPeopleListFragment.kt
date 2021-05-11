@@ -1,7 +1,6 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -51,7 +50,6 @@ class RandomPeopleListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d("myTag", "onCreateView")
         randomPeopleListFragmentBinding = RandomPeopleListFragmentBinding.inflate(
             inflater,
             container,
@@ -77,7 +75,7 @@ class RandomPeopleListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("myTag", "onViewCreated")
+
         viewModel = ViewModelProvider(this).get(RandomPeopleListViewModel::class.java)
 
         viewModel.oneTimeErrorMessage.observe(viewLifecycleOwner, { oneTimeErrorMessage ->
