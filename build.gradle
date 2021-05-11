@@ -1,6 +1,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext.min_sdk_version = 14
+    ext.target_sdk_version = 29
+    ext.compile_sdk_version = 29
+    ext.build_tools_version = "29.0.2"
+    ext.jvm_target = "1.8"
+
+    ext.application_id = "com.paint.randompeoplek"
+    ext.version_code = 1
+    ext.version_name = "1.0"
+    ext.test_instrumentation_runner = "androidx.test.runner.AndroidJUnitRunner"
 
     ext.kotlin_version = '1.4.32'
     ext.appcompat_version = '1.2.0'
