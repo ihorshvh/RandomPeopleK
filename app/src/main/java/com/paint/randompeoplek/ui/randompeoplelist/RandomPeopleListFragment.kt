@@ -58,10 +58,7 @@ class RandomPeopleListFragment : Fragment() {
         binding.swipeRefreshLayout.setOnRefreshListener { getUsers() }
         binding.imgBtnObtainList.setOnClickListener { getUsers() }
 
-        with(binding.list) {
-            layoutManager = LinearLayoutManager(context)
-            adapter = randomPeopleListRecyclerViewAdapter
-        }
+        binding.list.adapter = randomPeopleListRecyclerViewAdapter
     }
 
     private fun initializeViewModel() {
