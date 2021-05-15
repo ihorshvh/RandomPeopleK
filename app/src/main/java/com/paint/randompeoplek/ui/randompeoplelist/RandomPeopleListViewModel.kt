@@ -23,6 +23,10 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
         MutableLiveData()
     }
 
+    init {
+        getRandomPeopleList(USER_QUANTITY)
+    }
+
     fun getRandomPeopleList(userQuantity : String) {
         viewModelScope.launch {
             usersResponse.value = LoadResult.Loading(usersResponse.value?.data)
@@ -47,6 +51,12 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
                 usersResponse.value = LoadResult.Error(it.message.toString())
             }
         }
+    }
+
+    companion object {
+
+        const val USER_QUANTITY = "10"
+
     }
 
 }

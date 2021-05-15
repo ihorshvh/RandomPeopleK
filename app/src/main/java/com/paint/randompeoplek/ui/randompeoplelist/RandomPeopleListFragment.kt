@@ -17,13 +17,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class RandomPeopleListFragment : Fragment() {
 
-    private val userQuantity = "10"
-
     private val binding get() = randomPeopleListFragmentBinding!!
     private val randomPeopleListRecyclerViewAdapter:
             RandomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter()
 
-    private var isFragmentInitiallyCreated = true
     private var randomPeopleListFragmentBinding: RandomPeopleListFragmentBinding? = null
 
     private lateinit var viewModel: RandomPeopleListViewModel
@@ -32,18 +29,6 @@ class RandomPeopleListFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
-
-        savedInstanceState?.let {
-            isFragmentInitiallyCreated = savedInstanceState.getBoolean(ARG_FRAGMENT_LAUNCHED, true)
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.apply {
-            putBoolean(ARG_FRAGMENT_LAUNCHED, isFragmentInitiallyCreated)
-        }
     }
 
     override fun onCreateView(
@@ -85,16 +70,6 @@ class RandomPeopleListFragment : Fragment() {
         viewModel.usersResponse.observe(viewLifecycleOwner, { usersResponseResource ->
             handleUserListResponse(usersResponseResource)
         })
-
-        retrieveUsersIfFragmentCreated()
-    }
-
-    // Trigger the users retrieve in the fragment was just created
-    private fun retrieveUsersIfFragmentCreated() {
-        if (isFragmentInitiallyCreated) {
-            getUsers()
-            isFragmentInitiallyCreated = false
-        }
     }
 
     private fun handleOneTimeErrorMessageShowing(errorMessage: String) {
@@ -169,7 +144,7 @@ class RandomPeopleListFragment : Fragment() {
 
     private fun getUsers() {
         binding.swipeRefreshLayout.isRefreshing = true
-        viewModel.getRandomPeopleList(userQuantity)
+        viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY)
     }
 
     override fun onDestroyView() {
@@ -193,9 +168,4 @@ class RandomPeopleListFragment : Fragment() {
         }
     }
 
-    companion object {
-
-        const val ARG_FRAGMENT_LAUNCHED = "ARG_FRAGMENT_LAUNCHED"
-
-    }
 }
