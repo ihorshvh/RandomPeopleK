@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.paint.randompeoplek.mediator.RandomPeopleListMediator
-import com.paint.randompeoplek.mediator.model.Name
-import com.paint.randompeoplek.mediator.model.Picture
+import com.paint.randompeoplek.usecase.RandomPeopleListUseCase
+import com.paint.randompeoplek.usecase.model.Name
+import com.paint.randompeoplek.usecase.model.Picture
 import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListMediator : RandomPeopleListMediator) : ViewModel() {
+class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListUseCase : RandomPeopleListUseCase) : ViewModel() {
 
     private val oneTimeErrorMessage : MutableLiveData<String> by lazy {
         MutableLiveData()
@@ -37,7 +37,7 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
         viewModelScope.launch {
             usersResponse.value = LoadResult.Loading(usersResponse.value?.data)
 
-            val result = runCatching { randomPeopleListMediator.getUserList(userQuantity) }
+            val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
 
             result.onSuccess {
                 if (it.throwable != null) {
@@ -77,11 +77,11 @@ private fun Name.toUiParcelableName() =
 private fun Picture.toUiParcelablePicture() =
     com.paint.randompeoplek.ui.model.Picture(this.medium, this.thumbnail)
 
-private fun com.paint.randompeoplek.mediator.model.User.toUiParcelableUser() =
+private fun com.paint.randompeoplek.usecase.model.User.toUiParcelableUser() =
     com.paint.randompeoplek.ui.model.User(this.name.toUiParcelableName(),
         this.location,
         this.email,
         this.phone,
         this.picture.toUiParcelablePicture())
 
-private fun List<com.paint.randompeoplek.mediator.model.User>.toUiParcelableUsers() = this.map { it.toUiParcelableUser() }
+private fun List<com.paint.randompeoplek.usecase.model.User>.toUiParcelableUsers() = this.map { it.toUiParcelableUser() }

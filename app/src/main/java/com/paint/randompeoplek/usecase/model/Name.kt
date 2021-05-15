@@ -1,4 +1,4 @@
-package com.paint.randompeoplek.mediator.model
+package com.paint.randompeoplek.usecase.model
 
 data class Name(val shortName : String,
                 val fullName : String)

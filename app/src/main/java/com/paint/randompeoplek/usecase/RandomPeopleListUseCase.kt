@@ -1,10 +1,10 @@
-package com.paint.randompeoplek.mediator
+package com.paint.randompeoplek.usecase
 
 import com.paint.randompeoplek.repository.RandomPeopleListRepository
 import com.paint.randompeoplek.repository.model.*
 import javax.inject.Inject
 
-class RandomPeopleListMediator @Inject constructor(private val randomPeopleListRepository : RandomPeopleListRepository) {
+class RandomPeopleListUseCase @Inject constructor(private val randomPeopleListRepository : RandomPeopleListRepository) {
 
     suspend fun getUserList(userQuantity: String) =
         randomPeopleListRepository.getUserList(userQuantity).toMediatorUserResponse()
@@ -12,22 +12,22 @@ class RandomPeopleListMediator @Inject constructor(private val randomPeopleListR
 }
 
 private fun Name.toMediatorName() =
-    com.paint.randompeoplek.mediator.model.Name(this.firstName + " " + this.lastName,
+    com.paint.randompeoplek.usecase.model.Name(this.firstName + " " + this.lastName,
         this.title + " " + this.firstName + " " + this.lastName)
 
 private fun Picture.toMediatorPicture() =
-    com.paint.randompeoplek.mediator.model.Picture(this.medium, this.thumbnail)
+    com.paint.randompeoplek.usecase.model.Picture(this.medium, this.thumbnail)
 
-private fun User.toMediatorUser() = com.paint.randompeoplek.mediator.model.User(this.name.toMediatorName(),
+private fun User.toMediatorUser() = com.paint.randompeoplek.usecase.model.User(this.name.toMediatorName(),
     this.location.getAddress(), this.email, this.phone, this.picture.toMediatorPicture())
 
 private fun List<User>.toRepositoryUsers() = this.map { it.toMediatorUser() }
 
-private fun UserResponse.toMediatorUserResponse() : com.paint.randompeoplek.mediator.model.UserResponse {
+private fun UserResponse.toMediatorUserResponse() : com.paint.randompeoplek.usecase.model.UserResponse {
     return if(this.throwable != null) {
-        com.paint.randompeoplek.mediator.model.UserResponse(this.users.toRepositoryUsers(), this.throwable!!)
+        com.paint.randompeoplek.usecase.model.UserResponse(this.users.toRepositoryUsers(), this.throwable!!)
     } else {
-        com.paint.randompeoplek.mediator.model.UserResponse(this.users.toRepositoryUsers())
+        com.paint.randompeoplek.usecase.model.UserResponse(this.users.toRepositoryUsers())
     }
 }
 

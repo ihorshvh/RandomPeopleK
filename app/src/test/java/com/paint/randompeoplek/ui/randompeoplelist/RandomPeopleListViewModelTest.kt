@@ -3,8 +3,8 @@ package com.paint.randompeoplek.ui.randompeoplelist
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.paint.randompeoplek.CoroutineRule
-import com.paint.randompeoplek.mediator.RandomPeopleListMediator
-import com.paint.randompeoplek.mediator.model.UserResponse
+import com.paint.randompeoplek.usecase.RandomPeopleListUseCase
+import com.paint.randompeoplek.usecase.model.UserResponse
 import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
@@ -38,7 +38,7 @@ class RandomPeopleListViewModelTest {
 
     @Test
     fun testGetRandomPeopleListWhenSuccess() {
-        val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
+        val randomPeopleListMediator = mock(RandomPeopleListUseCase::class.java)
         val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
 
         runBlockingTest {
@@ -80,7 +80,7 @@ class RandomPeopleListViewModelTest {
 
     @Test
     fun testGetRandomPeopleListWhenSuccessButWithError() {
-        val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
+        val randomPeopleListMediator = mock(RandomPeopleListUseCase::class.java)
         val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
         val oneTimeMessageObserver : Observer<String> = mock(Observer::class.java) as Observer<String>
 
@@ -131,7 +131,7 @@ class RandomPeopleListViewModelTest {
 
     @Test
     fun testGetRandomPeopleListWhenFailure() {
-        val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
+        val randomPeopleListMediator = mock(RandomPeopleListUseCase::class.java)
         val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
         val oneTimeMessageObserver : Observer<String> = mock(Observer::class.java) as Observer<String>
 
@@ -173,7 +173,7 @@ class RandomPeopleListViewModelTest {
 
     @Test
     fun testClearOneTimeErrorMessage() {
-        val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
+        val randomPeopleListMediator = mock(RandomPeopleListUseCase::class.java)
         val oneTimeMessageObserver : Observer<String> = mock(Observer::class.java) as Observer<String>
 
         runBlockingTest {

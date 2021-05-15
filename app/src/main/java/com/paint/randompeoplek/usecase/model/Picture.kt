@@ -1,4 +1,4 @@
-package com.paint.randompeoplek.mediator.model
+package com.paint.randompeoplek.usecase.model
 
 data class Picture(val medium : String,
                    val thumbnail : String)

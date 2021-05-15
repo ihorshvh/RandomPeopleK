@@ -1,4 +1,4 @@
-package com.paint.randompeoplek.mediator.model
+package com.paint.randompeoplek.usecase.model
 
 data class User(val name : Name,
                 val location : String,

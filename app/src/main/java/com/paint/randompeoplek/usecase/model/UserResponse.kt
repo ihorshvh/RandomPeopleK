@@ -1,4 +1,4 @@
-package com.paint.randompeoplek.mediator.model
+package com.paint.randompeoplek.usecase.model
 
 
 class UserResponse {
