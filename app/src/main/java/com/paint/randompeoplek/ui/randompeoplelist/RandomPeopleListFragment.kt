@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
 import com.paint.randompeoplek.model.LiveDataResponse
-import com.paint.randompeoplek.model.Resource
+import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -60,7 +60,7 @@ class RandomPeopleListFragment : Fragment() {
     }
 
     private fun initializeViews(): View {
-        (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
+        (activity as AppCompatActivity?)?.setSupportActionBar(binding.toolbar)
 
         binding.swipeRefreshLayout.setOnRefreshListener { getUsers() }
         binding.imgBtnObtainList.setOnClickListener { getUsers() }
@@ -114,29 +114,29 @@ class RandomPeopleListFragment : Fragment() {
         }
 
 
-    private fun handleUserListResponse(response: Resource<LiveDataResponse<List<User>>>) {
+    private fun handleUserListResponse(response: LoadResult<LiveDataResponse<List<User>>>) {
         when (response) {
-            is Resource.Loading -> handleUserListWhenLoading(response)
-            is Resource.Success -> handleUserListWhenSuccess(response)
-            is Resource.Error -> handleUserListWhenError(response)
+            is LoadResult.Loading -> handleUserListWhenLoading(response)
+            is LoadResult.Success -> handleUserListWhenSuccess(response)
+            is LoadResult.Error -> handleUserListWhenError(response)
         }
 
-        if (response !is Resource.Loading) {
+        if (response !is LoadResult.Loading) {
             binding.swipeRefreshLayout.isRefreshing = false
             checkLayoutVisibilityConditions()
         }
     }
 
-    private fun handleUserListWhenLoading(response: Resource<LiveDataResponse<List<User>>>) {
+    private fun handleUserListWhenLoading(response: LoadResult<LiveDataResponse<List<User>>>) {
         binding.swipeRefreshLayout.isRefreshing = true
         mapUserList(response.data)
     }
 
-    private fun handleUserListWhenSuccess(response: Resource<LiveDataResponse<List<User>>>) {
+    private fun handleUserListWhenSuccess(response: LoadResult<LiveDataResponse<List<User>>>) {
         mapUserList(response.data)
     }
 
-    private fun handleUserListWhenError(response: Resource<LiveDataResponse<List<User>>>) {
+    private fun handleUserListWhenError(response: LoadResult<LiveDataResponse<List<User>>>) {
         // no need to handle error message at this time
         // as it will be shown as a one time message only.
         // See @RandomPeopleListViewModel for reference.

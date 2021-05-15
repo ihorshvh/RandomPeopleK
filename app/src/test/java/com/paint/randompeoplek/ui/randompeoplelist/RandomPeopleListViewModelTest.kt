@@ -6,7 +6,7 @@ import com.paint.randompeoplek.CoroutineRule
 import com.paint.randompeoplek.mediator.RandomPeopleListMediator
 import com.paint.randompeoplek.mediator.model.UserResponse
 import com.paint.randompeoplek.model.LiveDataResponse
-import com.paint.randompeoplek.model.Resource
+import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
 import junit.framework.Assert.assertNull
 import junit.framework.TestCase.assertEquals
@@ -36,13 +36,13 @@ class RandomPeopleListViewModelTest {
     val instantExecutorRule = InstantTaskExecutorRule()
 
     @Captor
-    private lateinit var resourceCaptor: ArgumentCaptor<Resource<LiveDataResponse<List<User>>>>
+    private lateinit var resourceCaptor: ArgumentCaptor<LoadResult<LiveDataResponse<List<User>>>>
 
     @Test
     fun testGetRandomPeopleListWhenSuccess() {
         val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator)
-        val observer: Observer<Resource<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<Resource<LiveDataResponse<List<User>>>>
+        val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
 
         runBlockingTest {
             val users = getUsers()
@@ -51,22 +51,22 @@ class RandomPeopleListViewModelTest {
             viewModel.usersResponse.observeForever(observer)
             viewModel.getRandomPeopleList("2")
 
-            verify(observer, times(1)).onChanged(Resource.Loading(LiveDataResponse()))
-            verify(observer, times(1)).onChanged(Resource.Success(LiveDataResponse()))
+            verify(observer, times(1)).onChanged(LoadResult.Loading(LiveDataResponse()))
+            verify(observer, times(1)).onChanged(LoadResult.Success(LiveDataResponse()))
 
             verify(observer, times(2)).onChanged(resourceCaptor.capture())
             assertEquals(2, resourceCaptor.allValues.size)
 
-            assertThat(resourceCaptor.allValues[0], instanceOf(Resource.Loading::class.java))
-            assertNull((resourceCaptor.allValues[0] as Resource.Loading).data)
+            assertThat(resourceCaptor.allValues[0], instanceOf(LoadResult.Loading::class.java))
+            assertNull((resourceCaptor.allValues[0] as LoadResult.Loading).data)
 
-            assertThat(resourceCaptor.allValues[1], instanceOf(Resource.Success::class.java))
+            assertThat(resourceCaptor.allValues[1], instanceOf(LoadResult.Success::class.java))
 
-            val resource = (resourceCaptor.allValues[1] as Resource.Success)
+            val resource = (resourceCaptor.allValues[1] as LoadResult.Success)
             assertNotNull(resource.data)
 
             val liveDataResponse =
-                (((resourceCaptor.allValues[1] as Resource.Success).data) as LiveDataResponse<List<User>>)
+                (((resourceCaptor.allValues[1] as LoadResult.Success).data) as LiveDataResponse<List<User>>)
             assertNull(liveDataResponse.warningThrowable)
             assertNotNull(liveDataResponse.response)
             assertEquals(2, liveDataResponse.response?.size)
@@ -79,7 +79,7 @@ class RandomPeopleListViewModelTest {
     fun testGetRandomPeopleListWhenSuccessWhenReloading() {
         val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator)
-        val observer: Observer<Resource<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<Resource<LiveDataResponse<List<User>>>>
+        val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
 
         runBlockingTest {
             val users = getUsers()
@@ -89,16 +89,16 @@ class RandomPeopleListViewModelTest {
             viewModel.getRandomPeopleList("2")
             viewModel.getRandomPeopleList("2")
 
-            verify(observer, times(2)).onChanged(Resource.Loading(LiveDataResponse()))
-            verify(observer, times(2)).onChanged(Resource.Success(LiveDataResponse()))
+            verify(observer, times(2)).onChanged(LoadResult.Loading(LiveDataResponse()))
+            verify(observer, times(2)).onChanged(LoadResult.Success(LiveDataResponse()))
 
             verify(observer, times(4)).onChanged(resourceCaptor.capture())
 
-            assertThat(resourceCaptor.allValues[2], instanceOf(Resource.Loading::class.java))
-            assertNotNull((resourceCaptor.allValues[2] as Resource.Loading).data)
+            assertThat(resourceCaptor.allValues[2], instanceOf(LoadResult.Loading::class.java))
+            assertNotNull((resourceCaptor.allValues[2] as LoadResult.Loading).data)
 
             val liveDataResponse =
-                (((resourceCaptor.allValues[2] as Resource.Loading).data) as LiveDataResponse<List<User>>)
+                (((resourceCaptor.allValues[2] as LoadResult.Loading).data) as LiveDataResponse<List<User>>)
             assertNotNull(liveDataResponse.response)
             assertEquals(2, liveDataResponse.response?.size)
 
@@ -109,7 +109,7 @@ class RandomPeopleListViewModelTest {
     @Test
     fun testGetRandomPeopleListWhenSuccessButWithError() {
         val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
-        val observer: Observer<Resource<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<Resource<LiveDataResponse<List<User>>>>
+        val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator)
 
         runBlockingTest {
@@ -125,23 +125,23 @@ class RandomPeopleListViewModelTest {
             viewModel.usersResponse.observeForever(observer)
             viewModel.getRandomPeopleList("2")
 
-            verify(observer, times(1)).onChanged(Resource.Loading(LiveDataResponse()))
-            verify(observer, times(1)).onChanged(Resource.Error("exception", LiveDataResponse()))
+            verify(observer, times(1)).onChanged(LoadResult.Loading(LiveDataResponse()))
+            verify(observer, times(1)).onChanged(LoadResult.Error("exception", LiveDataResponse()))
 
             verify(observer, times(2)).onChanged(resourceCaptor.capture())
             assertEquals(2, resourceCaptor.allValues.size)
 
-            assertThat(resourceCaptor.allValues[0], instanceOf(Resource.Loading::class.java))
-            assertNull((resourceCaptor.allValues[0] as Resource.Loading).data)
+            assertThat(resourceCaptor.allValues[0], instanceOf(LoadResult.Loading::class.java))
+            assertNull((resourceCaptor.allValues[0] as LoadResult.Loading).data)
 
-            assertThat(resourceCaptor.allValues[1], instanceOf(Resource.Error::class.java))
+            assertThat(resourceCaptor.allValues[1], instanceOf(LoadResult.Error::class.java))
 
-            val resource = (resourceCaptor.allValues[1] as Resource.Error)
+            val resource = (resourceCaptor.allValues[1] as LoadResult.Error)
             assertNotNull(resource.data)
             assertNotNull(resource.message)
 
             val liveDataResponse =
-                (((resourceCaptor.allValues[1] as Resource.Error).data) as LiveDataResponse<List<User>>)
+                (((resourceCaptor.allValues[1] as LoadResult.Error).data) as LiveDataResponse<List<User>>)
             assertNull(liveDataResponse.warningThrowable)
             assertNotNull(liveDataResponse.response)
             assertEquals(2, liveDataResponse.response?.size)
@@ -154,7 +154,7 @@ class RandomPeopleListViewModelTest {
     fun testGetRandomPeopleListWhenFailure() {
         val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator)
-        val observer: Observer<Resource<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<Resource<LiveDataResponse<List<User>>>>
+        val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
 
         runBlockingTest {
             doAnswer {
@@ -163,18 +163,18 @@ class RandomPeopleListViewModelTest {
             viewModel.usersResponse.observeForever(observer)
             viewModel.getRandomPeopleList("2")
 
-            verify(observer, times(1)).onChanged(Resource.Loading(LiveDataResponse()))
-            verify(observer, times(1)).onChanged(Resource.Error("exception"))
+            verify(observer, times(1)).onChanged(LoadResult.Loading(LiveDataResponse()))
+            verify(observer, times(1)).onChanged(LoadResult.Error("exception"))
 
             verify(observer, times(2)).onChanged(resourceCaptor.capture())
             assertEquals(2, resourceCaptor.allValues.size)
 
-            assertThat(resourceCaptor.allValues[0], instanceOf(Resource.Loading::class.java))
-            assertNull((resourceCaptor.allValues[0] as Resource.Loading).data)
+            assertThat(resourceCaptor.allValues[0], instanceOf(LoadResult.Loading::class.java))
+            assertNull((resourceCaptor.allValues[0] as LoadResult.Loading).data)
 
-            assertThat(resourceCaptor.allValues[1], instanceOf(Resource.Error::class.java))
+            assertThat(resourceCaptor.allValues[1], instanceOf(LoadResult.Error::class.java))
 
-            val resource = (resourceCaptor.allValues[1] as Resource.Error)
+            val resource = (resourceCaptor.allValues[1] as LoadResult.Error)
             assertNull(resource.data)
             assertNotNull(resource.message)
 

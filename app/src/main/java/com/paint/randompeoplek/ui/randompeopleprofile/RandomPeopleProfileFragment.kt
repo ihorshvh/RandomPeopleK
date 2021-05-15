@@ -36,7 +36,7 @@ class RandomPeopleProfileFragment : Fragment() {
     }
 
     private fun initializeViews() : View {
-        (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
+        (activity as AppCompatActivity?)?.setSupportActionBar(binding.toolbar)
 
         binding.toolbar.setNavigationIcon(R.drawable.ic_back_img)
         binding.toolbar.setNavigationOnClickListener {

@@ -11,6 +11,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+private const val BASE_URL = "https://randomuser.me/api/1.3/"
+
 @InstallIn(SingletonComponent::class)
 @Module
 object RandomPeopleServiceModule {
@@ -25,7 +27,7 @@ object RandomPeopleServiceModule {
     @Singleton
     fun provideRetrofit(gson : Gson) : Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://randomuser.me/api/1.3/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }

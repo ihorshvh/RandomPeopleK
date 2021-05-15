@@ -10,6 +10,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+private const val DATABASE_NAME = "random_people_app_database"
+
 @InstallIn(SingletonComponent::class)
 @Module
 object StorageModule {
@@ -19,7 +21,7 @@ object StorageModule {
     fun provideAppDatabase(@ApplicationContext applicationContext: Context) : AppDatabase {
         return Room.databaseBuilder(
             applicationContext,
-            AppDatabase::class.java, "random_people_app_database"
+            AppDatabase::class.java, DATABASE_NAME
         ).build()
     }
 

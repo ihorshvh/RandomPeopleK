@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.mediator.RandomPeopleListMediator
 import com.paint.randompeoplek.mediator.toUiParcelableUsers
 import com.paint.randompeoplek.model.LiveDataResponse
-import com.paint.randompeoplek.model.Resource
+import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,13 +19,13 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
         MutableLiveData()
     }
 
-    val usersResponse : MutableLiveData<Resource<LiveDataResponse<List<User>>>> by lazy {
+    val usersResponse : MutableLiveData<LoadResult<LiveDataResponse<List<User>>>> by lazy {
         MutableLiveData()
     }
 
     fun getRandomPeopleList(userQuantity : String) {
         viewModelScope.launch {
-            usersResponse.value = Resource.Loading(usersResponse.value?.data)
+            usersResponse.value = LoadResult.Loading(usersResponse.value?.data)
 
             val result = runCatching { randomPeopleListMediator.getUserList(userQuantity) }
 
@@ -35,16 +35,16 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
                     oneTimeErrorMessage.value = errorMessage
                     usersResponse.value =
-                        Resource.Error(errorMessage, LiveDataResponse(it.users.toUiParcelableUsers()))
+                        LoadResult.Error(errorMessage, LiveDataResponse(it.users.toUiParcelableUsers()))
                 } else {
                     usersResponse.value =
-                        Resource.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
+                        LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
                 }
             }
 
             result.onFailure {
                 oneTimeErrorMessage.value = it.message.toString()
-                usersResponse.value = Resource.Error(it.message.toString())
+                usersResponse.value = LoadResult.Error(it.message.toString())
             }
         }
     }
