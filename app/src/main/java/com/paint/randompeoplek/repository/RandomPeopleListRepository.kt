@@ -2,9 +2,8 @@ package com.paint.randompeoplek.repository
 
 import com.paint.randompeoplek.service.RandomPeopleService
 import com.paint.randompeoplek.repository.model.UserResponse
-import com.paint.randompeoplek.service.toStorageUsers
 import com.paint.randompeoplek.storage.dao.UserDao
-import com.paint.randompeoplek.storage.toRepositoryUsers
+import com.paint.randompeoplek.storage.entity.*
 import java.util.Date
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -42,3 +41,54 @@ class RandomPeopleListRepository @Inject constructor(
     }
 
 }
+
+private fun Location.toRepositoryLocation() =
+    com.paint.randompeoplek.repository.model.Location(this.street.toRepositoryStreet(),
+        this.city,
+        this.state,
+        this.country,
+        this.postCode)
+
+private fun Name.toRepositoryName() =
+    com.paint.randompeoplek.repository.model.Name(this.title, this.firstName, this.lastName)
+
+private fun Picture.toRepositoryPicture() =
+    com.paint.randompeoplek.repository.model.Picture(this.large, this.medium, this.thumbnail)
+
+private fun Street.toRepositoryStreet() =
+    com.paint.randompeoplek.repository.model.Street(this.number, this.name)
+
+private fun User.toRepositoryUser() =
+    com.paint.randompeoplek.repository.model.User(this.name.toRepositoryName(),
+        this.location.toRepositoryLocation(),
+        this.email,
+        this.phone,
+        this.picture.toRepositoryPicture())
+
+private fun List<User>.toRepositoryUsers() = this.map { it.toRepositoryUser() }
+
+private fun com.paint.randompeoplek.service.model.Location.toStorageLocation() =
+    com.paint.randompeoplek.storage.entity.Location(this.street.toStorageStreet(),
+        this.city,
+        this.state,
+        this.country,
+        this.postCode)
+
+private fun com.paint.randompeoplek.service.model.Name.toStorageName() =
+    com.paint.randompeoplek.storage.entity.Name(this.title, this.firstName, this.lastName)
+
+private fun com.paint.randompeoplek.service.model.Picture.toStoragePicture() =
+    com.paint.randompeoplek.storage.entity.Picture(this.large, this.medium, this.thumbnail)
+
+private fun com.paint.randompeoplek.service.model.Street.toStorageStreet() =
+    com.paint.randompeoplek.storage.entity.Street(this.number, this.name)
+
+private fun com.paint.randompeoplek.service.model.User.toStorageUser() =
+    com.paint.randompeoplek.storage.entity.User(this.name.toStorageName(),
+        this.location.toStorageLocation(),
+        this.email,
+        this.phone,
+        this.picture.toStoragePicture(),
+        Calendar.getInstance().time)
+
+private fun List<com.paint.randompeoplek.service.model.User>.toStorageUsers() = this.map { it.toStorageUser() }

@@ -8,9 +8,7 @@ import com.paint.randompeoplek.mediator.model.UserResponse
 import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
-import junit.framework.Assert.assertNull
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest

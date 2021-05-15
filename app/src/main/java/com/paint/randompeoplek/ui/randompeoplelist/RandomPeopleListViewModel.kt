@@ -5,7 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.mediator.RandomPeopleListMediator
-import com.paint.randompeoplek.mediator.toUiParcelableUsers
+import com.paint.randompeoplek.mediator.model.Name
+import com.paint.randompeoplek.mediator.model.Picture
 import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
@@ -69,3 +70,18 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
     }
 
 }
+
+private fun Name.toUiParcelableName() =
+    com.paint.randompeoplek.ui.model.Name(this.shortName, this.fullName)
+
+private fun Picture.toUiParcelablePicture() =
+    com.paint.randompeoplek.ui.model.Picture(this.medium, this.thumbnail)
+
+private fun com.paint.randompeoplek.mediator.model.User.toUiParcelableUser() =
+    com.paint.randompeoplek.ui.model.User(this.name.toUiParcelableName(),
+        this.location,
+        this.email,
+        this.phone,
+        this.picture.toUiParcelablePicture())
+
+private fun List<com.paint.randompeoplek.mediator.model.User>.toUiParcelableUsers() = this.map { it.toUiParcelableUser() }
