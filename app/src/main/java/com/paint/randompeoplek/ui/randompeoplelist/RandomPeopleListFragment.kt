@@ -41,10 +41,18 @@ class RandomPeopleListFragment : Fragment() {
             false
         )
 
-        return initializeViews()
+        return binding.root
     }
 
-    private fun initializeViews(): View {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initializeViews()
+        initializeViewModel()
+        setUpViewModel()
+    }
+
+    private fun initializeViews() {
         (activity as AppCompatActivity?)?.setSupportActionBar(binding.toolbar)
 
         binding.swipeRefreshLayout.setOnRefreshListener { getUsers() }
@@ -54,15 +62,13 @@ class RandomPeopleListFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = randomPeopleListRecyclerViewAdapter
         }
-
-        return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    private fun initializeViewModel() {
         viewModel = ViewModelProvider(this).get(RandomPeopleListViewModel::class.java)
+    }
 
+    private fun setUpViewModel() {
         viewModel.oneTimeErrorMessage.observe(viewLifecycleOwner, { oneTimeErrorMessage ->
             handleOneTimeErrorMessageShowing(oneTimeErrorMessage)
         })

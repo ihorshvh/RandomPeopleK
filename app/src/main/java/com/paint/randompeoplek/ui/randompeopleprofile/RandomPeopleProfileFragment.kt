@@ -32,23 +32,23 @@ class RandomPeopleProfileFragment : Fragment() {
             false
         )
 
-        return initializeViews()
+        return binding.root
     }
 
-    private fun initializeViews() : View {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initializeViews()
+        mapData()
+    }
+
+    private fun initializeViews() {
         (activity as AppCompatActivity?)?.setSupportActionBar(binding.toolbar)
 
         binding.toolbar.setNavigationIcon(R.drawable.ic_back_img)
         binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        mapData()
     }
 
     private fun mapData() {
