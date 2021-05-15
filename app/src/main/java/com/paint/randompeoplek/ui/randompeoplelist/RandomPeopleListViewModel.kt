@@ -1,5 +1,6 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,13 +16,17 @@ import javax.inject.Inject
 @HiltViewModel
 class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListMediator : RandomPeopleListMediator) : ViewModel() {
 
-    val oneTimeErrorMessage : MutableLiveData<String> by lazy {
+    private val oneTimeErrorMessage : MutableLiveData<String> by lazy {
         MutableLiveData()
     }
 
-    val usersResponse : MutableLiveData<LoadResult<LiveDataResponse<List<User>>>> by lazy {
+    private val usersResponse : MutableLiveData<LoadResult<LiveDataResponse<List<User>>>> by lazy {
         MutableLiveData()
     }
+
+    val oneTimeErrorMessageLiveData : LiveData<String> = oneTimeErrorMessage
+
+    val usersResponseLiveData : LiveData<LoadResult<LiveDataResponse<List<User>>>> = usersResponse
 
     init {
         getRandomPeopleList(USER_QUANTITY)
@@ -51,6 +56,10 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
                 usersResponse.value = LoadResult.Error(it.message.toString())
             }
         }
+    }
+
+    fun clearOneTimeErrorMessage() {
+        oneTimeErrorMessage.value = ""
     }
 
     companion object {

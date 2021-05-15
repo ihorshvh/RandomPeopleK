@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
 import com.paint.randompeoplek.model.LiveDataResponse
@@ -66,11 +65,11 @@ class RandomPeopleListFragment : Fragment() {
     }
 
     private fun setUpViewModel() {
-        viewModel.oneTimeErrorMessage.observe(viewLifecycleOwner, { oneTimeErrorMessage ->
+        viewModel.oneTimeErrorMessageLiveData.observe(viewLifecycleOwner, { oneTimeErrorMessage ->
             handleOneTimeErrorMessageShowing(oneTimeErrorMessage)
         })
 
-        viewModel.usersResponse.observe(viewLifecycleOwner, { usersResponseResource ->
+        viewModel.usersResponseLiveData.observe(viewLifecycleOwner, { usersResponseResource ->
             handleUserListResponse(usersResponseResource)
         })
     }
@@ -80,7 +79,7 @@ class RandomPeopleListFragment : Fragment() {
             val oneTimeErrorMessage = getOneTimeErrorMessage(errorMessage)
             Toast.makeText(activity, oneTimeErrorMessage, Toast.LENGTH_LONG).show()
 
-            viewModel.oneTimeErrorMessage.value = ""
+            viewModel.clearOneTimeErrorMessage()
         }
     }
 

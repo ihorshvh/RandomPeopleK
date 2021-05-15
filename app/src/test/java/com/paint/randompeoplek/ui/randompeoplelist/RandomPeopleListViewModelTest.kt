@@ -52,7 +52,7 @@ class RandomPeopleListViewModelTest {
             }
 
             val viewModel = RandomPeopleListViewModel(randomPeopleListMediator)
-            viewModel.usersResponse.observeForever(observer)
+            viewModel.usersResponseLiveData.observeForever(observer)
 
             viewModel.getRandomPeopleList("10")
 
@@ -76,7 +76,7 @@ class RandomPeopleListViewModelTest {
             assertNotNull(liveDataResponse.response)
             assertEquals(2, liveDataResponse.response?.size)
 
-            viewModel.usersResponse.removeObserver(observer)
+            viewModel.usersResponseLiveData.removeObserver(observer)
         }
     }
 
@@ -84,6 +84,7 @@ class RandomPeopleListViewModelTest {
     fun testGetRandomPeopleListWhenSuccessButWithError() {
         val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
         val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
+        val oneTimeMessageObserver : Observer<String> = mock(Observer::class.java) as Observer<String>
 
         runBlockingTest {
             val users = getUsers()
@@ -97,9 +98,12 @@ class RandomPeopleListViewModelTest {
             }
 
             val viewModel = RandomPeopleListViewModel(randomPeopleListMediator)
-            viewModel.usersResponse.observeForever(observer)
+            viewModel.usersResponseLiveData.observeForever(observer)
+            viewModel.oneTimeErrorMessageLiveData.observeForever(oneTimeMessageObserver)
 
             viewModel.getRandomPeopleList("10")
+
+            verify(oneTimeMessageObserver, times(2)).onChanged("exception")
 
             verify(observer, times(1)).onChanged(LoadResult.Loading(LiveDataResponse()))
             verify(observer, times(2)).onChanged(LoadResult.Error("exception", LiveDataResponse()))
@@ -122,7 +126,8 @@ class RandomPeopleListViewModelTest {
             assertNotNull(liveDataResponse.response)
             assertEquals(2, liveDataResponse.response?.size)
 
-            viewModel.usersResponse.removeObserver(observer)
+            viewModel.usersResponseLiveData.removeObserver(observer)
+            viewModel.oneTimeErrorMessageLiveData.removeObserver(oneTimeMessageObserver)
         }
     }
 
@@ -130,6 +135,7 @@ class RandomPeopleListViewModelTest {
     fun testGetRandomPeopleListWhenFailure() {
         val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
         val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
+        val oneTimeMessageObserver : Observer<String> = mock(Observer::class.java) as Observer<String>
 
         runBlockingTest {
             doAnswer {
@@ -138,9 +144,12 @@ class RandomPeopleListViewModelTest {
             }.`when`(randomPeopleListMediator).getUserList("10")
 
             val viewModel = RandomPeopleListViewModel(randomPeopleListMediator)
-            viewModel.usersResponse.observeForever(observer)
+            viewModel.usersResponseLiveData.observeForever(observer)
+            viewModel.oneTimeErrorMessageLiveData.observeForever(oneTimeMessageObserver)
 
             viewModel.getRandomPeopleList("10")
+
+            verify(oneTimeMessageObserver, times(2)).onChanged("exception")
 
             verify(observer, times(1)).onChanged(LoadResult.Loading(LiveDataResponse()))
             verify(observer, times(2)).onChanged(LoadResult.Error("exception"))
@@ -159,7 +168,28 @@ class RandomPeopleListViewModelTest {
             assertNull(resource.data)
             assertNotNull(resource.message)
 
-            viewModel.usersResponse.removeObserver(observer)
+            viewModel.usersResponseLiveData.removeObserver(observer)
+            viewModel.oneTimeErrorMessageLiveData.removeObserver(oneTimeMessageObserver)
+        }
+    }
+
+    @Test
+    fun testClearOneTimeErrorMessage() {
+        val randomPeopleListMediator = mock(RandomPeopleListMediator::class.java)
+        val oneTimeMessageObserver : Observer<String> = mock(Observer::class.java) as Observer<String>
+
+        runBlockingTest {
+            doAnswer {
+                throw Exception("exception")
+            }.`when`(randomPeopleListMediator).getUserList("10")
+
+            val viewModel = RandomPeopleListViewModel(randomPeopleListMediator)
+            viewModel.oneTimeErrorMessageLiveData.observeForever(oneTimeMessageObserver)
+
+            viewModel.clearOneTimeErrorMessage()
+
+            verify(oneTimeMessageObserver, times(1)).onChanged("exception")
+            verify(oneTimeMessageObserver, times(1)).onChanged("")
         }
     }
 
