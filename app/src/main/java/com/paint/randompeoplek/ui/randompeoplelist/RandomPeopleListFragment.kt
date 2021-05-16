@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
 import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
+import com.paint.randompeoplek.ui.randompeopleprofile.RandomPeopleProfileFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,11 +21,23 @@ class RandomPeopleListFragment : Fragment() {
 
     private val binding get() = randomPeopleListFragmentBinding!!
     private val randomPeopleListRecyclerViewAdapter:
-            RandomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter()
+            RandomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter { user ->
+        onRandomPeopleListRecyclerViewAdapterClick(user)
+    }
 
     private var randomPeopleListFragmentBinding: RandomPeopleListFragmentBinding? = null
 
     private lateinit var viewModel: RandomPeopleListViewModel
+
+    private fun onRandomPeopleListRecyclerViewAdapterClick(user: User) {
+        val bundle = bundleOf(RandomPeopleProfileFragment.ARG_USER to user)
+
+        Navigation.findNavController(binding.root)
+            .navigate(
+                R.id.action_randomPeopleListFragment_to_randomPeopleProfileFragment,
+                bundle
+            )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,7 +137,7 @@ class RandomPeopleListFragment : Fragment() {
 
     private fun mapUserList(response: LiveDataResponse<List<User>>?) {
         if (response?.response?.isNotEmpty() == true) {
-            randomPeopleListRecyclerViewAdapter.updateUsersList(response.response!!)
+            randomPeopleListRecyclerViewAdapter.submitList(response.response!!)
         }
     }
 
