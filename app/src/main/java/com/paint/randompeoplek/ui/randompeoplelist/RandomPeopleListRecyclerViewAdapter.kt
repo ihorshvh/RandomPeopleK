@@ -67,7 +67,7 @@ class RandomPeopleListRecyclerViewAdapter(private val callback: (User) -> Unit) 
 
 object UserDiffCallback : DiffUtil.ItemCallback<User>() {
     override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
-        return oldItem == newItem
+        return oldItem.name == newItem.name
     }
 
     override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
