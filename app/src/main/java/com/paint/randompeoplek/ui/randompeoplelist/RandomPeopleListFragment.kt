@@ -90,12 +90,8 @@ class RandomPeopleListFragment : Fragment() {
     }
 
     private fun handleOneTimeErrorMessageShowing(errorMessage: String) {
-        if (errorMessage.isNotEmpty()) {
-            val oneTimeErrorMessage = getOneTimeErrorMessage(errorMessage)
-            Toast.makeText(activity, oneTimeErrorMessage, Toast.LENGTH_LONG).show()
-
-            viewModel.clearOneTimeErrorMessage()
-        }
+        val oneTimeErrorMessage = getOneTimeErrorMessage(errorMessage)
+        Toast.makeText(activity, oneTimeErrorMessage, Toast.LENGTH_LONG).show()
     }
 
     private fun getOneTimeErrorMessage(errorMessage: String) =

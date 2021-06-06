@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.paint.randompeoplek.livedata.OnTimeMessageLiveData
 import com.paint.randompeoplek.usecase.RandomPeopleListUseCase
 import com.paint.randompeoplek.usecase.model.Name
 import com.paint.randompeoplek.usecase.model.Picture
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListUseCase : RandomPeopleListUseCase) : ViewModel() {
 
     private val oneTimeErrorMessage : MutableLiveData<String> by lazy {
-        MutableLiveData()
+        OnTimeMessageLiveData()
     }
 
     private val usersResponse : MutableLiveData<LoadResult<LiveDataResponse<List<User>>>> by lazy {
@@ -57,10 +58,6 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
                 usersResponse.value = LoadResult.Error(it.message.toString())
             }
         }
-    }
-
-    fun clearOneTimeErrorMessage() {
-        oneTimeErrorMessage.value = ""
     }
 
     companion object {
