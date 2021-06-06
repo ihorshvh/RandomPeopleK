@@ -12,7 +12,11 @@
             tools:layout="@layout/random_people_list_fragment">
         <action
                 android:id="@+id/action_randomPeopleListFragment_to_randomPeopleProfileFragment"
-                app:destination="@id/randomPeopleProfileFragment" />
+                app:destination="@id/randomPeopleProfileFragment"
+                app:enterAnim="@android:anim/slide_in_left"
+                app:exitAnim="@android:anim/slide_out_right"
+                app:popEnterAnim="@android:anim/slide_in_left"
+                app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
 
     <fragment
