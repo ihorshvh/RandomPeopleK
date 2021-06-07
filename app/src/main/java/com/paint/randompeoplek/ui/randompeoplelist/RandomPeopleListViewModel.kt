@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.paint.randompeoplek.livedata.OnTimeMessageLiveData
+import com.paint.randompeoplek.errorhandler.ErrorEntity
+import com.paint.randompeoplek.errorhandler.ErrorHandler
+import com.paint.randompeoplek.livedata.OnTimeLiveData
 import com.paint.randompeoplek.usecase.RandomPeopleListUseCase
 import com.paint.randompeoplek.usecase.model.Name
 import com.paint.randompeoplek.usecase.model.Picture
@@ -16,17 +18,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListUseCase : RandomPeopleListUseCase) : ViewModel() {
+class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListUseCase : RandomPeopleListUseCase, private val errorHandler: ErrorHandler) : ViewModel() {
 
-    private val oneTimeErrorMessage : MutableLiveData<String> by lazy {
-        OnTimeMessageLiveData()
+    private val oneTimeError : MutableLiveData<ErrorEntity> by lazy {
+        OnTimeLiveData()
     }
 
     private val usersResponse : MutableLiveData<LoadResult<LiveDataResponse<List<User>>>> by lazy {
         MutableLiveData()
     }
 
-    val oneTimeErrorMessageLiveData : LiveData<String> = oneTimeErrorMessage
+    val oneTimeErrorLiveData : LiveData<ErrorEntity> = oneTimeError
 
     val usersResponseLiveData : LiveData<LoadResult<LiveDataResponse<List<User>>>> = usersResponse
 
@@ -42,20 +44,19 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
             result.onSuccess {
                 if (it.throwable != null) {
-                    val errorMessage = it.throwable!!.message.toString()
+                    val errorEntity = errorHandler.getErrorEntity(it.throwable!!)
 
-                    oneTimeErrorMessage.value = errorMessage
-                    usersResponse.value =
-                        LoadResult.Error(errorMessage, LiveDataResponse(it.users.toUiParcelableUsers()))
+                    oneTimeError.value = errorEntity
+                    usersResponse.value = LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers()))
                 } else {
-                    usersResponse.value =
-                        LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
+                    usersResponse.value = LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
                 }
             }
 
             result.onFailure {
-                oneTimeErrorMessage.value = it.message.toString()
-                usersResponse.value = LoadResult.Error(it.message.toString())
+                // TODO consider adding data even if unknown error
+                oneTimeError.value = errorHandler.getErrorEntity(it)
+                usersResponse.value = LoadResult.Error(errorHandler.getErrorEntity(it))
             }
         }
     }

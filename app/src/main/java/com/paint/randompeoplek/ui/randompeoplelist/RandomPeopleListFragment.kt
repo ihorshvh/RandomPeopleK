@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
+import com.paint.randompeoplek.errorhandler.ErrorEntity
 import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
@@ -80,8 +81,8 @@ class RandomPeopleListFragment : Fragment() {
     }
 
     private fun setUpViewModel() {
-        viewModel.oneTimeErrorMessageLiveData.observe(viewLifecycleOwner, { oneTimeErrorMessage ->
-            handleOneTimeErrorMessageShowing(oneTimeErrorMessage)
+        viewModel.oneTimeErrorLiveData.observe(viewLifecycleOwner, { oneTimeError ->
+            handleOneTimeErrorMessageShowing(oneTimeError)
         })
 
         viewModel.usersResponseLiveData.observe(viewLifecycleOwner, { usersResponseResource ->
@@ -89,18 +90,18 @@ class RandomPeopleListFragment : Fragment() {
         })
     }
 
-    private fun handleOneTimeErrorMessageShowing(errorMessage: String) {
-        val oneTimeErrorMessage = getOneTimeErrorMessage(errorMessage)
+    private fun handleOneTimeErrorMessageShowing(error: ErrorEntity) {
+        val oneTimeErrorMessage = getOneTimeErrorMessage(error)
         Toast.makeText(activity, oneTimeErrorMessage, Toast.LENGTH_LONG).show()
     }
 
-    private fun getOneTimeErrorMessage(errorMessage: String) =
-        if (errorMessage.startsWith(getString(R.string.error_lost_connection))) {
-            getString(R.string.error_outdated_users_loaded)
-        } else {
-            getString(R.string.error_unknown)
+    private fun getOneTimeErrorMessage(error: ErrorEntity) : String {
+        return when (error) {
+            is ErrorEntity.Network -> getString(R.string.error_outdated_users_loaded)
+            is ErrorEntity.ServiceUnavailable -> getString(R.string.error_unknown)
+            else -> getString(R.string.error_unknown)
         }
-
+    }
 
     private fun handleUserListResponse(response: LoadResult<LiveDataResponse<List<User>>>) {
         when (response) {

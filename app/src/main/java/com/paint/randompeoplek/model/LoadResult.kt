@@ -1,8 +1,10 @@
 package com.paint.randompeoplek.model
 
+import com.paint.randompeoplek.errorhandler.ErrorEntity
+
 sealed class LoadResult<T>(
     val data: T? = null,
-    val message: String? = null
+    val errorEntity: ErrorEntity? = null
 ) {
     class Success<T>(data: T) : LoadResult<T>(data) {
         override fun equals(other: Any?): Boolean {
@@ -28,7 +30,7 @@ sealed class LoadResult<T>(
         }
     }
 
-    class Error<T>(message: String, data: T? = null) : LoadResult<T>(data, message) {
+    class Error<T>(errorEntity: ErrorEntity, data: T? = null) : LoadResult<T>(data, errorEntity) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false

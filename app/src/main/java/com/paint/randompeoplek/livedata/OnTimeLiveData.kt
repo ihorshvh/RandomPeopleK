@@ -5,7 +5,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
-class OnTimeMessageLiveData<T> : MutableLiveData<T>() {
+class OnTimeLiveData<T> : MutableLiveData<T>() {
 
     private var isUpdateSent = true
 
