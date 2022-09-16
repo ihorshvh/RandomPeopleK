@@ -6,7 +6,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.Navigation
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
@@ -16,6 +19,7 @@ import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
 import com.paint.randompeoplek.ui.randompeopleprofile.RandomPeopleProfileFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RandomPeopleListFragment : Fragment() {
@@ -85,9 +89,15 @@ class RandomPeopleListFragment : Fragment() {
             handleOneTimeErrorMessageShowing(oneTimeError)
         })
 
-        viewModel.usersResponseLiveData.observe(viewLifecycleOwner, { usersResponseResource ->
-            handleUserListResponse(usersResponseResource)
-        })
+        lifecycleScope.launch {
+            // repeatOnLifecycle launches the block in a new coroutine every time the
+            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.usersResponseFlowData.collect { usersResponseResource ->
+                    handleUserListResponse(usersResponseResource)
+                }
+            }
+        }
     }
 
     private fun handleOneTimeErrorMessageShowing(error: ErrorEntity) {

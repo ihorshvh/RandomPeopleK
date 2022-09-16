@@ -1,4 +1,4 @@
-package com.paint.randompeoplek.usecase
+package com.paint.randompeoplek.domain
 
 import com.paint.randompeoplek.repository.RandomPeopleListRepository
 import com.paint.randompeoplek.repository.model.*
@@ -12,22 +12,22 @@ class RandomPeopleListUseCase @Inject constructor(private val randomPeopleListRe
 }
 
 private fun Name.toMediatorName() =
-    com.paint.randompeoplek.usecase.model.Name(this.firstName + " " + this.lastName,
+    com.paint.randompeoplek.domain.model.Name(this.firstName + " " + this.lastName,
         this.title + " " + this.firstName + " " + this.lastName)
 
 private fun Picture.toMediatorPicture() =
-    com.paint.randompeoplek.usecase.model.Picture(this.medium, this.thumbnail)
+    com.paint.randompeoplek.domain.model.Picture(this.medium, this.thumbnail)
 
-private fun User.toMediatorUser() = com.paint.randompeoplek.usecase.model.User(this.name.toMediatorName(),
+private fun User.toMediatorUser() = com.paint.randompeoplek.domain.model.User(this.name.toMediatorName(),
     this.location.getAddress(), this.email, this.phone, this.picture.toMediatorPicture())
 
 private fun List<User>.toRepositoryUsers() = this.map { it.toMediatorUser() }
 
-private fun UserResponse.toMediatorUserResponse() : com.paint.randompeoplek.usecase.model.UserResponse {
+private fun UserResponse.toMediatorUserResponse() : com.paint.randompeoplek.domain.model.UserResponse {
     return if(this.throwable != null) {
-        com.paint.randompeoplek.usecase.model.UserResponse(this.users.toRepositoryUsers(), this.throwable!!)
+        com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers(), this.throwable!!)
     } else {
-        com.paint.randompeoplek.usecase.model.UserResponse(this.users.toRepositoryUsers())
+        com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers())
     }
 }
 

@@ -1,4 +1,4 @@
-package com.paint.randompeoplek.usecase.model
+package com.paint.randompeoplek.domain.model
 
 
 class UserResponse {
