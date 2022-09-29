@@ -54,7 +54,7 @@ class RandomPeopleListViewModelTest {
 
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, errorHandler)
 
-        val usersResponseLiveData = viewModel.usersResponseFlowData.asLiveData()
+        val usersResponseLiveData = viewModel.usersResponseFlow.asLiveData()
 
         usersResponseLiveData.observeForever(observer)
 
@@ -106,13 +106,15 @@ class RandomPeopleListViewModelTest {
 
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, errorHandler)
 
-        val usersResponseLiveData = viewModel.usersResponseFlowData.asLiveData()
+        val usersResponseLiveData = viewModel.usersResponseFlow.asLiveData()
         usersResponseLiveData.observeForever(observer)
-        viewModel.oneTimeErrorLiveData.observeForever(oneTimeMessageObserver)
+
+        val oneTimeErrorLiveData = viewModel.oneTimeErrorFlow.asLiveData()
+        oneTimeErrorLiveData.observeForever(oneTimeMessageObserver)
 
         viewModel.getRandomPeopleList("10")
 
-        verify(oneTimeMessageObserver, times(2)).onChanged(ErrorEntity.Unknown)
+        verify(oneTimeMessageObserver, times(1)).onChanged(ErrorEntity.Unknown)
 
         verify(observer, times(1)).onChanged(LoadResult.Loading(LiveDataResponse()))
         verify(observer, times(2)).onChanged(LoadResult.Error(ErrorEntity.Unknown, LiveDataResponse()))
@@ -136,7 +138,7 @@ class RandomPeopleListViewModelTest {
         assertEquals(2, liveDataResponse.response?.size)
 
         usersResponseLiveData.removeObserver(observer)
-        viewModel.oneTimeErrorLiveData.removeObserver(oneTimeMessageObserver)
+        oneTimeErrorLiveData.removeObserver(oneTimeMessageObserver)
     }
 
     @Test
@@ -156,14 +158,15 @@ class RandomPeopleListViewModelTest {
 
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, errorHandler)
 
-        val usersResponseLiveData = viewModel.usersResponseFlowData.asLiveData()
+        val usersResponseLiveData = viewModel.usersResponseFlow.asLiveData()
         usersResponseLiveData.observeForever(observer)
 
-        viewModel.oneTimeErrorLiveData.observeForever(oneTimeMessageObserver)
+        val oneTimeErrorLiveData = viewModel.oneTimeErrorFlow.asLiveData()
+        oneTimeErrorLiveData.observeForever(oneTimeMessageObserver)
 
         viewModel.getRandomPeopleList("10")
 
-        verify(oneTimeMessageObserver, times(2)).onChanged(ErrorEntity.Unknown)
+        verify(oneTimeMessageObserver, times(1)).onChanged(ErrorEntity.Unknown)
 
         verify(observer, times(1)).onChanged(LoadResult.Loading(LiveDataResponse()))
         verify(observer, times(2)).onChanged(LoadResult.Error(ErrorEntity.Unknown))
@@ -183,7 +186,7 @@ class RandomPeopleListViewModelTest {
         assertNotNull(resource.errorEntity)
 
         usersResponseLiveData.removeObserver(observer)
-        viewModel.oneTimeErrorLiveData.removeObserver(oneTimeMessageObserver)
+        oneTimeErrorLiveData.removeObserver(oneTimeMessageObserver)
     }
 
 }

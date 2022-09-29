@@ -8,4 +8,5 @@ sealed class ErrorEntity {
 
     object Unknown : ErrorEntity()
 
+    object NoError : ErrorEntity()
 }

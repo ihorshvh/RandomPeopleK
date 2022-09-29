@@ -85,16 +85,22 @@ class RandomPeopleListFragment : Fragment() {
     }
 
     private fun setUpViewModel() {
-        viewModel.oneTimeErrorLiveData.observe(viewLifecycleOwner, { oneTimeError ->
-            handleOneTimeErrorMessageShowing(oneTimeError)
-        })
-
         lifecycleScope.launch {
             // repeatOnLifecycle launches the block in a new coroutine every time the
             // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.usersResponseFlowData.collect { usersResponseResource ->
+                viewModel.usersResponseFlow.collect { usersResponseResource ->
                     handleUserListResponse(usersResponseResource)
+                }
+
+
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.oneTimeErrorFlow.collect { oneTimeError ->
+                    handleOneTimeErrorMessageShowing(oneTimeError)
                 }
             }
         }

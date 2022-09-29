@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/layout-land/random_people_profile_fragment.xml" value="0.2976190476190476" />
         <entry key="app/src/main/res/layout/random_people_list_item.xml" value="0.3515625" />
+        <entry key="app/src/main/res/layout/random_people_main_activity.xml" value="0.2869791666666667" />
         <entry key="app/src/main/res/layout/random_people_profile_fragment.xml" value="0.3515625" />
         <entry key="app/src/main/res/menu/people_profile_fragment_toolbar_menu.xml" value="0.22314814814814815" />
       </map>
