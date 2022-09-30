@@ -1,4 +1,4 @@
-package com.paint.randompeoplek.usecase
+package com.paint.randompeoplek.domain
 
 fun getUsers(): List<com.paint.randompeoplek.repository.model.User> {
     return listOf(getUser(), getUser())

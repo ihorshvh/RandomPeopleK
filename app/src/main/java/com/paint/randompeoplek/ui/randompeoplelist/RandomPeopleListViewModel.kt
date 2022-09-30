@@ -1,36 +1,32 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.errorhandler.ErrorEntity
 import com.paint.randompeoplek.errorhandler.ErrorHandler
-import com.paint.randompeoplek.livedata.OnTimeLiveData
-import com.paint.randompeoplek.usecase.RandomPeopleListUseCase
-import com.paint.randompeoplek.usecase.model.Name
-import com.paint.randompeoplek.usecase.model.Picture
+import com.paint.randompeoplek.domain.RandomPeopleListUseCase
+import com.paint.randompeoplek.domain.model.Name
+import com.paint.randompeoplek.domain.model.Picture
 import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListUseCase : RandomPeopleListUseCase, private val errorHandler: ErrorHandler) : ViewModel() {
+class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListUseCase : RandomPeopleListUseCase,
+                                                    private val errorHandler: ErrorHandler) : ViewModel() {
 
-    private val oneTimeError : MutableLiveData<ErrorEntity> by lazy {
-        OnTimeLiveData()
-    }
+    private val _oneTimeErrorFlow : MutableSharedFlow<ErrorEntity> = MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    private val usersResponse : MutableLiveData<LoadResult<LiveDataResponse<List<User>>>> by lazy {
-        MutableLiveData()
-    }
+    private val _usersResponseFlow : MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Loading())
 
-    val oneTimeErrorLiveData : LiveData<ErrorEntity> = oneTimeError
+    val oneTimeErrorFlow : SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
 
-    val usersResponseLiveData : LiveData<LoadResult<LiveDataResponse<List<User>>>> = usersResponse
+    val usersResponseFlow : StateFlow<LoadResult<LiveDataResponse<List<User>>>> = _usersResponseFlow.asStateFlow()
 
     init {
         getRandomPeopleList(USER_QUANTITY)
@@ -38,7 +34,7 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
     fun getRandomPeopleList(userQuantity : String) {
         viewModelScope.launch {
-            usersResponse.value = LoadResult.Loading(usersResponse.value?.data)
+            _usersResponseFlow.value = LoadResult.Loading()
 
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
 
@@ -46,17 +42,17 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
                 if (it.throwable != null) {
                     val errorEntity = errorHandler.getErrorEntity(it.throwable!!)
 
-                    oneTimeError.value = errorEntity
-                    usersResponse.value = LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers()))
+                    _oneTimeErrorFlow.emit(errorEntity)
+                    _usersResponseFlow.value = LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers()))
                 } else {
-                    usersResponse.value = LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
+                    _usersResponseFlow.value = LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
                 }
             }
 
             result.onFailure {
                 // TODO consider adding data even if unknown error
-                oneTimeError.value = errorHandler.getErrorEntity(it)
-                usersResponse.value = LoadResult.Error(errorHandler.getErrorEntity(it))
+                _oneTimeErrorFlow.emit(errorHandler.getErrorEntity(it))
+                _usersResponseFlow.value = LoadResult.Error(errorHandler.getErrorEntity(it))
             }
         }
     }
@@ -75,11 +71,11 @@ private fun Name.toUiParcelableName() =
 private fun Picture.toUiParcelablePicture() =
     com.paint.randompeoplek.ui.model.Picture(this.medium, this.thumbnail)
 
-private fun com.paint.randompeoplek.usecase.model.User.toUiParcelableUser() =
+private fun com.paint.randompeoplek.domain.model.User.toUiParcelableUser() =
     com.paint.randompeoplek.ui.model.User(this.name.toUiParcelableName(),
         this.location,
         this.email,
         this.phone,
         this.picture.toUiParcelablePicture())
 
-private fun List<com.paint.randompeoplek.usecase.model.User>.toUiParcelableUsers() = this.map { it.toUiParcelableUser() }
+private fun List<com.paint.randompeoplek.domain.model.User>.toUiParcelableUsers() = this.map { it.toUiParcelableUser() }

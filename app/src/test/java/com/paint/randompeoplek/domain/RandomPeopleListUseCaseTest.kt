@@ -1,6 +1,5 @@
-package com.paint.randompeoplek.usecase
+package com.paint.randompeoplek.domain
 
-import com.paint.randompeoplek.anyObject
 import com.paint.randompeoplek.repository.RandomPeopleListRepository
 import com.paint.randompeoplek.repository.model.UserResponse
 import junit.framework.TestCase.*
