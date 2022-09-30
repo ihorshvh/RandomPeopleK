@@ -11,6 +11,7 @@ import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,7 +20,7 @@ import javax.inject.Inject
 class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListUseCase : RandomPeopleListUseCase,
                                                     private val errorHandler: ErrorHandler) : ViewModel() {
 
-    private val _oneTimeErrorFlow : MutableSharedFlow<ErrorEntity> = MutableSharedFlow(replay = 0)
+    private val _oneTimeErrorFlow : MutableSharedFlow<ErrorEntity> = MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     private val _usersResponseFlow : MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Loading())
 
