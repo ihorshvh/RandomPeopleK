@@ -4,13 +4,13 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-interface ErrorHandler {
+interface ErrorHandlerUseCase {
 
     fun getErrorEntity(throwable: Throwable): ErrorEntity
 
 }
 
-class ErrorHandlerImpl @Inject constructor() : ErrorHandler {
+class ErrorHandlerUseCaseImpl @Inject constructor() : ErrorHandlerUseCase {
 
     override fun getErrorEntity(throwable: Throwable): ErrorEntity {
         return when(throwable) {

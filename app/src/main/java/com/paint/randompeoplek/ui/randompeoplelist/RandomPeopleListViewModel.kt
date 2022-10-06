@@ -3,7 +3,7 @@ package com.paint.randompeoplek.ui.randompeoplelist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.errorhandler.ErrorEntity
-import com.paint.randompeoplek.errorhandler.ErrorHandler
+import com.paint.randompeoplek.errorhandler.ErrorHandlerUseCase
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.model.Name
 import com.paint.randompeoplek.domain.model.Picture
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListUseCase : RandomPeopleListUseCase,
-                                                    private val errorHandler: ErrorHandler) : ViewModel() {
+                                                    private val errorHandlerUseCase: ErrorHandlerUseCase) : ViewModel() {
 
     private val _oneTimeErrorFlow : MutableSharedFlow<ErrorEntity> = MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
@@ -40,7 +40,7 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
             result.onSuccess {
                 if (it.throwable != null) {
-                    val errorEntity = errorHandler.getErrorEntity(it.throwable!!)
+                    val errorEntity = errorHandlerUseCase.getErrorEntity(it.throwable!!)
 
                     _oneTimeErrorFlow.emit(errorEntity)
                     _usersResponseFlow.value = LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers()))
@@ -51,8 +51,8 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
             result.onFailure {
                 // TODO consider adding data even if unknown error
-                _oneTimeErrorFlow.emit(errorHandler.getErrorEntity(it))
-                _usersResponseFlow.value = LoadResult.Error(errorHandler.getErrorEntity(it))
+                _oneTimeErrorFlow.emit(errorHandlerUseCase.getErrorEntity(it))
+                _usersResponseFlow.value = LoadResult.Error(errorHandlerUseCase.getErrorEntity(it))
             }
         }
     }

@@ -9,26 +9,26 @@ import retrofit2.Response
 import java.io.IOException
 import java.lang.ArithmeticException
 
-class ErrorHandlerImplTest {
+class ErrorHandlerUseCaseImplTest {
 
-    private val errorHandler : ErrorHandler = ErrorHandlerImpl()
+    private val errorHandlerUseCase : ErrorHandlerUseCase = ErrorHandlerUseCaseImpl()
 
     @Test
     fun testGetErrorEntityWhenIOException() {
-        val errorEntity = errorHandler.getErrorEntity(IOException())
+        val errorEntity = errorHandlerUseCase.getErrorEntity(IOException())
         assertEquals(ErrorEntity.Network, errorEntity)
     }
 
     @Test
     fun testGetErrorEntityWhenHttpException() {
         val response = mock(Response::class.java)
-        val errorEntity = errorHandler.getErrorEntity(HttpException(response))
+        val errorEntity = errorHandlerUseCase.getErrorEntity(HttpException(response))
         assertEquals(ErrorEntity.ServiceUnavailable, errorEntity)
     }
 
     @Test
     fun testGetErrorEntityWhenOtherException() {
-        val errorEntity = errorHandler.getErrorEntity(ArithmeticException())
+        val errorEntity = errorHandlerUseCase.getErrorEntity(ArithmeticException())
         assertEquals(ErrorEntity.Unknown, errorEntity)
     }
 

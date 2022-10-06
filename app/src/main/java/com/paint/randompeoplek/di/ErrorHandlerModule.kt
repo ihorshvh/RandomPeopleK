@@ -1,7 +1,7 @@
 package com.paint.randompeoplek.di
 
-import com.paint.randompeoplek.errorhandler.ErrorHandler
-import com.paint.randompeoplek.errorhandler.ErrorHandlerImpl
+import com.paint.randompeoplek.errorhandler.ErrorHandlerUseCase
+import com.paint.randompeoplek.errorhandler.ErrorHandlerUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,8 +14,8 @@ object ErrorHandlerModule {
 
     @Provides
     @Singleton
-    fun provideErrorHandler() : ErrorHandler {
-        return ErrorHandlerImpl()
+    fun provideErrorHandler() : ErrorHandlerUseCase {
+        return ErrorHandlerUseCaseImpl()
     }
 
 }

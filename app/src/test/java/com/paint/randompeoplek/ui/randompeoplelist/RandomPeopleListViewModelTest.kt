@@ -5,7 +5,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import com.paint.randompeoplek.CoroutineRule
 import com.paint.randompeoplek.errorhandler.ErrorEntity
-import com.paint.randompeoplek.errorhandler.ErrorHandler
+import com.paint.randompeoplek.errorhandler.ErrorHandlerUseCase
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.model.UserResponse
 import com.paint.randompeoplek.model.LiveDataResponse
@@ -41,7 +41,7 @@ class RandomPeopleListViewModelTest {
 
     @Test
     fun testGetRandomPeopleListWhenSuccess() = runTest {
-        val errorHandler = mock(ErrorHandler::class.java)
+        val errorHandlerUseCase = mock(ErrorHandlerUseCase::class.java)
         val randomPeopleListMediator = mock(RandomPeopleListUseCase::class.java)
         val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
 
@@ -52,7 +52,7 @@ class RandomPeopleListViewModelTest {
             UserResponse(users)
         }
 
-        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, errorHandler)
+        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, errorHandlerUseCase)
 
         val usersResponseLiveData = viewModel.usersResponseFlow.asLiveData()
 
@@ -85,14 +85,14 @@ class RandomPeopleListViewModelTest {
 
     @Test
     fun testGetRandomPeopleListWhenSuccessButWithError() = runTest {
-        val errorHandler = mock(ErrorHandler::class.java)
+        val errorHandlerUseCase = mock(ErrorHandlerUseCase::class.java)
 
         val randomPeopleListMediator = mock(RandomPeopleListUseCase::class.java)
         val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
         val oneTimeMessageObserver : Observer<ErrorEntity> = mock(Observer::class.java) as Observer<ErrorEntity>
 
         val exception = Exception("exception")
-        `when`(errorHandler.getErrorEntity(exception)).thenReturn(ErrorEntity.Unknown)
+        `when`(errorHandlerUseCase.getErrorEntity(exception)).thenReturn(ErrorEntity.Unknown)
 
         val users = getUsers()
 
@@ -104,7 +104,7 @@ class RandomPeopleListViewModelTest {
             )
         }
 
-        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, errorHandler)
+        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, errorHandlerUseCase)
 
         val usersResponseLiveData = viewModel.usersResponseFlow.asLiveData()
         usersResponseLiveData.observeForever(observer)
@@ -143,20 +143,20 @@ class RandomPeopleListViewModelTest {
 
     @Test
     fun testGetRandomPeopleListWhenFailure() = runTest {
-        val errorHandler = mock(ErrorHandler::class.java)
+        val errorHandlerUseCase = mock(ErrorHandlerUseCase::class.java)
         val randomPeopleListMediator = mock(RandomPeopleListUseCase::class.java)
         val observer: Observer<LoadResult<LiveDataResponse<List<User>>>> = mock(Observer::class.java) as Observer<LoadResult<LiveDataResponse<List<User>>>>
         val oneTimeMessageObserver : Observer<ErrorEntity> = mock(Observer::class.java) as Observer<ErrorEntity>
 
         val exception = Exception("exception")
-        `when`(errorHandler.getErrorEntity(exception)).thenReturn(ErrorEntity.Unknown)
+        `when`(errorHandlerUseCase.getErrorEntity(exception)).thenReturn(ErrorEntity.Unknown)
 
         doAnswer {
             Thread.sleep(1000)
             throw exception
         }.`when`(randomPeopleListMediator).getUserList("10")
 
-        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, errorHandler)
+        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, errorHandlerUseCase)
 
         val usersResponseLiveData = viewModel.usersResponseFlow.asLiveData()
         usersResponseLiveData.observeForever(observer)
