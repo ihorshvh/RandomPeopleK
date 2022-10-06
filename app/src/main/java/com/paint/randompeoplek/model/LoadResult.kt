@@ -1,6 +1,6 @@
 package com.paint.randompeoplek.model
 
-import com.paint.randompeoplek.errorhandler.ErrorEntity
+import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 
 sealed class LoadResult<T>(
     val data: T? = null,

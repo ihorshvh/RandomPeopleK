@@ -4,8 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import com.paint.randompeoplek.CoroutineRule
-import com.paint.randompeoplek.errorhandler.ErrorEntity
-import com.paint.randompeoplek.errorhandler.ErrorHandlerUseCase
+import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
+import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCase
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.model.UserResponse
 import com.paint.randompeoplek.model.LiveDataResponse

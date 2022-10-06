@@ -2,8 +2,8 @@ package com.paint.randompeoplek.ui.randompeoplelist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.paint.randompeoplek.errorhandler.ErrorEntity
-import com.paint.randompeoplek.errorhandler.ErrorHandlerUseCase
+import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
+import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCase
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.model.Name
 import com.paint.randompeoplek.domain.model.Picture

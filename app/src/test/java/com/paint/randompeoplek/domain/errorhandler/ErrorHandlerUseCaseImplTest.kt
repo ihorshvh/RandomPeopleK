@@ -1,4 +1,4 @@
-package com.paint.randompeoplek.errorhandler
+package com.paint.randompeoplek.domain.errorhandler
 
 import org.junit.Test
 
