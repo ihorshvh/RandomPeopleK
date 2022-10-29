@@ -1,19 +1,17 @@
 package com.paint.randompeoplek.repository
 
-import com.paint.randompeoplek.anyObject
 import com.paint.randompeoplek.service.RandomPeopleService
 import com.paint.randompeoplek.service.model.UserResponse
 import com.paint.randompeoplek.storage.dao.UserDao
+import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.mockito.Mockito.*
-import java.util.*
-
 
 @ExperimentalCoroutinesApi
 @RunWith(JUnit4::class)
@@ -26,18 +24,23 @@ class RandomPeopleListRepositoryTest {
 
     @Before
     fun setUp() {
-        randomPeopleService = mock(RandomPeopleService::class.java)
-        userDao = mock(UserDao::class.java)
+        randomPeopleService = mockk()
+        userDao = mockk()
 
         randomPeopleListRepository = RandomPeopleListRepository(randomPeopleService, userDao)
     }
 
+    @After
+    fun tearDown() {
+        clearAllMocks()
+    }
+
     @Test
-    fun testGetUserListSuccessWhenFreshData() = runBlockingTest {
+    fun testGetUserListSuccessWhenFreshData() = runTest {
         val user = getTestEntityUser()
 
-        `when`(userDao.hasUser(anyObject(Date::class.java))).thenReturn(1)
-        `when`(userDao.getAll()).thenReturn(listOf(user))
+        coEvery { userDao.hasUser(any()) } answers { 1 }
+        coEvery { userDao.getAll() } answers { listOf(user) }
 
         val userResponse = randomPeopleListRepository.getUserList("1")
 
@@ -46,14 +49,17 @@ class RandomPeopleListRepositoryTest {
     }
 
     @Test
-    fun testGetUserListSuccessWhenStaleData() = runBlockingTest {
+    fun testGetUserListSuccessWhenStaleData() = runTest {
         val user = getTestEntityUser()
 
-        `when`(userDao.hasUser(anyObject(Date::class.java))).thenReturn(0)
-        `when`(randomPeopleService.getUserList(anyObject(String::class.java))).thenReturn(UserResponse(listOf()))
-        `when`(userDao.deleteAll()).thenReturn(Unit)
-        `when`(userDao.insertAll(listOf(user))).thenReturn(Unit)
-        `when`(userDao.getAll()).thenReturn(listOf(user))
+        coEvery { userDao.hasUser(any()) } answers { 0 }
+        coEvery { randomPeopleService.getUserList(any()) } answers {
+            UserResponse(listOf())
+        }
+
+        coEvery { userDao.deleteAll() } just Runs
+        coEvery { userDao.insertAll(any()) } returns Unit
+        coEvery { userDao.getAll() } answers { listOf(user) }
 
         val userResponse = randomPeopleListRepository.getUserList("1")
 
@@ -62,14 +68,12 @@ class RandomPeopleListRepositoryTest {
     }
 
     @Test
-    fun testGetUserListSuccessWhenServerError() = runBlockingTest {
+    fun testGetUserListSuccessWhenServerError() = runTest {
         val user = getTestEntityUser()
 
-        `when`(userDao.hasUser(anyObject(Date::class.java))).thenReturn(0)
-        doAnswer {
-            throw Exception()
-        }.`when`(randomPeopleService).getUserList(anyObject(String::class.java))
-        `when`(userDao.getAll()).thenReturn(listOf(user))
+        coEvery { userDao.hasUser(any()) } answers { 0 }
+        coEvery { randomPeopleService.getUserList(any()) } answers { throw Exception() }
+        coEvery { userDao.getAll() } answers { listOf(user) }
 
         val userResponse = randomPeopleListRepository.getUserList("1")
 

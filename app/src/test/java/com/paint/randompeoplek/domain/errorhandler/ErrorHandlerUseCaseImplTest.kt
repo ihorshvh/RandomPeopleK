@@ -1,9 +1,8 @@
 package com.paint.randompeoplek.domain.errorhandler
 
+import io.mockk.*
 import org.junit.Test
-
 import org.junit.Assert.*
-import org.mockito.Mockito.mock
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -21,7 +20,16 @@ class ErrorHandlerUseCaseImplTest {
 
     @Test
     fun testGetErrorEntityWhenHttpException() {
-        val response = mock(Response::class.java)
+        val response = mockkClass(Response::class)
+
+        every {
+            response.code()
+        } returns 400
+
+        every {
+            response.message()
+        } returns "Service Unavailable"
+
         val errorEntity = errorHandlerUseCase.getErrorEntity(HttpException(response))
         assertEquals(ErrorEntity.ServiceUnavailable, errorEntity)
     }

@@ -2,51 +2,49 @@ package com.paint.randompeoplek.domain
 
 import com.paint.randompeoplek.repository.RandomPeopleListRepository
 import com.paint.randompeoplek.repository.model.UserResponse
+import io.mockk.coEvery
+import io.mockk.mockk
 import junit.framework.TestCase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
-
+import kotlinx.coroutines.test.runTest
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.mockito.Mockito
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 
 @ExperimentalCoroutinesApi
 @RunWith(JUnit4::class)
 class RandomPeopleListUseCaseTest {
 
     @Test
-    fun testGetUserListWhenSuccess() {
+    fun testGetUserListWhenSuccess() = runTest {
         val users = getUsers()
 
-        val randomPeopleListRepository = mock(RandomPeopleListRepository::class.java)
-        val randomPeopleListUseCase = RandomPeopleListUseCase(randomPeopleListRepository)
-        runBlockingTest {
-            `when`(randomPeopleListRepository.getUserList("10")).thenReturn(UserResponse(users))
+        val randomPeopleListRepository = mockk<RandomPeopleListRepository>()
 
-            val userResponse = randomPeopleListUseCase.getUserList("10")
-
-            assertNotNull(userResponse)
-            assertNotNull(userResponse.users)
-            assertEquals(2, userResponse.users.size)
+        coEvery { randomPeopleListRepository.getUserList("10") } answers {
+            UserResponse(users)
         }
+
+        val randomPeopleListUseCase = RandomPeopleListUseCase(randomPeopleListRepository)
+
+        val userResponse = randomPeopleListUseCase.getUserList("10")
+
+        assertNotNull(userResponse)
+        assertNotNull(userResponse.users)
+        assertEquals(2, userResponse.users.size)
     }
 
     @Test(expected = Exception::class)
-    fun testGetUserListWhenFailure() {
-        val randomPeopleListRepository = mock(RandomPeopleListRepository::class.java)
-        val randomPeopleListUseCase = RandomPeopleListUseCase(randomPeopleListRepository)
-        
-        runBlockingTest {
-            Mockito.doAnswer {
-                throw Exception()
-            }.`when`(randomPeopleListRepository).getUserList("10")
+    fun testGetUserListWhenFailure() = runTest {
+        val randomPeopleListRepository = mockk<RandomPeopleListRepository>()
 
-            randomPeopleListUseCase.getUserList("10")
-
-            fail()
+        coEvery { randomPeopleListRepository.getUserList("10") } answers {
+            throw Exception()
         }
+
+        val randomPeopleListUseCase = RandomPeopleListUseCase(randomPeopleListRepository)
+        randomPeopleListUseCase.getUserList("10")
+
+        fail()
     }
 }
