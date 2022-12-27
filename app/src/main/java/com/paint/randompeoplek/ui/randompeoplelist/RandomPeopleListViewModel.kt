@@ -23,6 +23,7 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
     private val _oneTimeErrorFlow : MutableSharedFlow<ErrorEntity> = MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     private val _usersResponseFlow : MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Loading())
+    private var lastLoadingResult : LoadResult<LiveDataResponse<List<User>>> = LoadResult.Loading()
 
     val oneTimeErrorFlow : SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
 
@@ -34,8 +35,7 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
     fun getRandomPeopleList(userQuantity : String) {
         viewModelScope.launch {
-            _usersResponseFlow.value = LoadResult.Loading()
-
+            _usersResponseFlow.value = LoadResult.Loading(lastLoadingResult.data)
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
 
             result.onSuccess {
@@ -43,9 +43,9 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
                     val errorEntity = errorHandlerUseCase.getErrorEntity(it.throwable!!)
 
                     _oneTimeErrorFlow.emit(errorEntity)
-                    _usersResponseFlow.value = LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers()))
+                    setResult(LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers())))
                 } else {
-                    _usersResponseFlow.value = LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
+                    setResult(LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers())))
                 }
             }
 
@@ -55,6 +55,11 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
                 _usersResponseFlow.value = LoadResult.Error(errorHandlerUseCase.getErrorEntity(it))
             }
         }
+    }
+
+    private fun setResult(result: LoadResult<LiveDataResponse<List<User>>>) {
+        lastLoadingResult = result
+        _usersResponseFlow.value = lastLoadingResult
     }
 
     companion object {

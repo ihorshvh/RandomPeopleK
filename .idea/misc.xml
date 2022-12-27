@@ -3,8 +3,28 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/compose-model-1667261040398.xml" value="0.75" />
+        <entry key="../../../../layout/compose-model-1667344752051.xml" value="0.17736289381563594" />
+        <entry key="../../../../layout/compose-model-1667961974949.xml" value="0.2712962962962963" />
+        <entry key="../../../../layout/compose-model-1671640388901.xml" value="0.2746013224426293" />
+        <entry key="../../../../layout/compose-model-1671642812860.xml" value="0.20342279268767016" />
+        <entry key="../../../../layout/compose-model-1671838502289.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1671910934605.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1671920381627.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1671920521788.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1671920521800.xml" value="0.35185185185185186" />
+        <entry key="../../../../layout/compose-model-1671920693457.xml" value="0.22" />
+        <entry key="../../../../layout/compose-model-1672000982735.xml" value="0.5" />
+        <entry key="../../../../layout/compose-model-1672001166920.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1672001199454.xml" value="0.21056241426611796" />
+        <entry key="../../../../layout/compose-model-1672086867392.xml" value="0.18" />
+        <entry key="../../../../layout/compose-model-1672094008257.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1672094008261.xml" value="0.1327218270310745" />
+        <entry key="../../../../layout/compose-model-1672168269225.xml" value="0.22" />
+        <entry key="../../../../layout/custom_preview.xml" value="0.11390887290167866" />
         <entry key="app/src/main/res/layout-land/random_people_profile_fragment.xml" value="0.2976190476190476" />
-        <entry key="app/src/main/res/layout/random_people_list_item.xml" value="0.3515625" />
+        <entry key="app/src/main/res/layout/random_people_list_fragment.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/random_people_list_item.xml" value="0.25" />
         <entry key="app/src/main/res/layout/random_people_main_activity.xml" value="0.2869791666666667" />
         <entry key="app/src/main/res/layout/random_people_profile_fragment.xml" value="0.3515625" />
         <entry key="app/src/main/res/menu/people_profile_fragment_toolbar_menu.xml" value="0.22314814814814815" />

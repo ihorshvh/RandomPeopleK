@@ -3,100 +3,83 @@ package com.paint.randompeoplek.ui.randompeoplelist
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.*
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.*
 import androidx.navigation.Navigation
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.paint.randompeoplek.R
-import com.paint.randompeoplek.databinding.RandomPeopleListFragmentBinding
 import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
-import com.paint.randompeoplek.model.LiveDataResponse
 import com.paint.randompeoplek.model.LoadResult
+import com.paint.randompeoplek.ui.model.Name
+import com.paint.randompeoplek.ui.model.Picture
 import com.paint.randompeoplek.ui.model.User
 import com.paint.randompeoplek.ui.randompeopleprofile.RandomPeopleProfileFragment
+import com.paint.randompeoplek.ui.theme.RandomPeopleKTheme
+import com.paint.randompeoplek.ui.theme.grey
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RandomPeopleListFragment : Fragment() {
 
-    private val binding get() = randomPeopleListFragmentBinding!!
-    private val randomPeopleListRecyclerViewAdapter:
-            RandomPeopleListRecyclerViewAdapter = RandomPeopleListRecyclerViewAdapter { user ->
-        onRandomPeopleListRecyclerViewAdapterClick(user)
-    }
-
-    private var randomPeopleListFragmentBinding: RandomPeopleListFragmentBinding? = null
-
     private lateinit var viewModel: RandomPeopleListViewModel
 
-    private fun onRandomPeopleListRecyclerViewAdapterClick(user: User) {
+    private fun onItemClick(user: User) {
         val bundle = bundleOf(RandomPeopleProfileFragment.ARG_USER to user)
 
-        Navigation.findNavController(binding.root)
+        Navigation.findNavController(requireView())
             .navigate(
                 R.id.action_randomPeopleListFragment_to_randomPeopleProfileFragment,
                 bundle
             )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        randomPeopleListFragmentBinding = RandomPeopleListFragmentBinding.inflate(
-            inflater,
-            container,
-            false
-        )
+        viewModel = ViewModelProvider(this)[RandomPeopleListViewModel::class.java]
 
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+                RandomPeopleKTheme {
+                    RandomPeopleListScreen(viewModel) { user -> onItemClick(user) }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initializeViews()
-        initializeViewModel()
         setUpViewModel()
     }
 
-    private fun initializeViews() {
-        (activity as AppCompatActivity?)?.setSupportActionBar(binding.toolbar)
-
-        binding.swipeRefreshLayout.setOnRefreshListener { getUsers() }
-        binding.imgBtnObtainList.setOnClickListener { getUsers() }
-
-        binding.list.adapter = randomPeopleListRecyclerViewAdapter
-    }
-
-    private fun initializeViewModel() {
-        viewModel = ViewModelProvider(this).get(RandomPeopleListViewModel::class.java)
-    }
-
     private fun setUpViewModel() {
-        lifecycleScope.launch {
-            // repeatOnLifecycle launches the block in a new coroutine every time the
-            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.usersResponseFlow.collect { usersResponseResource ->
-                    handleUserListResponse(usersResponseResource)
-                }
-
-
-            }
-        }
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.oneTimeErrorFlow.collect { oneTimeError ->
@@ -119,83 +102,200 @@ class RandomPeopleListFragment : Fragment() {
         }
     }
 
-    private fun handleUserListResponse(response: LoadResult<LiveDataResponse<List<User>>>) {
-        when (response) {
-            is LoadResult.Loading -> handleUserListWhenLoading(response)
-            is LoadResult.Success -> handleUserListWhenSuccess(response)
-            is LoadResult.Error -> handleUserListWhenError(response)
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun RandomPeopleListScreen(viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
+    val usersResponseResource by viewModel.usersResponseFlow.collectAsState()
+    val refreshing = usersResponseResource is LoadResult.Loading
+
+    val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) })
+    val users = usersResponseResource.data?.response ?: emptyList()
+
+    Scaffold(
+        topBar = { AppBar { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) } },
+        content = { padding ->
+            Box(
+                modifier = Modifier.padding(padding).pullRefresh(pullRefreshState)
+            ) {
+                if (users.isNotEmpty()) {
+                    LazyColumn {
+                        items(
+                            items = users,
+                            // TODO consider more specific and unique key
+                            key = { user -> user.name }
+                        )
+                        { user ->
+                            RandomPeopleListItem(user = user, onItemClick = { onItemClick(user) })
+                        }
+                    }
+                } else {
+                    RandomPeopleNoUsers { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
+                }
+                PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+            }
         }
+    )
+}
 
-        if (response !is LoadResult.Loading) {
-            binding.swipeRefreshLayout.isRefreshing = false
-            checkLayoutVisibilityConditions()
+@Composable
+fun AppBar(onClick: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(text = stringResource(id = R.string.app_name))
+        },
+        modifier = Modifier.height(56.dp),
+        actions = {
+            IconButton(onClick = onClick) {
+                Icon(painterResource(R.drawable.ic_update_img), "To refresh the user list")
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
+    Surface {
+        Row(
+            modifier = Modifier.fillMaxWidth().heightIn(min = 88.dp).clickable { onItemClick(user) }
+        ) {
+            Column(
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+            ) {
+                GlideImage(
+                    model = user.picture.thumbnail,
+                    contentDescription = "Profile image",
+                    modifier = Modifier.size(40.dp).clip(CircleShape)
+                )
+            }
+            Column(
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
+            ) {
+                Text(
+                    text = user.name.shortName,
+                    style = MaterialTheme.typography.h2.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = user.location,
+                    style = MaterialTheme.typography.h3
+                )
+            }
+        }
+        DividerRow()
+    }
+}
+
+@Composable
+fun DividerRow() {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Divider(color = grey, thickness = 1.dp)
+    }
+}
+
+@Composable
+fun RandomPeopleNoUsers(onClick: () -> Unit) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = stringResource(id = R.string.label_no_users),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 16.dp)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.ic_update_img_layout),
+                contentDescription = "To refresh the user list",
+                modifier = Modifier.width(100.dp).height(100.dp).clickable { onClick() }
+            )
         }
     }
+}
 
-    private fun handleUserListWhenLoading(response: LoadResult<LiveDataResponse<List<User>>>) {
-        binding.swipeRefreshLayout.isRefreshing = true
-        mapUserList(response.data)
+@Preview
+@Composable
+fun RandomPeopleNoUsersPreview() {
+    RandomPeopleNoUsers({})
+}
+
+@Preview
+@Composable
+fun AppBarPreview() {
+    RandomPeopleKTheme {
+        AppBar({})
     }
+}
 
-    private fun handleUserListWhenSuccess(response: LoadResult<LiveDataResponse<List<User>>>) {
-        mapUserList(response.data)
+@Preview
+@Composable
+fun RandomPeopleListItemPreview() {
+    RandomPeopleKTheme {
+        RandomPeopleListItem(user = User(
+            name = Name("Ire Test", "Mr. Ire Test"),
+            location = "8400 Jacksonwile road, Raintown, Greenwaland",
+            "email@gmail.com",
+            phone = "+12345678",
+            picture = Picture("", "")
+        ), {})
     }
+}
 
-    private fun handleUserListWhenError(response: LoadResult<LiveDataResponse<List<User>>>) {
-        // no need to handle error message at this time
-        // as it will be shown as a one time message only.
-        // See @RandomPeopleListViewModel for reference.
-        mapUserList(response.data)
-    }
-
-    private fun mapUserList(response: LiveDataResponse<List<User>>?) {
-        if (response?.response?.isNotEmpty() == true) {
-            randomPeopleListRecyclerViewAdapter.submitList(response.response!!)
+@Composable
+fun RandomPeopleListScreen(users: List<User>) {
+    Scaffold(
+        topBar = { AppBar({}) },
+        content = { padding ->
+            LazyColumn(modifier = Modifier.padding(padding)) {
+                items(items = users) { user ->
+                    RandomPeopleListItem(user = user) {}
+                }
+            }
         }
+    )
+}
+
+@Preview
+@Composable
+fun RandomPeopleListPreview() {
+    RandomPeopleKTheme {
+        RandomPeopleListScreen(listOf(
+            User(
+                name = Name("Ire Test", "Mr. Ire Test"),
+                location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                "email@gmail.com",
+                phone = "+12345678",
+                picture = Picture("", "")
+            ),
+            User(
+                name = Name("Ire Test", "Mr. Ire Test"),
+                location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                "email@gmail.com",
+                phone = "+12345678",
+                picture = Picture("", "")
+            ),
+            User(
+                name = Name("Ire Test", "Mr. Ire Test"),
+                location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                "email@gmail.com",
+                phone = "+12345678",
+                picture = Picture("", "")
+            ),
+            User(
+                name = Name("Ire Test", "Mr. Ire Test"),
+                location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                "email@gmail.com",
+                phone = "+12345678",
+                picture = Picture("", "")
+            ),
+            User(
+                name = Name("Ire Test", "Mr. Ire Test"),
+                location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                "email@gmail.com",
+                phone = "+12345678",
+                picture = Picture("", "")
+            )))
     }
-
-    private fun checkLayoutVisibilityConditions() {
-        if (randomPeopleListRecyclerViewAdapter.itemCount == 0) {
-            toEmptyListMode()
-        } else {
-            toNonEmptyListMode()
-        }
-    }
-
-    private fun toEmptyListMode() {
-        binding.llNoUsers.visibility = View.VISIBLE
-        binding.list.visibility = View.GONE
-    }
-
-    private fun toNonEmptyListMode() {
-        binding.llNoUsers.visibility = View.GONE
-        binding.list.visibility = View.VISIBLE
-    }
-
-    private fun getUsers() {
-        binding.swipeRefreshLayout.isRefreshing = true
-        viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        randomPeopleListFragmentBinding = null
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.people_list_fragment_toolbar_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_update -> {
-            getUsers()
-            true
-        }
-
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
-    }
-
 }
