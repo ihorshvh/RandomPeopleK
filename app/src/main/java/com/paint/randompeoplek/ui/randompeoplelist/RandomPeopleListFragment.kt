@@ -10,9 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,6 +29,8 @@ import androidx.lifecycle.*
 import androidx.navigation.Navigation
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.model.LoadResult
@@ -104,38 +103,11 @@ class RandomPeopleListFragment : Fragment() {
 
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RandomPeopleListScreen(viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
-    val usersResponseResource by viewModel.usersResponseFlow.collectAsState()
-    val refreshing = usersResponseResource is LoadResult.Loading
-
-    val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) })
-    val users = usersResponseResource.data?.response ?: emptyList()
-
     Scaffold(
         topBar = { AppBar { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) } },
-        content = { padding ->
-            Box(
-                modifier = Modifier.padding(padding).pullRefresh(pullRefreshState)
-            ) {
-                if (users.isNotEmpty()) {
-                    LazyColumn {
-                        items(
-                            items = users,
-                            // TODO consider more specific and unique key
-                            key = { user -> user.name }
-                        )
-                        { user ->
-                            RandomPeopleListItem(user = user, onItemClick = { onItemClick(user) })
-                        }
-                    }
-                } else {
-                    RandomPeopleNoUsers { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
-                }
-                PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
-            }
-        }
+        content = { padding -> Content(Modifier.padding(padding), viewModel, onItemClick) }
     )
 }
 
@@ -154,36 +126,80 @@ fun AppBar(onClick: () -> Unit) {
     )
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@Suppress("DEPRECATION") // temporary solution
+@Composable
+fun Content(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
+    val usersResponseResource by viewModel.usersResponseFlow.collectAsState()
+    
+    val isRefreshing = usersResponseResource is LoadResult.Loading
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
+    val users = usersResponseResource.data?.response ?: emptyList()
+
+    SwipeRefresh(
+        modifier = modifier,
+        state = swipeRefreshState,
+        onRefresh = { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
+    ) {
+        if (users.isNotEmpty()) {
+            LazyColumn {
+                items(
+                    items = users,
+                    // TODO consider more specific and unique key
+                    key = { user -> user.name }
+                )
+                { user ->
+                    RandomPeopleListItem(user = user, onItemClick = { onItemClick(user) })
+                }
+            }
+        } else {
+            RandomPeopleNoUsers { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
+        }
+    }
+}
+
 @Composable
 fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
     Surface {
         Row(
-            modifier = Modifier.fillMaxWidth().heightIn(min = 88.dp).clickable { onItemClick(user) }
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 88.dp)
+                .clickable { onItemClick(user) }
         ) {
-            Column(
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            ) {
-                GlideImage(
-                    model = user.picture.thumbnail,
-                    contentDescription = "Profile image",
-                    modifier = Modifier.size(40.dp).clip(CircleShape)
-                )
-            }
-            Column(
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
-            ) {
-                Text(
-                    text = user.name.shortName,
-                    style = MaterialTheme.typography.h2.copy(fontWeight = FontWeight.Bold)
-                )
-                Text(
-                    text = user.location,
-                    style = MaterialTheme.typography.h3
-                )
-            }
+            ListItemImage(user = user)
+            ListItemDescription(user = user)
         }
         DividerRow()
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun ListItemImage(user: User) {
+    Column(
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+    ) {
+        GlideImage(
+            model = user.picture.thumbnail,
+            contentDescription = "Profile image",
+            modifier = Modifier.size(40.dp).clip(CircleShape)
+        )
+    }
+}
+
+@Composable
+fun ListItemDescription(user: User) {
+    Column(
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
+    ) {
+        Text(
+            text = user.name.shortName,
+            style = MaterialTheme.typography.h2.copy(fontWeight = FontWeight.Bold)
+        )
+        Text(
+            text = user.location,
+            style = MaterialTheme.typography.h3
+        )
     }
 }
 
@@ -209,7 +225,10 @@ fun RandomPeopleNoUsers(onClick: () -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.ic_update_img_layout),
                 contentDescription = "To refresh the user list",
-                modifier = Modifier.width(100.dp).height(100.dp).clickable { onClick() }
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(100.dp)
+                    .clickable { onClick() }
             )
         }
     }
