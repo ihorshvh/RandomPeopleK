@@ -72,7 +72,7 @@ class RandomPeopleListViewModelTest {
         assertThat(results[0], instanceOf(LoadResult.Success::class.java))
 
         assertThat(results[1], instanceOf(LoadResult.Loading::class.java))
-        assertNull((results[1] as LoadResult.Loading).data)
+        assertNotNull((results[1] as LoadResult.Loading).data)
 
         assertThat(results[2], instanceOf(LoadResult.Success::class.java))
 
@@ -143,7 +143,7 @@ class RandomPeopleListViewModelTest {
         assertThat(results[0], instanceOf(LoadResult.Error::class.java))
 
         assertThat(results[1], instanceOf(LoadResult.Loading::class.java))
-        assertNull((results[1] as LoadResult.Loading).data)
+        assertNotNull((results[1] as LoadResult.Loading).data)
 
         assertThat(results[2], instanceOf(LoadResult.Error::class.java))
         val resource = (results[2] as LoadResult.Error)
