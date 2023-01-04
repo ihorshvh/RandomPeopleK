@@ -32,8 +32,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layoutManager="LinearLayoutManager"
-                        tools:context=".ui.randompeoplelist.RandomPeopleListFragment"
-                        tools:listitem="@layout/random_people_list_item" />
+                        tools:context=".ui.randompeoplelist.RandomPeopleListFragment" />
 
                 <LinearLayout
                         android:id="@+id/ll_no_users"
