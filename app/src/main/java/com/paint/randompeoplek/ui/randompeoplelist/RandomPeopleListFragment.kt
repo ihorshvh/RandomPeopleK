@@ -157,14 +157,12 @@ fun Content(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClic
     }
 }
 
+val itemModifier = Modifier.fillMaxWidth().heightIn(min = 88.dp)
 @Composable
 fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
     Surface {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 88.dp)
-                .clickable { onItemClick(user) }
+            modifier = itemModifier.clickable { onItemClick(user) }
         ) {
             ListItemImage(user = user)
             ListItemDescription(user = user)
@@ -173,12 +171,11 @@ fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
     }
 }
 
+val listItemImageModifier = Modifier.padding(start = 16.dp, top = 16.dp)
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ListItemImage(user: User) {
-    Column(
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-    ) {
+    Column(modifier = listItemImageModifier) {
         GlideImage(
             model = user.picture.thumbnail,
             contentDescription = "Profile image",
@@ -187,10 +184,11 @@ fun ListItemImage(user: User) {
     }
 }
 
+val listItemDescriptionModifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
 @Composable
 fun ListItemDescription(user: User) {
     Column(
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
+        modifier = listItemDescriptionModifier,
     ) {
         Text(
             text = user.name.shortName,
@@ -203,10 +201,11 @@ fun ListItemDescription(user: User) {
     }
 }
 
+val dividerRowModifier = Modifier.fillMaxWidth()
 @Composable
 fun DividerRow() {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = dividerRowModifier
     ) {
         Divider(color = grey, thickness = 1.dp)
     }
