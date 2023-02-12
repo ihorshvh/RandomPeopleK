@@ -37,7 +37,7 @@ class RandomPeopleProfileFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 RandomPeopleKTheme {
-                    UserProfileScreen(user) { findNavController().popBackStack() }
+                    //UserProfileScreen(user) { findNavController().popBackStack() }
                 }
             }
         }
@@ -51,162 +51,162 @@ class RandomPeopleProfileFragment : Fragment() {
 
 }
 
-@Composable
-fun UserProfileScreen(user : User, onClick: () -> Unit) {
-    Scaffold(
-        topBar = { AppBar(onClick) },
-        content = { padding -> Content(Modifier.padding(padding), user)}
-    )
-}
-
-@Composable
-fun AppBar(onClick: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(text = "")
-        },
-        modifier = Modifier.height(56.dp),
-        navigationIcon = {
-            IconButton(
-                onClick = onClick,
-            ) {
-                Icon(painter = painterResource(R.drawable.ic_back_img), contentDescription = "Navigation icon")
-            }
-        }
-    )
-}
-
-@Composable
-fun Content(modifier: Modifier, user : User) {
-    Surface(modifier = modifier.fillMaxSize()) {
-        Column {
-            ProfileImage(user.picture)
-            ProfileName(user.name)
-            ProfileLocation(user.location)
-            ProfileContactInformation(user.phone, user.email)
-        }
-    }
-}
-
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-fun ProfileImage(picture: Picture) {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp)
-    ) {
-        GlideImage(
-            model = picture.medium,
-            contentDescription = "Profile image",
-            modifier = Modifier.size(160.dp).clip(CircleShape)
-        )
-    }
-}
-
-@Composable
-fun ProfileName(name: Name){
-    TextWithTheImageToTheLeft(
-        {
-            Image(
-                painter = painterResource(R.drawable.ic_user_img),
-                contentDescription = null,
-                modifier = Modifier.size(38.dp).padding(start = 16.dp)
-            )
-        },
-        {
-            Text(
-                text = name.fullName,
-                style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-        }
-    )
-}
-
-@Composable
-fun ProfileLocation(location: String) {
-    TextWithTheImageToTheLeft(
-        {
-            Image(
-                painter = painterResource(R.drawable.ic_location_img),
-                contentDescription = null,
-                modifier = Modifier.size(38.dp).padding(start = 16.dp)
-            )
-        },
-        {
-            Text(
-                text = location,
-                style = MaterialTheme.typography.h3,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-        }
-    )
-}
-
-@Composable
-fun ProfileContactInformation(phone: String, email: String) {
-    Text(
-        text = stringResource(R.string.label_contact_info),
-        style = MaterialTheme.typography.h3.copy(fontWeight = FontWeight.Bold),
-        modifier = Modifier.padding(start = 16.dp, top = 32.dp, end = 16.dp)
-    )
-    TextWithTheImageToTheLeft(
-        {
-            Image(
-                painter = painterResource(R.drawable.ic_phone_img),
-                contentDescription = null,
-                modifier = Modifier.size(38.dp).padding(start = 16.dp)
-            )
-        },
-        {
-            Text(
-                text = phone,
-                style = MaterialTheme.typography.h3,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-        }
-    )
-    TextWithTheImageToTheLeft(
-        {
-            Image(
-                painter = painterResource(R.drawable.ic_email_img),
-                contentDescription = null,
-                modifier = Modifier.size(38.dp).padding(start = 16.dp)
-            )
-        },
-        {
-            Text(
-                text = email,
-                style = MaterialTheme.typography.h3,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-        }
-    )
-}
-
-@Composable
-fun TextWithTheImageToTheLeft(image: @Composable () -> Unit, text: @Composable () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        image()
-        text()
-    }
-}
-
-@Preview
-@Composable
-fun UserProfilePreview() {
-    RandomPeopleKTheme {
-        UserProfileScreen(
-            user = User(
-                name = Name("Ire Test", "Mr. Ire Test"),
-                location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                "email@gmail.com",
-                phone = "+12345678",
-                picture = Picture("", "")
-            ), {}
-        )
-    }
-}
+//@Composable
+//fun UserProfileScreen(user : User, onClick: () -> Unit) {
+//    Scaffold(
+//        topBar = { AppBar(onClick) },
+//        content = { padding -> Content(Modifier.padding(padding), user)}
+//    )
+//}
+//
+//@Composable
+//fun AppBar(onClick: () -> Unit) {
+//    TopAppBar(
+//        title = {
+//            Text(text = "")
+//        },
+//        modifier = Modifier.height(56.dp),
+//        navigationIcon = {
+//            IconButton(
+//                onClick = onClick,
+//            ) {
+//                Icon(painter = painterResource(R.drawable.ic_back_img), contentDescription = "Navigation icon")
+//            }
+//        }
+//    )
+//}
+//
+//@Composable
+//fun Content(modifier: Modifier, user : User) {
+//    Surface(modifier = modifier.fillMaxSize()) {
+//        Column {
+//            ProfileImage(user.picture)
+//            ProfileName(user.name)
+//            ProfileLocation(user.location)
+//            ProfileContactInformation(user.phone, user.email)
+//        }
+//    }
+//}
+//
+//@OptIn(ExperimentalGlideComposeApi::class)
+//@Composable
+//fun ProfileImage(picture: Picture) {
+//    Row(
+//        horizontalArrangement = Arrangement.Center,
+//        modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp)
+//    ) {
+//        GlideImage(
+//            model = picture.medium,
+//            contentDescription = "Profile image",
+//            modifier = Modifier.size(160.dp).clip(CircleShape)
+//        )
+//    }
+//}
+//
+//@Composable
+//fun ProfileName(name: Name){
+//    TextWithTheImageToTheLeft(
+//        {
+//            Image(
+//                painter = painterResource(R.drawable.ic_user_img),
+//                contentDescription = null,
+//                modifier = Modifier.size(38.dp).padding(start = 16.dp)
+//            )
+//        },
+//        {
+//            Text(
+//                text = name.fullName,
+//                style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold),
+//                modifier = Modifier.padding(horizontal = 8.dp)
+//            )
+//        }
+//    )
+//}
+//
+//@Composable
+//fun ProfileLocation(location: String) {
+//    TextWithTheImageToTheLeft(
+//        {
+//            Image(
+//                painter = painterResource(R.drawable.ic_location_img),
+//                contentDescription = null,
+//                modifier = Modifier.size(38.dp).padding(start = 16.dp)
+//            )
+//        },
+//        {
+//            Text(
+//                text = location,
+//                style = MaterialTheme.typography.h3,
+//                modifier = Modifier.padding(horizontal = 8.dp)
+//            )
+//        }
+//    )
+//}
+//
+//@Composable
+//fun ProfileContactInformation(phone: String, email: String) {
+//    Text(
+//        text = stringResource(R.string.label_contact_info),
+//        style = MaterialTheme.typography.h3.copy(fontWeight = FontWeight.Bold),
+//        modifier = Modifier.padding(start = 16.dp, top = 32.dp, end = 16.dp)
+//    )
+//    TextWithTheImageToTheLeft(
+//        {
+//            Image(
+//                painter = painterResource(R.drawable.ic_phone_img),
+//                contentDescription = null,
+//                modifier = Modifier.size(38.dp).padding(start = 16.dp)
+//            )
+//        },
+//        {
+//            Text(
+//                text = phone,
+//                style = MaterialTheme.typography.h3,
+//                modifier = Modifier.padding(horizontal = 8.dp)
+//            )
+//        }
+//    )
+//    TextWithTheImageToTheLeft(
+//        {
+//            Image(
+//                painter = painterResource(R.drawable.ic_email_img),
+//                contentDescription = null,
+//                modifier = Modifier.size(38.dp).padding(start = 16.dp)
+//            )
+//        },
+//        {
+//            Text(
+//                text = email,
+//                style = MaterialTheme.typography.h3,
+//                modifier = Modifier.padding(horizontal = 8.dp)
+//            )
+//        }
+//    )
+//}
+//
+//@Composable
+//fun TextWithTheImageToTheLeft(image: @Composable () -> Unit, text: @Composable () -> Unit) {
+//    Row(
+//        verticalAlignment = Alignment.CenterVertically,
+//        modifier = Modifier.fillMaxWidth()
+//    ) {
+//        image()
+//        text()
+//    }
+//}
+//
+//@Preview
+//@Composable
+//fun UserProfilePreview() {
+//    RandomPeopleKTheme {
+//        UserProfileScreen(
+//            user = User(
+//                name = Name("Ire Test", "Mr. Ire Test"),
+//                location = "8400 Jacksonwile road, Raintown, Greenwaland",
+//                "email@gmail.com",
+//                phone = "+12345678",
+//                picture = Picture("", "")
+//            ), {}
+//        )
+//    }
+//}

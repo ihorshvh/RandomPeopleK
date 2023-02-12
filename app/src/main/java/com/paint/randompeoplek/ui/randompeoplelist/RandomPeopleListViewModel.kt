@@ -62,6 +62,10 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
         _usersResponseFlow.value = lastLoadingResult
     }
 
+    fun getUserByFullName(userFullName: String): User? {
+        return usersResponseFlow.value.data?.response?.find { user -> user.name.fullName == userFullName }
+    }
+
     companion object {
 
         const val USER_QUANTITY = "10"
