@@ -32,6 +32,11 @@ class RandomPeopleListRepository @Inject constructor(
         return UserResponse(userDao.getAll().toRepositoryUsers())
     }
 
+    suspend fun getUserByUserName(userName: String): com.paint.randompeoplek.repository.model.User {
+        val names = userName.split(" ")
+        return userDao.getUserByUserName(names[1], names[2]).toRepositoryUser()
+    }
+
     companion object {
 
         private val FRESH_TIMEOUT = TimeUnit.SECONDS.toMillis(15)

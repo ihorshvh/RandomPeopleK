@@ -62,8 +62,8 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
         _usersResponseFlow.value = lastLoadingResult
     }
 
-    fun getUserByFullName(userFullName: String): User? {
-        return usersResponseFlow.value.data?.response?.find { user -> user.name.fullName == userFullName }
+    suspend fun getUserByFullName(userFullName: String): User? {
+        return randomPeopleListUseCase.getUserByUserName(userFullName).toUiParcelableUser()
     }
 
     companion object {

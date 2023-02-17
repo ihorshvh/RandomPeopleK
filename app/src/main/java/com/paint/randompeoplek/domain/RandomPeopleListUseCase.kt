@@ -9,6 +9,9 @@ class RandomPeopleListUseCase @Inject constructor(private val randomPeopleListRe
     suspend fun getUserList(userQuantity: String) =
         randomPeopleListRepository.getUserList(userQuantity).toMediatorUserResponse()
 
+    suspend fun getUserByUserName(userName: String) =
+        randomPeopleListRepository.getUserByUserName(userName).toMediatorUser()
+
 }
 
 private fun Name.toMediatorName() =

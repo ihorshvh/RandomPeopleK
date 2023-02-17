@@ -4,8 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,15 +20,13 @@ import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
 import com.paint.randompeoplek.ui.model.User
 import com.paint.randompeoplek.ui.randompeoplelist.RandomPeopleListViewModel
-import com.paint.randompeoplek.ui.theme.RandomPeopleKTheme
 
 
 @Composable
 fun UserProfileScreen(viewModel: RandomPeopleListViewModel, userName: String, onClick: () -> Unit) {
-    val user = remember(userName) { viewModel.getUserByFullName(userName) }
     Scaffold(
         topBar = { AppBar(onClick) },
-        content = { padding -> Content(Modifier.padding(padding), user)}
+        content = { padding -> Content(Modifier.padding(padding), userName, viewModel)}
     )
 }
 
@@ -51,22 +48,38 @@ fun AppBar(onClick: () -> Unit) {
 }
 
 @Composable
-fun Content(modifier: Modifier, user : User?) {
+fun Content(modifier: Modifier, userName: String, viewModel: RandomPeopleListViewModel) {
     Surface(modifier = modifier.fillMaxSize()) {
-        if (user != null) {
+
+        var userState: User? by remember { mutableStateOf(null) }
+
+        if (userState == null) {
+            UserLoading()
+            LaunchedEffect(userState) {
+                userState = viewModel.getUserByFullName(userName)
+            }
+        } else {
+            val user = userState as User
             Column {
                 ProfileImage(user.picture)
                 ProfileName(user.name)
                 ProfileLocation(user.location)
                 ProfileContactInformation(user.phone, user.email)
             }
-        } else {
-//            Column {
-//                ProfileImage(user.picture)
-//                ProfileName(user.name)
-//                ProfileLocation(user.location)
-//                ProfileContactInformation(user.phone, user.email)
-//            }
+        }
+    }
+}
+
+@Composable
+fun UserLoading() {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(160.dp)
+            )
         }
     }
 }
@@ -192,16 +205,6 @@ fun TextWithTheImageToTheLeft(image: @Composable () -> Unit, text: @Composable (
 
 @Preview
 @Composable
-fun UserProfilePreview() {
-    RandomPeopleKTheme {
-//        UserProfileScreen(
-//            user = User(
-//                name = Name("Ire Test", "Mr. Ire Test"),
-//                location = "8400 Jacksonwile road, Raintown, Greenwaland",
-//                "email@gmail.com",
-//                phone = "+12345678",
-//                picture = Picture("", "")
-//            ), {}
-//        )
-    }
+fun UserLoadingPreview() {
+    UserLoading()
 }
