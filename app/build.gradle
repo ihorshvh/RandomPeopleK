@@ -9,8 +9,7 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    compileSdkVersion rootProject.compile_sdk_version
-    buildToolsVersion rootProject.build_tools_version
+    compileSdk rootProject.compile_sdk_version
 
     defaultConfig {
         applicationId rootProject.application_id
