@@ -8,7 +8,7 @@ interface Destination {
     val route: String
 }
 
-object RandomPeopleList : Destination {
+object RandomPeopleListScreen : Destination {
     override val route = "random_people_list"
 }
 

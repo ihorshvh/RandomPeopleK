@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -33,22 +34,22 @@ import com.paint.randompeoplek.ui.theme.grey
 
 
 @Composable
-fun RandomPeopleListScreen(viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
+fun RandomPeopleListScreen(viewModel: RandomPeopleListViewModel = viewModel<RandomPeopleListViewModel>(), onItemClick: (user: User) -> Unit) {
     Scaffold(
-        topBar = { AppBar { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) } },
-        content = { padding -> Content(Modifier.padding(padding), viewModel, onItemClick) }
+        topBar = { RandomPeopleAppBar(viewModel) },
+        content = { padding -> RandomPeopleListContent(Modifier.padding(padding), viewModel, onItemClick) }
     )
 }
 
 @Composable
-fun AppBar(onClick: () -> Unit) {
+fun RandomPeopleAppBar(viewModel: RandomPeopleListViewModel) {
     TopAppBar(
         title = {
             Text(text = stringResource(id = R.string.app_name))
         },
         modifier = Modifier.height(56.dp),
         actions = {
-            IconButton(onClick = onClick) {
+            IconButton(onClick = { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }) {
                 Icon(painterResource(R.drawable.ic_update_img), "To refresh the user list")
             }
         }
@@ -57,13 +58,15 @@ fun AppBar(onClick: () -> Unit) {
 
 @Suppress("DEPRECATION") // temporary solution
 @Composable
-fun Content(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
+fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
+    // TODO consider to change to collectAsStateWithLifecycle()
     val usersResponseResource by viewModel.usersResponseFlow.collectAsState()
 
     val isRefreshing = usersResponseResource is LoadResult.Loading
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
     val users = usersResponseResource.data?.response ?: emptyList()
 
+    // TODO Confirm the swipe refresh is actual
     SwipeRefresh(
         modifier = modifier,
         state = swipeRefreshState,
@@ -81,7 +84,7 @@ fun Content(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClic
                 }
             }
         } else {
-            RandomPeopleNoUsers { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
+            RandomPeopleNoUsers(viewModel)
         }
     }
 }
@@ -96,6 +99,7 @@ fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
             ListItemImage(user = user)
             ListItemDescription(user = user)
         }
+        // TODO check whether divider should be added into LazyColumn directly
         DividerRow()
     }
 }
@@ -105,6 +109,7 @@ val listItemImageModifier = Modifier.padding(start = 16.dp, top = 16.dp)
 @Composable
 fun ListItemImage(user: User) {
     Column(modifier = listItemImageModifier) {
+        // TODO GlideImage is supposed to work out of the box in new versions
         GlideImage(
             model = user.picture.thumbnail,
             contentDescription = "Profile image",
@@ -141,7 +146,7 @@ fun DividerRow() {
 }
 
 @Composable
-fun RandomPeopleNoUsers(onClick: () -> Unit) {
+fun RandomPeopleNoUsers(viewModel: RandomPeopleListViewModel) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -156,7 +161,7 @@ fun RandomPeopleNoUsers(onClick: () -> Unit) {
                 modifier = Modifier
                     .width(100.dp)
                     .height(100.dp)
-                    .clickable { onClick() }
+                    .clickable { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
             )
         }
     }
@@ -165,14 +170,16 @@ fun RandomPeopleNoUsers(onClick: () -> Unit) {
 @Preview
 @Composable
 fun RandomPeopleNoUsersPreview() {
-    RandomPeopleNoUsers({})
+    val viewModel = viewModel<RandomPeopleListViewModel>()
+    RandomPeopleNoUsers(viewModel)
 }
 
 @Preview
 @Composable
 fun AppBarPreview() {
+    val viewModel = viewModel<RandomPeopleListViewModel>()
     RandomPeopleKTheme {
-        AppBar({})
+        RandomPeopleAppBar(viewModel)
     }
 }
 
@@ -192,8 +199,9 @@ fun RandomPeopleListItemPreview() {
 
 @Composable
 fun RandomPeopleListScreen(users: List<User>) {
+    val viewModel = viewModel<RandomPeopleListViewModel>()
     Scaffold(
-        topBar = { AppBar({}) },
+        topBar = { RandomPeopleAppBar(viewModel) },
         content = { padding ->
             LazyColumn(modifier = Modifier.padding(padding)) {
                 items(items = users) { user ->

@@ -23,11 +23,13 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
     private val _oneTimeErrorFlow : MutableSharedFlow<ErrorEntity> = MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     private val _usersResponseFlow : MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Loading())
+    val usersResponseFlow = _usersResponseFlow.asStateFlow()
+
     private var lastLoadingResult : LoadResult<LiveDataResponse<List<User>>> = LoadResult.Loading()
 
     val oneTimeErrorFlow : SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
 
-    val usersResponseFlow : StateFlow<LoadResult<LiveDataResponse<List<User>>>> = _usersResponseFlow.asStateFlow()
+
 
     init {
         getRandomPeopleList(USER_QUANTITY)
