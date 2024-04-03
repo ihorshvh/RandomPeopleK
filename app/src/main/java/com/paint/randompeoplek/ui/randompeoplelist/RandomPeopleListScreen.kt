@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -34,7 +34,7 @@ import com.paint.randompeoplek.ui.theme.grey
 
 
 @Composable
-fun RandomPeopleListScreen(viewModel: RandomPeopleListViewModel = viewModel<RandomPeopleListViewModel>(), onItemClick: (user: User) -> Unit) {
+fun RandomPeopleListScreen(viewModel: RandomPeopleListViewModel = hiltViewModel<RandomPeopleListViewModel>(), onItemClick: (user: User) -> Unit) {
     Scaffold(
         topBar = { RandomPeopleAppBar(viewModel) },
         content = { padding -> RandomPeopleListContent(Modifier.padding(padding), viewModel, onItemClick) }
@@ -89,7 +89,9 @@ fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewM
     }
 }
 
-val itemModifier = Modifier.fillMaxWidth().heightIn(min = 88.dp)
+val itemModifier = Modifier
+    .fillMaxWidth()
+    .heightIn(min = 88.dp)
 @Composable
 fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
     Surface {
@@ -113,7 +115,9 @@ fun ListItemImage(user: User) {
         GlideImage(
             model = user.picture.thumbnail,
             contentDescription = "Profile image",
-            modifier = Modifier.size(40.dp).clip(CircleShape)
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
         )
     }
 }
@@ -170,14 +174,14 @@ fun RandomPeopleNoUsers(viewModel: RandomPeopleListViewModel) {
 @Preview
 @Composable
 fun RandomPeopleNoUsersPreview() {
-    val viewModel = viewModel<RandomPeopleListViewModel>()
+    val viewModel = hiltViewModel<RandomPeopleListViewModel>()
     RandomPeopleNoUsers(viewModel)
 }
 
 @Preview
 @Composable
 fun AppBarPreview() {
-    val viewModel = viewModel<RandomPeopleListViewModel>()
+    val viewModel = hiltViewModel<RandomPeopleListViewModel>()
     RandomPeopleKTheme {
         RandomPeopleAppBar(viewModel)
     }
@@ -199,7 +203,7 @@ fun RandomPeopleListItemPreview() {
 
 @Composable
 fun RandomPeopleListScreen(users: List<User>) {
-    val viewModel = viewModel<RandomPeopleListViewModel>()
+    val viewModel = hiltViewModel<RandomPeopleListViewModel>()
     Scaffold(
         topBar = { RandomPeopleAppBar(viewModel) },
         content = { padding ->

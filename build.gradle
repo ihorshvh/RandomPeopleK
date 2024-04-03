@@ -2,42 +2,42 @@
 
 buildscript {
     ext.min_sdk_version = 23
-    ext.target_sdk_version = 33
-    ext.compile_sdk_version = 33
-    ext.build_tools_version = "30.0.3"
-    ext.jvm_target = "1.8"
+    ext.target_sdk_version = 34
+    ext.compile_sdk_version = 34
+    ext.build_tools_version = "34.0.0"
+    ext.jvm_target = "17"
 
     ext.application_id = "com.paint.randompeoplek"
     ext.version_code = 1
     ext.version_name = "1.0"
     ext.test_instrumentation_runner = "androidx.test.runner.AndroidJUnitRunner"
 
-    ext.kotlin_version = '1.7.10'
-    ext.appcompat_version = '1.5.1'
-    ext.core_ktx_version = '1.9.0'
+    ext.kotlin_version = '1.9.23'
+    ext.appcompat_version = '1.6.1'
+    ext.core_ktx_version = '1.12.0'
     ext.constraintlayout_version = '2.1.4'
-    ext.lifecycle_version = '2.5.1'
+    ext.lifecycle_version = '2.7.0'
     ext.legacy_support_version = '1.0.0'
-    ext.recyclerview_version = '1.2.1'
+    ext.recyclerview_version = '1.3.2'
     ext.coordinatorlayout_version = '1.2.0'
     ext.cardview_version = '1.0.0'
-    ext.fragment_ktx_version = '1.5.5'
+    ext.fragment_ktx_version = '1.6.2'
     ext.retrofit_version = '2.9.0'
-    ext.hilt_version = '2.43.2'
-    ext.room_version = '2.4.3'
+    ext.hilt_version = '2.49'
+    ext.room_version = '2.6.1'
     ext.glide_version = '4.12.0'
     ext.kotlinx_coroutines_version = '1.6.1'
     ext.junit_version = '4.13.2'
     ext.mockK = '1.12.4'
     ext.test_runner_version = '1.3.0'
     ext.espresso_version = '3.1.0'
-    ext.nav_version = '2.5.3'
+    ext.nav_version = '2.7.7'
     ext.hilt_nav_version = '1.2.0'
     ext.coroutines_test = '1.5.2'
 
     ext.material = '1.7.0'
-    ext.compose_material = '1.3.1'
-    ext.compose_activity = '1.6.1'
+    ext.compose_material = '1.6.4'
+    ext.compose_activity = '1.8.2'
 
     ext.coroutines_test = '1.5.2'
     ext.androidx_core_testing = '2.1.0'
@@ -50,7 +50,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath 'com.android.tools.build:gradle:8.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
         // NOTE: Do not place your application dependencies here; they belong

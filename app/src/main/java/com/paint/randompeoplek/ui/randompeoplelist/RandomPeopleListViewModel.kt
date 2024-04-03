@@ -29,8 +29,6 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
 
     val oneTimeErrorFlow : SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
 
-
-
     init {
         getRandomPeopleList(USER_QUANTITY)
     }
