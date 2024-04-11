@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,7 +65,6 @@ fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewM
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
     val users = usersResponseResource.data?.response ?: emptyList()
 
-    // TODO Confirm the swipe refresh is actual
     SwipeRefresh(
         modifier = modifier,
         state = swipeRefreshState,
