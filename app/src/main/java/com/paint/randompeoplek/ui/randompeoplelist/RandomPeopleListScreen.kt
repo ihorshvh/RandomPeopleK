@@ -125,7 +125,6 @@ val listItemImageModifier = Modifier.padding(start = 16.dp, top = 16.dp)
 @Composable
 fun ListItemImage(user: User) {
     Column(modifier = listItemImageModifier) {
-        // TODO GlideImage is supposed to work out of the box in new versions
         GlideImage(
             model = user.picture.thumbnail,
             contentDescription = "Profile image",
