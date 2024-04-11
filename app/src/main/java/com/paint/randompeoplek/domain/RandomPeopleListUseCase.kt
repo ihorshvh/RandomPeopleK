@@ -1,10 +1,14 @@
 package com.paint.randompeoplek.domain
 
 import com.paint.randompeoplek.repository.RandomPeopleListRepository
-import com.paint.randompeoplek.repository.model.*
+import com.paint.randompeoplek.repository.model.Location
+import com.paint.randompeoplek.repository.model.Name
+import com.paint.randompeoplek.repository.model.Picture
+import com.paint.randompeoplek.repository.model.User
+import com.paint.randompeoplek.repository.model.UserResponse
 import javax.inject.Inject
 
-class RandomPeopleListUseCase @Inject constructor(private val randomPeopleListRepository : RandomPeopleListRepository) {
+class RandomPeopleListUseCase @Inject constructor(private val randomPeopleListRepository: RandomPeopleListRepository) {
 
     suspend fun getUserList(userQuantity: String) =
         randomPeopleListRepository.getUserList(userQuantity).toMediatorUserResponse()
@@ -15,27 +19,35 @@ class RandomPeopleListUseCase @Inject constructor(private val randomPeopleListRe
 }
 
 private fun Name.toMediatorName() =
-    com.paint.randompeoplek.domain.model.Name(this.firstName + " " + this.lastName,
-        this.title + " " + this.firstName + " " + this.lastName)
+    com.paint.randompeoplek.domain.model.Name(
+        this.firstName + " " + this.lastName,
+        this.title + " " + this.firstName + " " + this.lastName
+    )
 
 private fun Picture.toMediatorPicture() =
     com.paint.randompeoplek.domain.model.Picture(this.medium, this.thumbnail)
 
-private fun User.toMediatorUser() = com.paint.randompeoplek.domain.model.User(this.name.toMediatorName(),
-    this.location.getAddress(), this.email, this.phone, this.picture.toMediatorPicture())
+private fun User.toMediatorUser() = com.paint.randompeoplek.domain.model.User(
+    this.id,
+    this.name.toMediatorName(),
+    this.location.getAddress(),
+    this.email,
+    this.phone,
+    this.picture.toMediatorPicture()
+)
 
 private fun List<User>.toRepositoryUsers() = this.map { it.toMediatorUser() }
 
-private fun UserResponse.toMediatorUserResponse() : com.paint.randompeoplek.domain.model.UserResponse {
-    return if(this.throwable != null) {
+private fun UserResponse.toMediatorUserResponse(): com.paint.randompeoplek.domain.model.UserResponse {
+    return if (this.throwable != null) {
         com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers(), this.throwable!!)
     } else {
         com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers())
     }
 }
 
-private fun Location.getAddress() : String {
-    val sb : StringBuilder = StringBuilder()
+private fun Location.getAddress(): String {
+    val sb: StringBuilder = StringBuilder()
 
     return sb.append(this.street.number).append(" ")
         .append(this.street.name).append(", ")

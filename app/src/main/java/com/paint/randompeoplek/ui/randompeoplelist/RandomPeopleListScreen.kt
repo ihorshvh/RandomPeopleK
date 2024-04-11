@@ -2,11 +2,28 @@ package com.paint.randompeoplek.ui.randompeoplelist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -71,8 +88,7 @@ fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewM
             LazyColumn {
                 items(
                     items = users,
-                    // TODO consider more specific and unique key
-                    key = { user -> user.name }
+                    key = { user -> user.id }
                 )
                 { user ->
                     RandomPeopleListItem(user = user, onItemClick = { onItemClick(user) })
@@ -89,6 +105,7 @@ fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewM
 val itemModifier = Modifier
     .fillMaxWidth()
     .heightIn(min = 88.dp)
+
 @Composable
 fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
     Surface {
@@ -104,6 +121,7 @@ fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
 }
 
 val listItemImageModifier = Modifier.padding(start = 16.dp, top = 16.dp)
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ListItemImage(user: User) {
@@ -120,6 +138,7 @@ fun ListItemImage(user: User) {
 }
 
 val listItemDescriptionModifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
+
 @Composable
 fun ListItemDescription(user: User) {
     Column(
@@ -137,6 +156,7 @@ fun ListItemDescription(user: User) {
 }
 
 val dividerRowModifier = Modifier.fillMaxWidth()
+
 @Composable
 fun DividerRow() {
     Row(
@@ -189,6 +209,7 @@ fun AppBarPreview() {
 fun RandomPeopleListItemPreview() {
     RandomPeopleKTheme {
         RandomPeopleListItem(user = User(
+            id = "unique_id",
             name = Name("Ire Test", "Mr. Ire Test"),
             location = "8400 Jacksonwile road, Raintown, Greenwaland",
             "email@gmail.com",
@@ -217,42 +238,49 @@ fun RandomPeopleListScreen(users: List<User>) {
 @Composable
 fun RandomPeopleListPreview() {
     RandomPeopleKTheme {
-        RandomPeopleListScreen(listOf(
-            User(
-                name = Name("Ire Test", "Mr. Ire Test"),
-                location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                "email@gmail.com",
-                phone = "+12345678",
-                picture = Picture("", "")
-            ),
-            User(
-                name = Name("Ire Test", "Mr. Ire Test"),
-                location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                "email@gmail.com",
-                phone = "+12345678",
-                picture = Picture("", "")
-            ),
-            User(
-                name = Name("Ire Test", "Mr. Ire Test"),
-                location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                "email@gmail.com",
-                phone = "+12345678",
-                picture = Picture("", "")
-            ),
-            User(
-                name = Name("Ire Test", "Mr. Ire Test"),
-                location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                "email@gmail.com",
-                phone = "+12345678",
-                picture = Picture("", "")
-            ),
-            User(
-                name = Name("Ire Test", "Mr. Ire Test"),
-                location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                "email@gmail.com",
-                phone = "+12345678",
-                picture = Picture("", "")
+        RandomPeopleListScreen(
+            listOf(
+                User(
+                    id = "unique_id",
+                    name = Name("Ire Test", "Mr. Ire Test"),
+                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                    "email@gmail.com",
+                    phone = "+12345678",
+                    picture = Picture("", "")
+                ),
+                User(
+                    id = "unique_id",
+                    name = Name("Ire Test", "Mr. Ire Test"),
+                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                    "email@gmail.com",
+                    phone = "+12345678",
+                    picture = Picture("", "")
+                ),
+                User(
+                    id = "unique_id",
+                    name = Name("Ire Test", "Mr. Ire Test"),
+                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                    "email@gmail.com",
+                    phone = "+12345678",
+                    picture = Picture("", "")
+                ),
+                User(
+                    id = "unique_id",
+                    name = Name("Ire Test", "Mr. Ire Test"),
+                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                    "email@gmail.com",
+                    phone = "+12345678",
+                    picture = Picture("", "")
+                ),
+                User(
+                    id = "unique_id",
+                    name = Name("Ire Test", "Mr. Ire Test"),
+                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                    "email@gmail.com",
+                    phone = "+12345678",
+                    picture = Picture("", "")
+                )
             )
-        ))
+        )
     }
 }

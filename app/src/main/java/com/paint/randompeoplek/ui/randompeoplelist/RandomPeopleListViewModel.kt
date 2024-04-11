@@ -2,9 +2,9 @@ package com.paint.randompeoplek.ui.randompeoplelist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCase
-import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.model.Name
 import com.paint.randompeoplek.domain.model.Picture
 import com.paint.randompeoplek.model.LiveDataResponse
@@ -12,28 +12,35 @@ import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RandomPeopleListViewModel @Inject constructor(private val randomPeopleListUseCase : RandomPeopleListUseCase,
-                                                    private val errorHandlerUseCase: ErrorHandlerUseCase) : ViewModel() {
+class RandomPeopleListViewModel @Inject constructor(
+    private val randomPeopleListUseCase: RandomPeopleListUseCase,
+    private val errorHandlerUseCase: ErrorHandlerUseCase
+) : ViewModel() {
 
-    private val _oneTimeErrorFlow : MutableSharedFlow<ErrorEntity> = MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _oneTimeErrorFlow: MutableSharedFlow<ErrorEntity> =
+        MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    private val _usersResponseFlow : MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Loading())
+    private val _usersResponseFlow: MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Loading())
     val usersResponseFlow = _usersResponseFlow.asStateFlow()
 
-    private var lastLoadingResult : LoadResult<LiveDataResponse<List<User>>> = LoadResult.Loading()
+    private var lastLoadingResult: LoadResult<LiveDataResponse<List<User>>> = LoadResult.Loading()
 
-    val oneTimeErrorFlow : SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
+    val oneTimeErrorFlow: SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
 
     init {
         getRandomPeopleList(USER_QUANTITY)
     }
 
-    fun getRandomPeopleList(userQuantity : String) {
+    fun getRandomPeopleList(userQuantity: String) {
         viewModelScope.launch {
             _usersResponseFlow.value = LoadResult.Loading(lastLoadingResult.data)
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
@@ -62,7 +69,7 @@ class RandomPeopleListViewModel @Inject constructor(private val randomPeopleList
         _usersResponseFlow.value = lastLoadingResult
     }
 
-    suspend fun getUserByFullName(userFullName: String): User? {
+    suspend fun getUserByFullName(userFullName: String): User {
         return randomPeopleListUseCase.getUserByUserName(userFullName).toUiParcelableUser()
     }
 
@@ -81,10 +88,13 @@ private fun Picture.toUiParcelablePicture() =
     com.paint.randompeoplek.ui.model.Picture(this.medium, this.thumbnail)
 
 private fun com.paint.randompeoplek.domain.model.User.toUiParcelableUser() =
-    com.paint.randompeoplek.ui.model.User(this.name.toUiParcelableName(),
+    User(
+        this.id,
+        this.name.toUiParcelableName(),
         this.location,
         this.email,
         this.phone,
-        this.picture.toUiParcelablePicture())
+        this.picture.toUiParcelablePicture()
+    )
 
 private fun List<com.paint.randompeoplek.domain.model.User>.toUiParcelableUsers() = this.map { it.toUiParcelableUser() }

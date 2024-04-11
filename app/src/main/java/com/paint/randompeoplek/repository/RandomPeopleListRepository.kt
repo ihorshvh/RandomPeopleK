@@ -64,7 +64,9 @@ private fun Street.toRepositoryStreet() =
     com.paint.randompeoplek.repository.model.Street(this.number, this.name)
 
 private fun User.toRepositoryUser() =
-    com.paint.randompeoplek.repository.model.User(this.name.toRepositoryName(),
+    com.paint.randompeoplek.repository.model.User(
+        this.id,
+        this.name.toRepositoryName(),
         this.location.toRepositoryLocation(),
         this.email,
         this.phone,
