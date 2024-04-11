@@ -7,6 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,8 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.model.LoadResult
 import com.paint.randompeoplek.ui.model.Name
@@ -56,20 +57,16 @@ fun RandomPeopleAppBar(viewModel: RandomPeopleListViewModel) {
     )
 }
 
-@Suppress("DEPRECATION") // temporary solution
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
     val usersResponseResource by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
 
     val isRefreshing = usersResponseResource is LoadResult.Loading
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
+    val pullRefreshState = rememberPullRefreshState(isRefreshing, { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) })
     val users = usersResponseResource.data?.response ?: emptyList()
 
-    SwipeRefresh(
-        modifier = modifier,
-        state = swipeRefreshState,
-        onRefresh = { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
-    ) {
+    Box(Modifier.pullRefresh(pullRefreshState)) {
         if (users.isNotEmpty()) {
             LazyColumn {
                 items(
@@ -84,6 +81,8 @@ fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewM
         } else {
             RandomPeopleNoUsers(viewModel)
         }
+
+        PullRefreshIndicator(isRefreshing, pullRefreshState, modifier.align(Alignment.TopCenter))
     }
 }
 
