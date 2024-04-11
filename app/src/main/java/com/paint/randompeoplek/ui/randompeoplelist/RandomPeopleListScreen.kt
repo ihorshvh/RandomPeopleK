@@ -115,7 +115,6 @@ fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
             ListItemImage(user = user)
             ListItemDescription(user = user)
         }
-        // TODO check whether divider should be added into LazyColumn directly
         DividerRow()
     }
 }

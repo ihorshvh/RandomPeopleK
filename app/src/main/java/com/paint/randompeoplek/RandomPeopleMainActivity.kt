@@ -35,7 +35,7 @@ fun RandomPeopleApp() {
         ) {
             composable(route = RandomPeopleListScreen.route) {
                 RandomPeopleListScreen {
-                    user -> navController.navigateToProfile(user.name.fullName)
+                    //user -> navController.navigateToProfile(user.name.fullName)
                 }
             }
             composable(
