@@ -89,11 +89,14 @@ private fun com.paint.randompeoplek.service.model.Street.toStorageStreet() =
     com.paint.randompeoplek.storage.entity.Street(this.number, this.name)
 
 private fun com.paint.randompeoplek.service.model.User.toStorageUser() =
-    com.paint.randompeoplek.storage.entity.User(this.name.toStorageName(),
+    com.paint.randompeoplek.storage.entity.User(
+        this.id.uuid,
+        this.name.toStorageName(),
         this.location.toStorageLocation(),
         this.email,
         this.phone,
         this.picture.toStoragePicture(),
-        Calendar.getInstance().time)
+        Calendar.getInstance().time
+    )
 
 private fun List<com.paint.randompeoplek.service.model.User>.toStorageUsers() = this.map { it.toStorageUser() }

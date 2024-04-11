@@ -6,7 +6,7 @@ import retrofit2.http.Query
 
 interface RandomPeopleService {
 
-    @GET("?inc=name,email,phone,location,picture")
+    @GET("?inc=login,name,email,phone,location,picture")
     suspend fun getUserList(@Query("results") userQuantity: String): UserResponse
 
 }
