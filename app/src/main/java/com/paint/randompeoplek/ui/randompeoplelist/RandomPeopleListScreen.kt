@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -59,8 +60,7 @@ fun RandomPeopleAppBar(viewModel: RandomPeopleListViewModel) {
 @Suppress("DEPRECATION") // temporary solution
 @Composable
 fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
-    // TODO consider to change to collectAsStateWithLifecycle()
-    val usersResponseResource by viewModel.usersResponseFlow.collectAsState()
+    val usersResponseResource by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
 
     val isRefreshing = usersResponseResource is LoadResult.Loading
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
