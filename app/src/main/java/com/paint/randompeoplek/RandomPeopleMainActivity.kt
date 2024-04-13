@@ -1,9 +1,10 @@
 package com.paint.randompeoplek
 
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,10 +16,11 @@ import com.paint.randompeoplek.ui.theme.RandomPeopleKTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class RandomPeopleMainActivity : AppCompatActivity() {
+class RandomPeopleMainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         setContent {
             RandomPeopleApp()
         }
