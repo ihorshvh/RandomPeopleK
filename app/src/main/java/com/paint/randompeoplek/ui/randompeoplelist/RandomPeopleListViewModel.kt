@@ -29,10 +29,10 @@ class RandomPeopleListViewModel @Inject constructor(
     private val _oneTimeErrorFlow: MutableSharedFlow<ErrorEntity> =
         MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    private val _usersResponseFlow: MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Loading())
+    private val _usersResponseFlow: MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Initial())
     val usersResponseFlow = _usersResponseFlow.asStateFlow()
 
-    private var lastLoadingResult: LoadResult<LiveDataResponse<List<User>>> = LoadResult.Loading()
+    private var lastLoadingResult: LoadResult<LiveDataResponse<List<User>>> = LoadResult.Initial()
 
     val oneTimeErrorFlow: SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
 
@@ -42,7 +42,11 @@ class RandomPeopleListViewModel @Inject constructor(
 
     fun getRandomPeopleList(userQuantity: String) {
         viewModelScope.launch {
-            _usersResponseFlow.value = LoadResult.Loading(lastLoadingResult.data)
+            if (lastLoadingResult == LoadResult.Initial<LoadResult<LiveDataResponse<List<User>>>>()) {
+                _usersResponseFlow.value = LoadResult.Initial(lastLoadingResult.data)
+            } else {
+                _usersResponseFlow.value = LoadResult.Loading(lastLoadingResult.data)
+            }
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
 
             result.onSuccess {

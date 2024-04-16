@@ -5,6 +5,7 @@
     <string name="label_no_users">Push update button in order to obtain your random users list!</string>
     <string name="warning_empty_cache">Cache is empty</string>
     <string name="action_update">Update</string>
+    <string name="users_loading">Profiles fetching…</string>
 
     <!--Error messages-->
     <string name="error_unknown">Unknown error</string>

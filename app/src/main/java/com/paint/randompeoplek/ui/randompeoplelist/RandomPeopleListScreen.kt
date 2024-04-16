@@ -2,9 +2,11 @@ package com.paint.randompeoplek.ui.randompeoplelist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -80,10 +83,15 @@ fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewM
     val usersResponseResource by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
 
     val isRefreshing = usersResponseResource is LoadResult.Loading
+    val isInitial = usersResponseResource is LoadResult.Initial
     val pullRefreshState = rememberPullRefreshState(isRefreshing, { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) })
     val users = usersResponseResource.data?.response ?: emptyList()
 
-    Box(Modifier.pullRefresh(pullRefreshState)) {
+    Box(modifier.pullRefresh(pullRefreshState)) {
+        if (isInitial) {
+            RandomPeopleInitialLoading()
+            return
+        }
         if (users.isNotEmpty()) {
             LazyColumn {
                 items(
@@ -99,6 +107,31 @@ fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewM
         }
 
         PullRefreshIndicator(isRefreshing, pullRefreshState, modifier.align(Alignment.TopCenter))
+    }
+}
+
+@Composable
+fun RandomPeopleInitialLoading() {
+    val modifier = Modifier
+    Surface(modifier = modifier.fillMaxSize()) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CircularProgressIndicator(
+                modifier = modifier
+                    .width(128.dp)
+                    .height(128.dp),
+                strokeWidth = 10.dp
+            )
+            Spacer(modifier.height(30.dp))
+            Text(
+                text = stringResource(id = R.string.users_loading),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold),
+                modifier = modifier.padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 16.dp)
+            )
+        }
     }
 }
 
