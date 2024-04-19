@@ -44,7 +44,7 @@ class RandomPeopleListViewModel @Inject constructor(
     fun getRandomPeopleList(userQuantity: String) {
         viewModelScope.launch {
             if (_usersResponseFlow.value != LoadResult.Initial<LiveDataResponse<List<User>>>()) {
-                _isRefreshing.emit(true)
+                _isRefreshing.value = true
             }
 
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
@@ -53,19 +53,19 @@ class RandomPeopleListViewModel @Inject constructor(
                     val errorEntity = errorHandlerUseCase.getErrorEntity(it.throwable!!)
 
                     _oneTimeErrorFlow.emit(errorEntity)
-                    _usersResponseFlow.emit(LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers())))
+                    _usersResponseFlow.value = LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers()))
                 } else {
-                    _usersResponseFlow.emit(LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers())))
+                    _usersResponseFlow.value = LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
                 }
 
-                _isRefreshing.emit(false)
+                _isRefreshing.value = false
             }
 
             result.onFailure {
                 // TODO consider adding data even if unknown error
                 _oneTimeErrorFlow.emit(errorHandlerUseCase.getErrorEntity(it))
-                _usersResponseFlow.emit(LoadResult.Error(errorHandlerUseCase.getErrorEntity(it)))
-                _isRefreshing.emit(false)
+                _usersResponseFlow.value = LoadResult.Error(errorHandlerUseCase.getErrorEntity(it))
+                _isRefreshing.value = false
             }
         }
     }
