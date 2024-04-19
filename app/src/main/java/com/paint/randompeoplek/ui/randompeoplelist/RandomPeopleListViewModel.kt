@@ -15,6 +15,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -28,13 +29,13 @@ class RandomPeopleListViewModel @Inject constructor(
 
     private val _oneTimeErrorFlow: MutableSharedFlow<ErrorEntity> =
         MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val oneTimeErrorFlow: SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     private val _usersResponseFlow: MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Initial())
-    val usersResponseFlow = _usersResponseFlow.asStateFlow()
-
-    private var lastLoadingResult: LoadResult<LiveDataResponse<List<User>>> = LoadResult.Initial()
-
-    val oneTimeErrorFlow: SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
+    val usersResponseFlow: StateFlow<LoadResult<LiveDataResponse<List<User>>>> = _usersResponseFlow.asStateFlow()
 
     init {
         getRandomPeopleList(USER_QUANTITY)
@@ -42,35 +43,31 @@ class RandomPeopleListViewModel @Inject constructor(
 
     fun getRandomPeopleList(userQuantity: String) {
         viewModelScope.launch {
-            if (lastLoadingResult == LoadResult.Initial<LoadResult<LiveDataResponse<List<User>>>>()) {
-                _usersResponseFlow.value = LoadResult.Initial(lastLoadingResult.data)
-            } else {
-                _usersResponseFlow.value = LoadResult.Loading(lastLoadingResult.data)
+            if (_usersResponseFlow.value != LoadResult.Initial<LiveDataResponse<List<User>>>()) {
+                _isRefreshing.emit(true)
             }
-            val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
 
+            val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
             result.onSuccess {
                 if (it.throwable != null) {
                     val errorEntity = errorHandlerUseCase.getErrorEntity(it.throwable!!)
 
                     _oneTimeErrorFlow.emit(errorEntity)
-                    setResult(LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers())))
+                    _usersResponseFlow.emit(LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers())))
                 } else {
-                    setResult(LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers())))
+                    _usersResponseFlow.emit(LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers())))
                 }
+
+                _isRefreshing.emit(false)
             }
 
             result.onFailure {
                 // TODO consider adding data even if unknown error
                 _oneTimeErrorFlow.emit(errorHandlerUseCase.getErrorEntity(it))
-                _usersResponseFlow.value = LoadResult.Error(errorHandlerUseCase.getErrorEntity(it))
+                _usersResponseFlow.emit(LoadResult.Error(errorHandlerUseCase.getErrorEntity(it)))
+                _isRefreshing.emit(false)
             }
         }
-    }
-
-    private fun setResult(result: LoadResult<LiveDataResponse<List<User>>>) {
-        lastLoadingResult = result
-        _usersResponseFlow.value = lastLoadingResult
     }
 
     suspend fun getUserByFullName(userFullName: String): User {
@@ -82,7 +79,6 @@ class RandomPeopleListViewModel @Inject constructor(
         const val USER_QUANTITY = "10"
 
     }
-
 }
 
 private fun Name.toUiParcelableName() =

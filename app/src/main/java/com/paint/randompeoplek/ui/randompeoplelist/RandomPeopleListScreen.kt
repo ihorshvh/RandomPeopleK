@@ -80,12 +80,15 @@ fun RandomPeopleAppBar(viewModel: RandomPeopleListViewModel) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
-    val usersResponseResource by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
+    val usersResponse by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
+    val users = usersResponse.data?.response ?: emptyList()
 
-    val isRefreshing = usersResponseResource is LoadResult.Loading
-    val isInitial = usersResponseResource is LoadResult.Initial
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+
+    val isInitial = usersResponse is LoadResult.Initial
+
     val pullRefreshState = rememberPullRefreshState(isRefreshing, { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) })
-    val users = usersResponseResource.data?.response ?: emptyList()
+
 
     Box(modifier.pullRefresh(pullRefreshState)) {
         if (isInitial) {
