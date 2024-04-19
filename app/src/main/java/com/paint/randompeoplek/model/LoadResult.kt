@@ -8,6 +8,8 @@ sealed class LoadResult<T>(
 ) {
     class Initial<T> : LoadResult<T>()
     class Success<T>(data: T) : LoadResult<T>(data)
+
+    // TODO remove when testing classes are refactored
     class Loading<T>(data: T? = null) : LoadResult<T>(data)
     class Error<T>(errorEntity: ErrorEntity, data: T? = null) : LoadResult<T>(data, errorEntity)
 }
