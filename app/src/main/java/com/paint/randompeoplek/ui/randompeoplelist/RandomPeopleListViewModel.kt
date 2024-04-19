@@ -43,7 +43,7 @@ class RandomPeopleListViewModel @Inject constructor(
 
     fun getRandomPeopleList(userQuantity: String) {
         viewModelScope.launch {
-            if (_usersResponseFlow.value != LoadResult.Initial<LiveDataResponse<List<User>>>()) {
+            if (_usersResponseFlow.value !is LoadResult.Initial) {
                 _isRefreshing.value = true
             }
 

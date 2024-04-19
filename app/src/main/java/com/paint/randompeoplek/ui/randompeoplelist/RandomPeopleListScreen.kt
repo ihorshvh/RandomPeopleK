@@ -53,7 +53,6 @@ import com.paint.randompeoplek.ui.model.User
 import com.paint.randompeoplek.ui.theme.RandomPeopleKTheme
 import com.paint.randompeoplek.ui.theme.grey
 
-
 @Composable
 fun RandomPeopleListScreen(viewModel: RandomPeopleListViewModel = hiltViewModel<RandomPeopleListViewModel>(), onItemClick: (user: User) -> Unit) {
     Scaffold(
@@ -82,31 +81,15 @@ fun RandomPeopleAppBar(viewModel: RandomPeopleListViewModel) {
 fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
     val usersResponse by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
     val users = usersResponse.data?.response ?: emptyList()
-
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-
     val isInitial = usersResponse is LoadResult.Initial
-
     val pullRefreshState = rememberPullRefreshState(isRefreshing, { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) })
-
 
     Box(modifier.pullRefresh(pullRefreshState)) {
         if (isInitial) {
             RandomPeopleInitialLoading()
-            return
-        }
-        if (users.isNotEmpty()) {
-            LazyColumn {
-                items(
-                    items = users,
-                    key = { user -> user.id }
-                )
-                { user ->
-                    RandomPeopleListItem(user = user, onItemClick = { onItemClick(user) })
-                }
-            }
         } else {
-            RandomPeopleNoUsers(viewModel)
+            RandomPeopleListUsers(users, viewModel, onItemClick)
         }
 
         PullRefreshIndicator(isRefreshing, pullRefreshState, modifier.align(Alignment.TopCenter))
@@ -135,6 +118,23 @@ fun RandomPeopleInitialLoading() {
                 modifier = modifier.padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 16.dp)
             )
         }
+    }
+}
+
+@Composable
+fun RandomPeopleListUsers(users: List<User>, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
+    if (users.isNotEmpty()) {
+        LazyColumn {
+            items(
+                items = users,
+                key = { user -> user.id }
+            )
+            { user ->
+                RandomPeopleListItem(user = user, onItemClick = { onItemClick(user) })
+            }
+        }
+    } else {
+        RandomPeopleNoUsers(viewModel)
     }
 }
 
