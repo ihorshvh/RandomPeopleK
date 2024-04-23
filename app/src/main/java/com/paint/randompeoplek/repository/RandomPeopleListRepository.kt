@@ -33,8 +33,7 @@ class RandomPeopleListRepository @Inject constructor(
     }
 
     suspend fun getUserByUserName(userName: String): com.paint.randompeoplek.repository.model.User {
-        val names = userName.split(" ")
-        return userDao.getUserByUserName(names[1], names[2]).toRepositoryUser()
+        return userDao.getUserById(userName).toRepositoryUser()
     }
 
     companion object {

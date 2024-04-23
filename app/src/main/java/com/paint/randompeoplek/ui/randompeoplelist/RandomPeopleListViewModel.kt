@@ -71,8 +71,8 @@ class RandomPeopleListViewModel @Inject constructor(
         }
     }
 
-    suspend fun getUserByFullName(userFullName: String): User {
-        return randomPeopleListUseCase.getUserByUserName(userFullName).toUiParcelableUser()
+    suspend fun getUserById(userId: String): User {
+        return randomPeopleListUseCase.getUserByUserName(userId).toUiParcelableUser()
     }
 
     companion object {

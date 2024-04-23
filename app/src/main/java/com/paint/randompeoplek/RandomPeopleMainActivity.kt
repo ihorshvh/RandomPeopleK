@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.paint.randompeoplek.navigation.RandomPeopleListScreen
 import com.paint.randompeoplek.navigation.RandomPeopleProfile
 import com.paint.randompeoplek.ui.randompeoplelist.RandomPeopleListScreen
+import com.paint.randompeoplek.ui.randompeopleprofile.UserProfileScreen
 import com.paint.randompeoplek.ui.theme.RandomPeopleKTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,15 +38,15 @@ fun RandomPeopleApp() {
         ) {
             composable(route = RandomPeopleListScreen.route) {
                 RandomPeopleListScreen {
-                    //user -> navController.navigateToProfile(user.name.fullName)
+                    user -> navController.navigateToProfile(user.id)
                 }
             }
             composable(
                 route = RandomPeopleProfile.routeWithArgs,
                 arguments = RandomPeopleProfile.arguments
             ) { backStackEntry ->
-                //val userName = backStackEntry.arguments?.getString(RandomPeopleProfile.userNameArg).orEmpty()
-                //UserProfileScreen(viewModel, userName) { navController.navigateSingleTopTo(RandomPeopleList.route) }
+                val userId = backStackEntry.arguments?.getString(RandomPeopleProfile.userIdArg).orEmpty()
+                UserProfileScreen(userId = userId) { navController.navigateSingleTopTo(RandomPeopleListScreen.route) }
             }
         }
     }

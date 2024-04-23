@@ -14,7 +14,7 @@ object RandomPeopleListScreen : Destination {
 
 object RandomPeopleProfile : Destination {
     override val route = "random_people_profile"
-    const val userNameArg = "user_name"
-    val routeWithArgs = "${route}/{${userNameArg}}"
-    val arguments = listOf(navArgument(userNameArg) { type = NavType.StringType })
+    const val userIdArg = "user_id"
+    val routeWithArgs = "${route}/{${userIdArg}}"
+    val arguments = listOf(navArgument(userIdArg) { type = NavType.StringType })
 }

@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.paint.randompeoplek.R
@@ -23,10 +24,10 @@ import com.paint.randompeoplek.ui.randompeoplelist.RandomPeopleListViewModel
 
 
 @Composable
-fun UserProfileScreen(viewModel: RandomPeopleListViewModel, userName: String, onClick: () -> Unit) {
+fun UserProfileScreen(viewModel: RandomPeopleListViewModel = hiltViewModel<RandomPeopleListViewModel>(), userId: String, onClick: () -> Unit) {
     Scaffold(
         topBar = { AppBar(onClick) },
-        content = { padding -> Content(Modifier.padding(padding), userName, viewModel)}
+        content = { padding -> Content(Modifier.padding(padding), userId, viewModel)}
     )
 }
 
@@ -48,7 +49,7 @@ fun AppBar(onClick: () -> Unit) {
 }
 
 @Composable
-fun Content(modifier: Modifier, userName: String, viewModel: RandomPeopleListViewModel) {
+fun Content(modifier: Modifier, userId: String, viewModel: RandomPeopleListViewModel) {
     Surface(modifier = modifier.fillMaxSize()) {
 
         var userState: User? by remember { mutableStateOf(null) }
@@ -56,7 +57,7 @@ fun Content(modifier: Modifier, userName: String, viewModel: RandomPeopleListVie
         if (userState == null) {
             UserLoading()
             LaunchedEffect(userState) {
-                userState = viewModel.getUserByFullName(userName)
+                userState = viewModel.getUserById(userId)
             }
         } else {
             val user = userState as User

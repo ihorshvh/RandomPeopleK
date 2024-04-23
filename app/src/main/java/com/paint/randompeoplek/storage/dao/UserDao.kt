@@ -12,8 +12,8 @@ interface UserDao {
     @Query("SELECT * FROM user")
     suspend fun getAll() : List<User>
 
-    @Query("SELECT * FROM user WHERE first == :first AND last == :last")
-    suspend fun getUserByUserName(first: String, last: String) : User
+    @Query("SELECT * FROM user WHERE id == :id")
+    suspend fun getUserById(id: String) : User
 
     @Insert
     suspend fun insertAll(users : List<User>)
