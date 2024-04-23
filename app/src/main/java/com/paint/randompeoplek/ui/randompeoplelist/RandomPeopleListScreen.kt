@@ -1,5 +1,7 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,21 +33,25 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.paint.randompeoplek.R
+import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
@@ -79,11 +85,20 @@ fun RandomPeopleAppBar(viewModel: RandomPeopleListViewModel) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
+    val context = LocalContext.current
+
     val usersResponse by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
     val users = usersResponse.data ?: emptyList()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val isInitial = usersResponse is Response.Initial
     val pullRefreshState = rememberPullRefreshState(isRefreshing, { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) })
+
+    LaunchedEffect(key1 = true) {
+        viewModel.oneTimeErrorFlow.collect {
+            val oneTimeErrorMessage = getOneTimeErrorMessage(context, it)
+            Toast.makeText(context, oneTimeErrorMessage, Toast.LENGTH_LONG).show()
+        }
+    }
 
     Box(modifier.pullRefresh(pullRefreshState)) {
         if (isInitial) {
@@ -93,6 +108,14 @@ fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewM
         }
 
         PullRefreshIndicator(isRefreshing, pullRefreshState, modifier.align(Alignment.TopCenter))
+    }
+}
+
+private fun getOneTimeErrorMessage(context: Context, error: ErrorEntity) : String {
+    return when (error) {
+        is ErrorEntity.Network -> getString(context, R.string.error_outdated_users_loaded)
+        is ErrorEntity.ServiceUnavailable -> getString(context, R.string.error_unknown)
+        else -> getString(context, R.string.error_unknown)
     }
 }
 
