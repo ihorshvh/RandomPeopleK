@@ -46,7 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.paint.randompeoplek.R
-import com.paint.randompeoplek.model.LoadResult
+import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
 import com.paint.randompeoplek.ui.model.User
@@ -80,9 +80,9 @@ fun RandomPeopleAppBar(viewModel: RandomPeopleListViewModel) {
 @Composable
 fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
     val usersResponse by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
-    val users = usersResponse.data?.response ?: emptyList()
+    val users = usersResponse.data ?: emptyList()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-    val isInitial = usersResponse is LoadResult.Initial
+    val isInitial = usersResponse is Response.Initial
     val pullRefreshState = rememberPullRefreshState(isRefreshing, { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) })
 
     Box(modifier.pullRefresh(pullRefreshState)) {

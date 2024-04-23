@@ -7,8 +7,7 @@ import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCase
 import com.paint.randompeoplek.domain.model.Name
 import com.paint.randompeoplek.domain.model.Picture
-import com.paint.randompeoplek.model.LiveDataResponse
-import com.paint.randompeoplek.model.LoadResult
+import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
@@ -28,14 +27,18 @@ class RandomPeopleListViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _oneTimeErrorFlow: MutableSharedFlow<ErrorEntity> =
-        MutableSharedFlow(replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+        MutableSharedFlow(
+            replay = 0,
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST
+        )
     val oneTimeErrorFlow: SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
-    private val _usersResponseFlow: MutableStateFlow<LoadResult<LiveDataResponse<List<User>>>> = MutableStateFlow(LoadResult.Initial())
-    val usersResponseFlow: StateFlow<LoadResult<LiveDataResponse<List<User>>>> = _usersResponseFlow.asStateFlow()
+    private val _usersResponseFlow: MutableStateFlow<Response<List<User>>> = MutableStateFlow(Response.Initial())
+    val usersResponseFlow: StateFlow<Response<List<User>>> = _usersResponseFlow.asStateFlow()
 
     init {
         getRandomPeopleList(USER_QUANTITY)
@@ -43,29 +46,27 @@ class RandomPeopleListViewModel @Inject constructor(
 
     fun getRandomPeopleList(userQuantity: String) {
         viewModelScope.launch {
-            if (_usersResponseFlow.value !is LoadResult.Initial) {
+            if (_usersResponseFlow.value !is Response.Initial) {
                 _isRefreshing.value = true
             }
 
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
             result.onSuccess {
                 if (it.throwable != null) {
-                    val errorEntity = errorHandlerUseCase.getErrorEntity(it.throwable!!)
-
+                    val errorEntity = errorHandlerUseCase.getErrorEntity(it.throwable)
                     _oneTimeErrorFlow.emit(errorEntity)
-                    _usersResponseFlow.value = LoadResult.Error(errorEntity, LiveDataResponse(it.users.toUiParcelableUsers()))
+
+                    _usersResponseFlow.value = Response.Error(errorEntity, it.users.toUiParcelableUsers())
                 } else {
-                    _usersResponseFlow.value = LoadResult.Success(LiveDataResponse(it.users.toUiParcelableUsers()))
+                    _usersResponseFlow.value = Response.Success(it.users.toUiParcelableUsers())
                 }
 
                 _isRefreshing.value = false
             }
 
             result.onFailure {
-                // TODO consider adding data even if unknown error
-                _oneTimeErrorFlow.emit(errorHandlerUseCase.getErrorEntity(it))
-                _usersResponseFlow.value = LoadResult.Error(errorHandlerUseCase.getErrorEntity(it))
-                _isRefreshing.value = false
+                val errorEntity = errorHandlerUseCase.getErrorEntity(it)
+                _oneTimeErrorFlow.emit(errorEntity)
             }
         }
     }

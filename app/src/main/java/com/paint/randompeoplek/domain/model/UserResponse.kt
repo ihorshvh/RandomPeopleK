@@ -11,9 +11,8 @@ class UserResponse {
         this.users = users
     }
 
-    constructor(users: List<User>, throwable: Throwable) {
+    constructor(users: List<User>, throwable: Throwable?) {
         this.users = users
         this.throwable = throwable
     }
-
 }

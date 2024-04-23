@@ -10,12 +10,9 @@ import javax.inject.Inject
 
 class RandomPeopleListUseCase @Inject constructor(private val randomPeopleListRepository: RandomPeopleListRepository) {
 
-    suspend fun getUserList(userQuantity: String) =
-        randomPeopleListRepository.getUserList(userQuantity).toMediatorUserResponse()
+    suspend fun getUserList(userQuantity: String) = randomPeopleListRepository.getUserList(userQuantity).toMediatorUserResponse()
 
-    suspend fun getUserByUserName(userName: String) =
-        randomPeopleListRepository.getUserByUserName(userName).toMediatorUser()
-
+    suspend fun getUserByUserName(userName: String) = randomPeopleListRepository.getUserByUserName(userName).toMediatorUser()
 }
 
 private fun Name.toMediatorName() =
@@ -40,7 +37,7 @@ private fun List<User>.toRepositoryUsers() = this.map { it.toMediatorUser() }
 
 private fun UserResponse.toMediatorUserResponse(): com.paint.randompeoplek.domain.model.UserResponse {
     return if (this.throwable != null) {
-        com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers(), this.throwable!!)
+        com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers(), this.throwable)
     } else {
         com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers())
     }
