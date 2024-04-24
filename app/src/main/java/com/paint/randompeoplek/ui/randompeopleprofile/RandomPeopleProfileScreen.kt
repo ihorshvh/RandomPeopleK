@@ -11,6 +11,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -60,9 +61,7 @@ fun Content(modifier: Modifier, userId: String, viewModel: RandomPeopleProfileVi
         when(userResponse) {
             is Response.Initial -> ProfileLoading()
             is Response.Success -> ProfileMapping(userResponse.data)
-            else -> {
-                // TODO show unexpected error screen
-            }
+            else -> ProfileMappingError()
         }
     }
 }
@@ -83,12 +82,15 @@ fun ProfileLoading() {
 
 @Composable
 fun ProfileMapping(user: User?) {
-    if (user == null) return // TODO show unexpected error screen
-    Column {
-        ProfileImage(user.picture)
-        ProfileName(user.name)
-        ProfileLocation(user.location)
-        ProfileContactInformation(user.phone, user.email)
+    if (user != null) {
+        Column {
+            ProfileImage(user.picture)
+            ProfileName(user.name)
+            ProfileLocation(user.location)
+            ProfileContactInformation(user.phone, user.email)
+        }
+    } else {
+        ProfileMappingError()
     }
 }
 
@@ -211,8 +213,39 @@ fun TextWithTheImageToTheLeft(image: @Composable () -> Unit, text: @Composable (
     }
 }
 
+@Composable
+fun ProfileMappingError() {
+    val modifier = Modifier.fillMaxSize()
+
+    Surface(modifier = modifier) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_profile_load_error),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(150.dp)
+                    .padding(start = 16.dp)
+            )
+            Text(
+                text = stringResource(R.string.error_mapping_profile),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold)
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun UserLoadingPreview() {
     ProfileLoading()
+}
+
+@Preview
+@Composable
+fun ProfileMappingErrorPreview() {
+    ProfileMappingError()
 }
