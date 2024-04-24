@@ -226,7 +226,10 @@ fun DividerRow() {
 @Composable
 fun RandomPeopleNoUsers(viewModel: RandomPeopleListViewModel) {
     Surface(modifier = Modifier.fillMaxSize()) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = stringResource(id = R.string.label_no_users),
                 textAlign = TextAlign.Center,
