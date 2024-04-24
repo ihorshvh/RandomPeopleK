@@ -14,17 +14,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.paint.randompeoplek.R
+import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
 import com.paint.randompeoplek.ui.model.User
-import com.paint.randompeoplek.ui.randompeoplelist.RandomPeopleListViewModel
-
 
 @Composable
-fun UserProfileScreen(viewModel: RandomPeopleListViewModel = hiltViewModel<RandomPeopleListViewModel>(), userId: String, onClick: () -> Unit) {
+fun UserProfileScreen(viewModel: RandomPeopleProfileViewModel = hiltViewModel<RandomPeopleProfileViewModel>(), userId: String, onClick: () -> Unit) {
     Scaffold(
         topBar = { AppBar(onClick) },
         content = { padding -> Content(Modifier.padding(padding), userId, viewModel)}
@@ -49,30 +49,26 @@ fun AppBar(onClick: () -> Unit) {
 }
 
 @Composable
-fun Content(modifier: Modifier, userId: String, viewModel: RandomPeopleListViewModel) {
+fun Content(modifier: Modifier, userId: String, viewModel: RandomPeopleProfileViewModel) {
     Surface(modifier = modifier.fillMaxSize()) {
+        val userResponse by viewModel.userResponseFlow.collectAsStateWithLifecycle()
 
-        var userState: User? by remember { mutableStateOf(null) }
+        LaunchedEffect(true) {
+            viewModel.getUserById(userId)
+        }
 
-        if (userState == null) {
-            UserLoading()
-            LaunchedEffect(userState) {
-                userState = viewModel.getUserById(userId)
-            }
-        } else {
-            val user = userState as User
-            Column {
-                ProfileImage(user.picture)
-                ProfileName(user.name)
-                ProfileLocation(user.location)
-                ProfileContactInformation(user.phone, user.email)
+        when(userResponse) {
+            is Response.Initial -> ProfileLoading()
+            is Response.Success -> ProfileMapping(userResponse.data)
+            else -> {
+                // TODO show unexpected error screen
             }
         }
     }
 }
 
 @Composable
-fun UserLoading() {
+fun ProfileLoading() {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -82,6 +78,17 @@ fun UserLoading() {
                 modifier = Modifier.size(160.dp)
             )
         }
+    }
+}
+
+@Composable
+fun ProfileMapping(user: User?) {
+    if (user == null) return // TODO show unexpected error screen
+    Column {
+        ProfileImage(user.picture)
+        ProfileName(user.name)
+        ProfileLocation(user.location)
+        ProfileContactInformation(user.phone, user.email)
     }
 }
 
@@ -207,5 +214,5 @@ fun TextWithTheImageToTheLeft(image: @Composable () -> Unit, text: @Composable (
 @Preview
 @Composable
 fun UserLoadingPreview() {
-    UserLoading()
+    ProfileLoading()
 }

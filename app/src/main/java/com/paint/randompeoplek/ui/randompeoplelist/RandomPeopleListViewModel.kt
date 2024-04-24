@@ -5,10 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCase
-import com.paint.randompeoplek.domain.model.Name
-import com.paint.randompeoplek.domain.model.Picture
 import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.User
+import com.paint.randompeoplek.ui.model.toUiParcelableUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -71,31 +70,7 @@ class RandomPeopleListViewModel @Inject constructor(
         }
     }
 
-    suspend fun getUserById(userId: String): User {
-        return randomPeopleListUseCase.getUserByUserName(userId).toUiParcelableUser()
-    }
-
     companion object {
-
         const val USER_QUANTITY = "10"
-
     }
 }
-
-private fun Name.toUiParcelableName() =
-    com.paint.randompeoplek.ui.model.Name(this.shortName, this.fullName)
-
-private fun Picture.toUiParcelablePicture() =
-    com.paint.randompeoplek.ui.model.Picture(this.medium, this.thumbnail)
-
-private fun com.paint.randompeoplek.domain.model.User.toUiParcelableUser() =
-    User(
-        this.id,
-        this.name.toUiParcelableName(),
-        this.location,
-        this.email,
-        this.phone,
-        this.picture.toUiParcelablePicture()
-    )
-
-private fun List<com.paint.randompeoplek.domain.model.User>.toUiParcelableUsers() = this.map { it.toUiParcelableUser() }

@@ -32,8 +32,8 @@ class RandomPeopleListRepository @Inject constructor(
         return UserResponse(userDao.getAll().toRepositoryUsers())
     }
 
-    suspend fun getUserByUserName(userName: String): com.paint.randompeoplek.repository.model.User {
-        return userDao.getUserById(userName).toRepositoryUser()
+    suspend fun getUserById(userId: String): com.paint.randompeoplek.repository.model.User {
+        return userDao.getUserById(userId).toRepositoryUser()
     }
 
     companion object {
@@ -41,9 +41,7 @@ class RandomPeopleListRepository @Inject constructor(
         private val FRESH_TIMEOUT = TimeUnit.SECONDS.toMillis(15)
 
         fun getTimeout() = Date(Calendar.getInstance().time.time - FRESH_TIMEOUT)
-
     }
-
 }
 
 private fun Location.toRepositoryLocation() =
