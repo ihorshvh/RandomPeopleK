@@ -23,6 +23,8 @@ import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
 import com.paint.randompeoplek.ui.model.User
+import com.paint.randompeoplek.ui.screen.ScreenInfo
+import com.paint.randompeoplek.ui.screen.rememberScreenInfo
 
 @Composable
 fun UserProfileScreen(viewModel: RandomPeopleProfileViewModel = hiltViewModel<RandomPeopleProfileViewModel>(), userId: String, onClick: () -> Unit) {
@@ -83,20 +85,35 @@ fun ProfileLoading() {
 @Composable
 fun ProfileMapping(user: User?) {
     if (user != null) {
-        Column {
-            ProfileImage(user.picture)
-            ProfileName(user.name)
-            ProfileLocation(user.location)
-            ProfileContactInformation(user.phone, user.email)
-        }
+        ProfileMappingScreen(user)
     } else {
         ProfileMappingError()
     }
 }
 
+@Composable
+fun ProfileMappingScreen(user: User) {
+    val screenInfo = rememberScreenInfo()
+    if (screenInfo.screenOrientation == ScreenInfo.ScreenOrientation.Portrait) {
+        ProfileMappingScreenPortrait(user)
+    } else {
+        ProfileMappingScreenLandscape(user)
+    }
+}
+
+@Composable
+fun ProfileMappingScreenPortrait(user: User) {
+    Column {
+        ProfileImagePortrait(user.picture)
+        ProfileName(user.name)
+        ProfileLocation(user.location)
+        ProfileContactInformation(user.phone, user.email)
+    }
+}
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProfileImage(picture: Picture) {
+fun ProfileImagePortrait(picture: Picture) {
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -210,6 +227,43 @@ fun TextWithTheImageToTheLeft(image: @Composable () -> Unit, text: @Composable (
     ) {
         image()
         text()
+    }
+}
+
+@Composable
+fun ProfileMappingScreenLandscape(user: User) {
+    Row {
+        ProfileImageLandscape(user.picture)
+        Column(
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .padding(top = 16.dp, end = 16.dp)
+        ) {
+            ProfileName(user.name)
+            ProfileLocation(user.location)
+            ProfileContactInformation(user.phone, user.email)
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun ProfileImageLandscape(picture: Picture) {
+    Column(
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+    ) {
+        GlideImage(
+            model = picture.medium,
+            contentDescription = "Profile image",
+            modifier = Modifier
+                .size(160.dp)
+                .clip(CircleShape)
+        )
     }
 }
 
