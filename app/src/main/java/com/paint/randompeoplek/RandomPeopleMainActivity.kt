@@ -21,6 +21,7 @@ class RandomPeopleMainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         installSplashScreen()
         setContent {
             RandomPeopleApp()
