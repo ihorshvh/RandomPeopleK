@@ -7,4 +7,5 @@ data class Location(
     @SerializedName("city") val city : String,
     @SerializedName("state") val state: String,
     @SerializedName("country") val country : String,
-    @SerializedName("postcode") val postCode: String)
+    @SerializedName("postcode") val postCode: String
+)

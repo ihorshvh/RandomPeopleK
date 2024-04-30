@@ -186,7 +186,7 @@ fun ListItemImage(user: User) {
     Column(modifier = listItemImageModifier) {
         GlideImage(
             model = user.picture.thumbnail,
-            contentDescription = stringResource(id = R.string.item_image_description),
+            contentDescription = stringResource(id = R.string.image_description),
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
@@ -238,7 +238,7 @@ fun RandomPeopleNoUsers(viewModel: PeopleListViewModel) {
             )
             Image(
                 painter = painterResource(id = R.drawable.ic_update_img_layout),
-                contentDescription = stringResource(id = R.string.no_users_image_description),
+                contentDescription = stringResource(id = R.string.description_no_users_image),
                 modifier = Modifier
                     .width(100.dp)
                     .height(100.dp)

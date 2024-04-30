@@ -18,12 +18,12 @@ import javax.inject.Inject
 class RandomPeopleProfileViewModel @Inject constructor(
     private val randomPeopleProfileUseCase: RandomPeopleProfileUseCase,
     private val errorHandlerUseCase: ErrorHandlerUseCase
-) : ViewModel() {
+) : ViewModel(), PeopleProfileViewModel {
 
     private val _userResponseFlow: MutableStateFlow<Response<User>> = MutableStateFlow(Response.Initial())
     val userResponseFlow: StateFlow<Response<User>> = _userResponseFlow.asStateFlow()
 
-    fun getUserById(userId: String) {
+    override fun getUserById(userId: String) {
         viewModelScope.launch {
             val result = runCatching { randomPeopleProfileUseCase.getUserById(userId) }
             result.onSuccess {

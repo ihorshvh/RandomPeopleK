@@ -9,4 +9,5 @@ data class User(
     @SerializedName("location") val location : Location,
     @SerializedName("email") val email : String,
     @SerializedName("phone") val phone : String,
-    @SerializedName("picture") val picture : Picture)
+    @SerializedName("picture") val picture : Picture
+)

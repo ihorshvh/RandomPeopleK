@@ -36,16 +36,20 @@ fun UserProfileScreen(viewModel: RandomPeopleProfileViewModel = hiltViewModel<Ra
 
 @Composable
 fun AppBar(onClick: () -> Unit) {
+    val modifier = Modifier.height(56.dp)
     TopAppBar(
         title = {
             Text(text = "")
         },
-        modifier = Modifier.height(56.dp),
+        modifier = modifier,
         navigationIcon = {
             IconButton(
                 onClick = onClick,
             ) {
-                Icon(painter = painterResource(R.drawable.ic_back_img), contentDescription = "Navigation icon")
+                Icon(
+                    painter = painterResource(R.drawable.ic_back_img),
+                    contentDescription = stringResource(id = R.string.description_navigation_image)
+                )
             }
         }
     )
@@ -61,69 +65,69 @@ fun Content(modifier: Modifier, userId: String, viewModel: RandomPeopleProfileVi
         }
 
         when(userResponse) {
-            is Response.Initial -> ProfileLoading()
-            is Response.Success -> ProfileMapping(userResponse.data)
-            else -> ProfileMappingError()
+            is Response.Initial -> ProfileLoading(modifier)
+            is Response.Success -> ProfileMapping(modifier, userResponse.data)
+            else -> ProfileMappingError(modifier)
         }
     }
 }
 
 @Composable
-fun ProfileLoading() {
-    Surface(modifier = Modifier.fillMaxSize()) {
+fun ProfileLoading(modifier: Modifier) {
+    Surface(modifier = modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CircularProgressIndicator(
-                modifier = Modifier.size(160.dp)
+                modifier = modifier.size(160.dp)
             )
         }
     }
 }
 
 @Composable
-fun ProfileMapping(user: User?) {
+fun ProfileMapping(modifier: Modifier, user: User?) {
     if (user != null) {
-        ProfileMappingScreen(user)
+        ProfileMappingScreen(modifier, user)
     } else {
-        ProfileMappingError()
+        ProfileMappingError(modifier)
     }
 }
 
 @Composable
-fun ProfileMappingScreen(user: User) {
+fun ProfileMappingScreen(modifier: Modifier, user: User) {
     val screenInfo = rememberScreenInfo()
     if (screenInfo.screenOrientation == ScreenInfo.ScreenOrientation.Portrait) {
-        ProfileMappingScreenPortrait(user)
+        ProfileMappingScreenPortrait(modifier, user)
     } else {
-        ProfileMappingScreenLandscape(user)
+        ProfileMappingScreenLandscape(modifier, user)
     }
 }
 
 @Composable
-fun ProfileMappingScreenPortrait(user: User) {
+fun ProfileMappingScreenPortrait(modifier: Modifier, user: User) {
     Column {
-        ProfileImagePortrait(user.picture)
-        ProfileName(user.name)
-        ProfileLocation(user.location)
-        ProfileContactInformation(user.phone, user.email)
+        ProfileImagePortrait(modifier, user.picture)
+        ProfileName(modifier, user.name)
+        ProfileLocation(modifier, user.location)
+        ProfileContactInformation(modifier, user.phone, user.email)
     }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProfileImagePortrait(picture: Picture) {
+fun ProfileImagePortrait(modifier: Modifier, picture: Picture) {
     Row(
         horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(top = 16.dp, bottom = 24.dp)
     ) {
         GlideImage(
             model = picture.medium,
-            contentDescription = "Profile image",
-            modifier = Modifier
+            contentDescription = stringResource(id = R.string.image_description),
+            modifier = modifier
                 .size(160.dp)
                 .clip(CircleShape)
         )
@@ -131,13 +135,13 @@ fun ProfileImagePortrait(picture: Picture) {
 }
 
 @Composable
-fun ProfileName(name: Name){
+fun ProfileName(modifier: Modifier, name: Name){
     TextWithTheImageToTheLeft(
         {
             Image(
                 painter = painterResource(R.drawable.ic_user_img),
                 contentDescription = null,
-                modifier = Modifier
+                modifier = modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
             )
@@ -146,20 +150,20 @@ fun ProfileName(name: Name){
             Text(
                 text = name.fullName,
                 style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = modifier.padding(horizontal = 8.dp)
             )
         }
     )
 }
 
 @Composable
-fun ProfileLocation(location: String) {
+fun ProfileLocation(modifier: Modifier, location: String) {
     TextWithTheImageToTheLeft(
         {
             Image(
                 painter = painterResource(R.drawable.ic_location_img),
                 contentDescription = null,
-                modifier = Modifier
+                modifier = modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
             )
@@ -168,25 +172,25 @@ fun ProfileLocation(location: String) {
             Text(
                 text = location,
                 style = MaterialTheme.typography.h3,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = modifier.padding(horizontal = 8.dp)
             )
         }
     )
 }
 
 @Composable
-fun ProfileContactInformation(phone: String, email: String) {
+fun ProfileContactInformation(modifier: Modifier, phone: String, email: String) {
     Text(
         text = stringResource(R.string.label_contact_info),
         style = MaterialTheme.typography.h3.copy(fontWeight = FontWeight.Bold),
-        modifier = Modifier.padding(start = 16.dp, top = 32.dp, end = 16.dp)
+        modifier = modifier.padding(start = 16.dp, top = 32.dp, end = 16.dp)
     )
     TextWithTheImageToTheLeft(
         {
             Image(
                 painter = painterResource(R.drawable.ic_phone_img),
                 contentDescription = null,
-                modifier = Modifier
+                modifier = modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
             )
@@ -195,7 +199,7 @@ fun ProfileContactInformation(phone: String, email: String) {
             Text(
                 text = phone,
                 style = MaterialTheme.typography.h3,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = modifier.padding(horizontal = 8.dp)
             )
         }
     )
@@ -204,7 +208,7 @@ fun ProfileContactInformation(phone: String, email: String) {
             Image(
                 painter = painterResource(R.drawable.ic_email_img),
                 contentDescription = null,
-                modifier = Modifier
+                modifier = modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
             )
@@ -213,7 +217,7 @@ fun ProfileContactInformation(phone: String, email: String) {
             Text(
                 text = email,
                 style = MaterialTheme.typography.h3,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = modifier.padding(horizontal = 8.dp)
             )
         }
     )
@@ -231,19 +235,19 @@ fun TextWithTheImageToTheLeft(image: @Composable () -> Unit, text: @Composable (
 }
 
 @Composable
-fun ProfileMappingScreenLandscape(user: User) {
+fun ProfileMappingScreenLandscape(modifier: Modifier, user: User) {
     Row {
         ProfileImageLandscape(user.picture)
         Column(
             verticalArrangement = Arrangement.Top,
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
                 .padding(top = 16.dp, end = 16.dp)
         ) {
-            ProfileName(user.name)
-            ProfileLocation(user.location)
-            ProfileContactInformation(user.phone, user.email)
+            ProfileName(modifier, user.name)
+            ProfileLocation(modifier, user.location)
+            ProfileContactInformation(modifier, user.phone, user.email)
         }
     }
 }
@@ -259,7 +263,7 @@ fun ProfileImageLandscape(picture: Picture) {
     ) {
         GlideImage(
             model = picture.medium,
-            contentDescription = "Profile image",
+            contentDescription = stringResource(id = R.string.image_description),
             modifier = Modifier
                 .size(160.dp)
                 .clip(CircleShape)
@@ -268,9 +272,7 @@ fun ProfileImageLandscape(picture: Picture) {
 }
 
 @Composable
-fun ProfileMappingError() {
-    val modifier = Modifier.fillMaxSize()
-
+fun ProfileMappingError(modifier: Modifier) {
     Surface(modifier = modifier) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -279,7 +281,7 @@ fun ProfileMappingError() {
             Image(
                 painter = painterResource(R.drawable.ic_profile_load_error),
                 contentDescription = null,
-                modifier = Modifier
+                modifier = modifier
                     .size(150.dp)
                     .padding(start = 16.dp)
             )
@@ -295,11 +297,43 @@ fun ProfileMappingError() {
 @Preview
 @Composable
 fun UserLoadingPreview() {
-    ProfileLoading()
+    val modifier = Modifier
+    ProfileLoading(modifier)
+}
+
+@Preview
+@Composable
+fun UserMappingScreenPortrait() {
+    val modifier = Modifier
+    val user = User(
+        id = "unique_id",
+        name = Name("Ire Test", "Mr. Ire Test"),
+        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+        "email@gmail.com",
+        phone = "+12345678",
+        picture = Picture("", "")
+    )
+    ProfileMappingScreenPortrait(modifier, user)
+}
+
+@Preview
+@Composable
+fun UserMappingScreenLandscape() {
+    val modifier = Modifier
+    val user = User(
+        id = "unique_id",
+        name = Name("Ire Test", "Mr. Ire Test"),
+        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+        "email@gmail.com",
+        phone = "+12345678",
+        picture = Picture("", "")
+    )
+    ProfileMappingScreenLandscape(modifier, user)
 }
 
 @Preview
 @Composable
 fun ProfileMappingErrorPreview() {
-    ProfileMappingError()
+    val modifier = Modifier
+    ProfileMappingError(modifier)
 }

@@ -14,6 +14,7 @@
     <!--Server errors-->
     <string name="error_lost_connection">Unable to resolve host</string>
     <!--Resource descriptions-->
-    <string name="item_image_description">Profile image</string>
-    <string name="no_users_image_description">To refresh the user list</string>
+    <string name="image_description">Profile image</string>
+    <string name="description_no_users_image">To refresh the user list</string>
+    <string name="description_navigation_image">Navigation image</string>
 </resources>

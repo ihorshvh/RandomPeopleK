@@ -8,4 +8,5 @@ data class Location(
     @ColumnInfo(name = "city") val city : String,
     @ColumnInfo(name = "state") val state: String,
     @ColumnInfo(name = "country") val country : String,
-    @ColumnInfo(name = "postcode") val postCode: String)
+    @ColumnInfo(name = "postcode") val postCode: String
+)

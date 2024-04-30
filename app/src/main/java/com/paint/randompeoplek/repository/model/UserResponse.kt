@@ -14,5 +14,4 @@ class UserResponse {
         this.users = users
         this.throwable = throwable
     }
-
 }
