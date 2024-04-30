@@ -27,8 +27,8 @@ class RandomPeopleListViewModel @Inject constructor(
 
     private val _oneTimeErrorFlow: MutableSharedFlow<ErrorEntity> =
         MutableSharedFlow(
-            replay = 0,
-            extraBufferCapacity = 1,
+            replay = ONE_TIME_ERROR_REPLAY,
+            extraBufferCapacity = ONE_TIME_ERROR_EXTRA_BUFFER_CAPACITY,
             onBufferOverflow = BufferOverflow.DROP_OLDEST
         )
     val oneTimeErrorFlow: SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
@@ -72,5 +72,7 @@ class RandomPeopleListViewModel @Inject constructor(
 
     companion object {
         const val USER_QUANTITY = "10"
+        private const val ONE_TIME_ERROR_REPLAY = 0
+        private const val ONE_TIME_ERROR_EXTRA_BUFFER_CAPACITY = 1
     }
 }
