@@ -23,7 +23,7 @@ import javax.inject.Inject
 class RandomPeopleListViewModel @Inject constructor(
     private val randomPeopleListUseCase: RandomPeopleListUseCase,
     private val errorHandlerUseCase: ErrorHandlerUseCase
-) : ViewModel() {
+) : ViewModel(), PeopleListViewModel {
 
     private val _oneTimeErrorFlow: MutableSharedFlow<ErrorEntity> =
         MutableSharedFlow(
@@ -43,7 +43,7 @@ class RandomPeopleListViewModel @Inject constructor(
         getRandomPeopleList(USER_QUANTITY)
     }
 
-    fun getRandomPeopleList(userQuantity: String) {
+    override fun getRandomPeopleList(userQuantity: String) {
         viewModelScope.launch {
             if (_usersResponseFlow.value !is Response.Initial) {
                 _isRefreshing.value = true

@@ -13,5 +13,7 @@
     <string name="error_mapping_profile">Unexpected error while the profile loading! \n Try later!</string>
     <!--Server errors-->
     <string name="error_lost_connection">Unable to resolve host</string>
-
+    <!--Resource descriptions-->
+    <string name="item_image_description">Profile image</string>
+    <string name="no_users_image_description">To refresh the user list</string>
 </resources>

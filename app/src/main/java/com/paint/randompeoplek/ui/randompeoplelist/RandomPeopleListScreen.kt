@@ -68,7 +68,7 @@ fun RandomPeopleListScreen(viewModel: RandomPeopleListViewModel = hiltViewModel<
 }
 
 @Composable
-fun RandomPeopleAppBar(viewModel: RandomPeopleListViewModel) {
+fun RandomPeopleAppBar(viewModel: PeopleListViewModel) {
     TopAppBar(
         title = {
             Text(text = stringResource(id = R.string.app_name))
@@ -186,7 +186,7 @@ fun ListItemImage(user: User) {
     Column(modifier = listItemImageModifier) {
         GlideImage(
             model = user.picture.thumbnail,
-            contentDescription = "Profile image",
+            contentDescription = stringResource(id = R.string.item_image_description),
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
@@ -224,7 +224,7 @@ fun DividerRow() {
 }
 
 @Composable
-fun RandomPeopleNoUsers(viewModel: RandomPeopleListViewModel) {
+fun RandomPeopleNoUsers(viewModel: PeopleListViewModel) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -238,7 +238,7 @@ fun RandomPeopleNoUsers(viewModel: RandomPeopleListViewModel) {
             )
             Image(
                 painter = painterResource(id = R.drawable.ic_update_img_layout),
-                contentDescription = "To refresh the user list",
+                contentDescription = stringResource(id = R.string.no_users_image_description),
                 modifier = Modifier
                     .width(100.dp)
                     .height(100.dp)
@@ -250,15 +250,25 @@ fun RandomPeopleNoUsers(viewModel: RandomPeopleListViewModel) {
 
 @Preview
 @Composable
+fun RandomPeopleInitialLoadingPreview() {
+    RandomPeopleInitialLoading()
+}
+
+@Preview
+@Composable
 fun RandomPeopleNoUsersPreview() {
-    val viewModel = hiltViewModel<RandomPeopleListViewModel>()
+    val viewModel = object : PeopleListViewModel {
+        override fun getRandomPeopleList(userQuantity: String) = Unit
+    }
     RandomPeopleNoUsers(viewModel)
 }
 
 @Preview
 @Composable
 fun AppBarPreview() {
-    val viewModel = hiltViewModel<RandomPeopleListViewModel>()
+    val viewModel = object : PeopleListViewModel {
+        override fun getRandomPeopleList(userQuantity: String) = Unit
+    }
     RandomPeopleKTheme {
         RandomPeopleAppBar(viewModel)
     }
