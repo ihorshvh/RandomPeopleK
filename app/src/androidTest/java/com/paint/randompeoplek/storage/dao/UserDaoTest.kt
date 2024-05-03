@@ -72,12 +72,12 @@ class UserDaoTest {
         val name = Name("Mr", "Ryan", "Wilson")
         val street = Street(740, "Lambie Drive")
         val location = Location(street, "Invercargill", "Bay of Plenty", "New Zealand", "32336")
-        val user = User(name, location, "", "", Picture("", "", ""), Date())
+        val user = User("test_id_1", name, location, "", "", Picture("", "", ""), Date())
 
         val secondName = Name("Mr", "Ryan", "Wilson")
         val secondStreet = Street(740, "Lambie Drive")
         val secondLocation = Location(secondStreet, "Invercargill", "Bay of Plenty", "New Zealand", "32336")
-        val secondUser = User(secondName, secondLocation, "", "", Picture("", "", ""), Date())
+        val secondUser = User("test_id_2", secondName, secondLocation, "", "", Picture("", "", ""), Date())
 
         return listOf(user, secondUser)
     }
@@ -87,6 +87,6 @@ class UserDaoTest {
         val name = Name("Mr", "Ryan", "Wilson")
         val street = Street(740, "Lambie Drive")
         val location = Location(street, "Invercargill", "Bay of Plenty", "New Zealand", "32336")
-        return User(name, location, "", "", Picture("", "", ""), Date())
+        return User("test_id_1", name, location, "", "", Picture("", "", ""), Date())
     }
 }
