@@ -41,7 +41,7 @@ buildscript {
     ext.compose_activity = '1.8.2'
 
     ext.coroutines_test = '1.5.2'
-    ext.androidx_core_testing = '2.1.0'
+    ext.androidx_core_testing = '2.2.0'
     ext.turbine = '0.7.0'
 
     repositories {
