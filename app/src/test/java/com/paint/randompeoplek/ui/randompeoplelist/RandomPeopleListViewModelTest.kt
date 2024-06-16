@@ -61,6 +61,7 @@ class RandomPeopleListViewModelTest {
             assertNull(userResponseRefreshed.errorEntity)
 
             assertFalse(isRefreshingFlows.awaitItem())
+            oneTimeErrorFlows.expectNoEvents()
         }
     }
 
