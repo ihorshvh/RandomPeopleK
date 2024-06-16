@@ -1,6 +1,7 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
 import app.cash.turbine.turbineScope
+import com.paint.randompeoplek.ViewModelCoroutineRule
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCaseImpl
@@ -10,143 +11,119 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
-import kotlinx.coroutines.Dispatchers
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RandomPeopleListViewModelTest {
 
-//    @get:Rule
-//    val coroutineRule = CoroutineRule()
+    @get:Rule
+    val viewModelCoroutineRule = ViewModelCoroutineRule()
 
     @Test
     fun testGetUserListWhenSuccess() = runTest {
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        Dispatchers.setMain(testDispatcher)
+        val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
+        val users = getUsers()
 
-        try {
-            val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
-            val users = getUsers()
+        coEvery { randomPeopleListMediator.getUserList("10") } answers {
+            UserResponse(users)
+        }
 
-            coEvery { randomPeopleListMediator.getUserList("10") } answers {
-                UserResponse(users)
-            }
+        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl())
 
-            val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl())
+        turbineScope {
+            val usersResponseFlows = viewModel.usersResponseFlow.testIn(backgroundScope)
+            val isRefreshingFlows = viewModel.isRefreshing.testIn(backgroundScope)
+            val oneTimeErrorFlows = viewModel.oneTimeErrorFlow.testIn(backgroundScope)
 
-            turbineScope {
-                val usersResponseFlows = viewModel.usersResponseFlow.testIn(backgroundScope)
-                val isRefreshingFlows = viewModel.isRefreshing.testIn(backgroundScope)
-                val oneTimeErrorFlows = viewModel.oneTimeErrorFlow.testIn(backgroundScope)
+            assertThat(usersResponseFlows.awaitItem(), instanceOf(Response.Initial::class.java))
 
-                assertThat(usersResponseFlows.awaitItem(), instanceOf(Response.Initial::class.java))
+            val userResponse = usersResponseFlows.awaitItem()
+            assertThat(userResponse, instanceOf(Response.Success::class.java))
+            assertEquals(2, userResponse.data?.size)
+            assertNull(userResponse.errorEntity)
+            assertFalse(isRefreshingFlows.awaitItem())
 
-                val userResponse = usersResponseFlows.awaitItem()
-                assertThat(userResponse, instanceOf(Response.Success::class.java))
-                assertEquals(2, userResponse.data?.size)
-                assertNull(userResponse.errorEntity)
-                assertFalse(isRefreshingFlows.awaitItem())
+            viewModel.getRandomPeopleList("10")
 
-                viewModel.getRandomPeopleList("10")
+            assertTrue(isRefreshingFlows.awaitItem())
 
-                assertTrue(isRefreshingFlows.awaitItem())
+            val userResponseRefreshed = usersResponseFlows.awaitItem()
+            assertThat(userResponseRefreshed, instanceOf(Response.Success::class.java))
+            assertEquals(2, userResponseRefreshed.data?.size)
+            assertNull(userResponseRefreshed.errorEntity)
 
-                val userResponseRefreshed = usersResponseFlows.awaitItem()
-                assertThat(userResponseRefreshed, instanceOf(Response.Success::class.java))
-                assertEquals(2, userResponseRefreshed.data?.size)
-                assertNull(userResponseRefreshed.errorEntity)
-
-                assertFalse(isRefreshingFlows.awaitItem())
-            }
-        } finally {
-            Dispatchers.resetMain()
+            assertFalse(isRefreshingFlows.awaitItem())
         }
     }
 
     @Test
     fun testGetRandomPeopleListWhenSuccessButWithError() = runTest {
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        Dispatchers.setMain(testDispatcher)
+        val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
+        val users = getUsers()
 
-        try {
-            val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
-            val users = getUsers()
+        val exception = Throwable("exception")
+        coEvery { randomPeopleListMediator.getUserList("10") } answers {
+            UserResponse(users, exception)
+        }
 
-            val exception = Throwable("exception")
-            coEvery { randomPeopleListMediator.getUserList("10") } answers {
-                UserResponse(users, exception)
-            }
+        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl())
 
-            val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl())
+        turbineScope {
+            val usersResponseFlows = viewModel.usersResponseFlow.testIn(backgroundScope)
+            val isRefreshingFlows = viewModel.isRefreshing.testIn(backgroundScope)
+            val oneTimeErrorFlows = viewModel.oneTimeErrorFlow.testIn(backgroundScope)
 
-            turbineScope {
-                val usersResponseFlows = viewModel.usersResponseFlow.testIn(backgroundScope)
-                val isRefreshingFlows = viewModel.isRefreshing.testIn(backgroundScope)
-                val oneTimeErrorFlows = viewModel.oneTimeErrorFlow.testIn(backgroundScope)
+            assertThat(usersResponseFlows.awaitItem(), instanceOf(Response.Initial::class.java))
 
-                assertThat(usersResponseFlows.awaitItem(), instanceOf(Response.Initial::class.java))
+            val userResponse = usersResponseFlows.awaitItem()
+            assertThat(userResponse, instanceOf(Response.Error::class.java))
+            assertEquals(2, userResponse.data?.size)
+            assertNotNull(userResponse.errorEntity)
+            assertFalse(isRefreshingFlows.awaitItem())
+            assertThat(oneTimeErrorFlows.awaitItem(), instanceOf(ErrorEntity.Unknown::class.java))
 
-                val userResponse = usersResponseFlows.awaitItem()
-                assertThat(userResponse, instanceOf(Response.Error::class.java))
-                assertEquals(2, userResponse.data?.size)
-                assertNotNull(userResponse.errorEntity)
-                assertFalse(isRefreshingFlows.awaitItem())
-                assertThat(oneTimeErrorFlows.awaitItem(), instanceOf(ErrorEntity.Unknown::class.java))
+            viewModel.getRandomPeopleList("10")
 
-                viewModel.getRandomPeopleList("10")
+            assertTrue(isRefreshingFlows.awaitItem())
 
-                assertTrue(isRefreshingFlows.awaitItem())
-
-                val userResponseRefreshed = usersResponseFlows.awaitItem()
-                assertThat(userResponseRefreshed, instanceOf(Response.Error::class.java))
-                assertEquals(2, userResponseRefreshed.data?.size)
-                assertNotNull(userResponseRefreshed.errorEntity)
-                assertFalse(isRefreshingFlows.awaitItem())
-                assertThat(oneTimeErrorFlows.awaitItem(), instanceOf(ErrorEntity.Unknown::class.java))
-            }
-        } finally {
-            Dispatchers.resetMain()
+            val userResponseRefreshed = usersResponseFlows.awaitItem()
+            assertThat(userResponseRefreshed, instanceOf(Response.Error::class.java))
+            assertEquals(2, userResponseRefreshed.data?.size)
+            assertNotNull(userResponseRefreshed.errorEntity)
+            assertFalse(isRefreshingFlows.awaitItem())
+            assertThat(oneTimeErrorFlows.awaitItem(), instanceOf(ErrorEntity.Unknown::class.java))
         }
     }
 
     @Test
     fun testGetRandomPeopleListWhenFailure() = runTest {
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        Dispatchers.setMain(testDispatcher)
+        val exception = Throwable("exception")
+        val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
+        coEvery { randomPeopleListMediator.getUserList("10") } answers {
+            throw exception
+        }
 
-        try {
-            val exception = Throwable("exception")
-            val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
-            coEvery { randomPeopleListMediator.getUserList("10") } answers {
-                throw exception
-            }
+        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl())
 
-            val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl())
+        turbineScope {
+            val usersResponseFlows = viewModel.usersResponseFlow.testIn(backgroundScope)
+            val isRefreshingFlows = viewModel.isRefreshing.testIn(backgroundScope)
+            val oneTimeErrorFlows = viewModel.oneTimeErrorFlow.testIn(backgroundScope)
 
-            turbineScope {
-                val usersResponseFlows = viewModel.usersResponseFlow.testIn(backgroundScope)
-                val isRefreshingFlows = viewModel.isRefreshing.testIn(backgroundScope)
-                val oneTimeErrorFlows = viewModel.oneTimeErrorFlow.testIn(backgroundScope)
+            assertThat(usersResponseFlows.awaitItem(), instanceOf(Response.Initial::class.java))
+            assertThat(oneTimeErrorFlows.awaitItem(), instanceOf(ErrorEntity.Unknown::class.java))
 
-                assertThat(usersResponseFlows.awaitItem(), instanceOf(Response.Initial::class.java))
-                assertThat(oneTimeErrorFlows.awaitItem(), instanceOf(ErrorEntity.Unknown::class.java))
-
-                viewModel.getRandomPeopleList("10")
-                assertThat(oneTimeErrorFlows.awaitItem(), instanceOf(ErrorEntity.Unknown::class.java))
-                assertFalse(isRefreshingFlows.awaitItem())
-            }
-        } finally {
-            Dispatchers.resetMain()
+            viewModel.getRandomPeopleList("10")
+            assertThat(oneTimeErrorFlows.awaitItem(), instanceOf(ErrorEntity.Unknown::class.java))
+            assertFalse(isRefreshingFlows.awaitItem())
         }
     }
 }
