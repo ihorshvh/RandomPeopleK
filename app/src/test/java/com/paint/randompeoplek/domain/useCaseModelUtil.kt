@@ -7,6 +7,7 @@ fun getUsers(): List<com.paint.randompeoplek.repository.model.User> {
 fun getUser(): com.paint.randompeoplek.repository.model.User {
     val name = com.paint.randompeoplek.repository.model.Name("Mr", "Ryan Wilson", "Mr Ryan Wilson")
     return com.paint.randompeoplek.repository.model.User(
+        "test_user_id",
         name,
         com.paint.randompeoplek.repository.model.Location(com.paint.randompeoplek.repository.model.Street(0, ""), "", "", "", ""),
         "",
