@@ -81,4 +81,16 @@ class RandomPeopleListRepositoryTest {
         assertNotNull(userResponse.throwable)
     }
 
+    @Test
+    fun testGetUserById() = runTest {
+        val user = getTestEntityUser()
+
+        coEvery { userDao.getUserById("test_user_id") } answers { user }
+
+        val returnedUser = randomPeopleListRepository.getUserById("test_user_id")
+
+        assertNotNull(returnedUser)
+        assertNotNull(returnedUser.id)
+        assertEquals("test_user_id", returnedUser.id)
+    }
 }
