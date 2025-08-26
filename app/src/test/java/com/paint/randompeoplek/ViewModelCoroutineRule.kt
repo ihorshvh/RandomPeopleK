@@ -7,12 +7,16 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 @ExperimentalCoroutinesApi
-class ViewModelCoroutineRule(
-    private val testDispatcher: TestDispatcher = StandardTestDispatcher(),
-) : TestWatcher() {
+class ViewModelCoroutineRule: TestWatcher() {
+    lateinit var scheduler: TestCoroutineScheduler
+        private set
+    lateinit var dispatcher: TestDispatcher
+        private set
 
     override fun starting(description: Description) {
-        Dispatchers.setMain(testDispatcher)
+        scheduler = TestCoroutineScheduler()
+        dispatcher = StandardTestDispatcher(scheduler)
+        Dispatchers.setMain(dispatcher)
     }
 
     override fun finished(description: Description) {
