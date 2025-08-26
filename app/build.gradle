@@ -8,6 +8,8 @@ apply plugin: 'kotlin-parcelize'
 
 apply plugin: 'dagger.hilt.android.plugin'
 
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+
 android {
     compileSdk rootProject.compile_sdk_version
 
