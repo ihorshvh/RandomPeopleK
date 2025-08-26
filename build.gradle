@@ -12,7 +12,7 @@ buildscript {
     ext.version_name = "1.0"
     ext.test_instrumentation_runner = "androidx.test.runner.AndroidJUnitRunner"
 
-    ext.kotlin_version = '2.0.0'
+    ext.kotlin_version = '2.1.10'
     ext.appcompat_version = '1.7.1'
     ext.core_ktx_version = '1.17.0'
     ext.splash_screen_version = "1.0.1"
