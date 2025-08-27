@@ -30,6 +30,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
@@ -52,6 +53,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
+import com.paint.randompeoplek.domain.model.UserResponse
 import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
@@ -59,23 +61,66 @@ import com.paint.randompeoplek.ui.model.User
 import com.paint.randompeoplek.ui.theme.RandomPeopleKTheme
 import com.paint.randompeoplek.ui.theme.grey
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RandomPeopleListScreen(viewModel: RandomPeopleListViewModel = hiltViewModel<RandomPeopleListViewModel>(), onItemClick: (user: User) -> Unit) {
+fun RandomPeopleListScreen(onItemClick: (user: User) -> Unit) {
+    val viewModel = hiltViewModel<RandomPeopleListViewModel>()
+
+    val context = LocalContext.current
+    LaunchedEffect(key1 = true) {
+        viewModel.oneTimeErrorFlow.collect {
+            val oneTimeErrorMessage = getOneTimeErrorMessage(context, it)
+            Toast.makeText(context, oneTimeErrorMessage, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    val onRefreshClick = { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
+
+    val usersResponse by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefreshClick)
+
+    RandomPeopleListScreenRoot(
+        usersResponse = usersResponse,
+        isRefreshing = isRefreshing,
+        pullRefreshState = pullRefreshState,
+        onItemClick = onItemClick,
+        onRefreshClick = onRefreshClick
+    )
+}
+
+private fun getOneTimeErrorMessage(context: Context, error: ErrorEntity) : String {
+    return when (error) {
+        is ErrorEntity.Network -> getString(context, R.string.error_outdated_users_loaded)
+        is ErrorEntity.ServiceUnavailable -> getString(context, R.string.error_unknown)
+        else -> getString(context, R.string.error_unknown)
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun RandomPeopleListScreenRoot(
+    usersResponse: Response<List<User>>,
+    isRefreshing: Boolean,
+    pullRefreshState: PullRefreshState?,
+    onItemClick: (user: User) -> Unit,
+    onRefreshClick: () -> Unit
+) {
     Scaffold(
-        topBar = { RandomPeopleAppBar(viewModel) },
-        content = { padding -> RandomPeopleListContent(Modifier.padding(padding), viewModel, onItemClick) }
+        topBar = { RandomPeopleAppBar(onRefreshClick) },
+        content = { padding -> RandomPeopleListContent(Modifier.padding(padding), usersResponse, isRefreshing, pullRefreshState, onItemClick, onRefreshClick) }
     )
 }
 
 @Composable
-fun RandomPeopleAppBar(viewModel: PeopleListViewModel) {
+fun RandomPeopleAppBar(onRefreshClick: () -> Unit) {
     TopAppBar(
         title = {
             Text(text = stringResource(id = R.string.app_name))
         },
         modifier = Modifier.height(56.dp),
         actions = {
-            IconButton(onClick = { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }) {
+            IconButton(onClick = { onRefreshClick.invoke() }) {
                 Icon(painterResource(R.drawable.ic_update_img), "To refresh the user list")
             }
         }
@@ -84,38 +129,28 @@ fun RandomPeopleAppBar(viewModel: PeopleListViewModel) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RandomPeopleListContent(modifier: Modifier, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
-    val context = LocalContext.current
+fun RandomPeopleListContent(
+    modifier: Modifier,
+    usersResponse: Response<List<User>>,
+    isRefreshing: Boolean,
+    pullRefreshState: PullRefreshState?,
+    onItemClick: (user: User) -> Unit,
+    onRefreshClick: () -> Unit
+) {
 
-    val usersResponse by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
     val users = usersResponse.data ?: emptyList()
-    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val isInitial = usersResponse is Response.Initial
-    val pullRefreshState = rememberPullRefreshState(isRefreshing, { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) })
 
-    LaunchedEffect(key1 = true) {
-        viewModel.oneTimeErrorFlow.collect {
-            val oneTimeErrorMessage = getOneTimeErrorMessage(context, it)
-            Toast.makeText(context, oneTimeErrorMessage, Toast.LENGTH_LONG).show()
+    pullRefreshState?.let {
+        Box(modifier.pullRefresh(it)) {
+            if (isInitial) {
+                RandomPeopleInitialLoading()
+            } else {
+                RandomPeopleListUsers(users, onItemClick, onRefreshClick)
+            }
+
+            PullRefreshIndicator(isRefreshing, it, modifier.align(Alignment.TopCenter))
         }
-    }
-
-    Box(modifier.pullRefresh(pullRefreshState)) {
-        if (isInitial) {
-            RandomPeopleInitialLoading()
-        } else {
-            RandomPeopleListUsers(users, viewModel, onItemClick)
-        }
-
-        PullRefreshIndicator(isRefreshing, pullRefreshState, modifier.align(Alignment.TopCenter))
-    }
-}
-
-private fun getOneTimeErrorMessage(context: Context, error: ErrorEntity) : String {
-    return when (error) {
-        is ErrorEntity.Network -> getString(context, R.string.error_outdated_users_loaded)
-        is ErrorEntity.ServiceUnavailable -> getString(context, R.string.error_unknown)
-        else -> getString(context, R.string.error_unknown)
     }
 }
 
@@ -145,7 +180,7 @@ fun RandomPeopleInitialLoading() {
 }
 
 @Composable
-fun RandomPeopleListUsers(users: List<User>, viewModel: RandomPeopleListViewModel, onItemClick: (user: User) -> Unit) {
+fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, onRefreshClick: () -> Unit) {
     if (users.isNotEmpty()) {
         LazyColumn {
             items(
@@ -157,7 +192,7 @@ fun RandomPeopleListUsers(users: List<User>, viewModel: RandomPeopleListViewMode
             }
         }
     } else {
-        RandomPeopleNoUsers(viewModel)
+        RandomPeopleNoUsers(onRefreshClick)
     }
 }
 
@@ -224,7 +259,7 @@ fun DividerRow() {
 }
 
 @Composable
-fun RandomPeopleNoUsers(viewModel: PeopleListViewModel) {
+fun RandomPeopleNoUsers(onRefreshClick: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -242,7 +277,7 @@ fun RandomPeopleNoUsers(viewModel: PeopleListViewModel) {
                 modifier = Modifier
                     .width(100.dp)
                     .height(100.dp)
-                    .clickable { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
+                    .clickable { onRefreshClick.invoke() }
             )
         }
     }
@@ -250,27 +285,25 @@ fun RandomPeopleNoUsers(viewModel: PeopleListViewModel) {
 
 @Preview
 @Composable
+fun AppBarPreview() {
+    RandomPeopleKTheme {
+        RandomPeopleAppBar(onRefreshClick = {  })
+    }
+}
+
+@Preview
+@Composable
 fun RandomPeopleInitialLoadingPreview() {
-    RandomPeopleInitialLoading()
+    RandomPeopleKTheme {
+        RandomPeopleInitialLoading()
+    }
 }
 
 @Preview
 @Composable
 fun RandomPeopleNoUsersPreview() {
-    val viewModel = object : PeopleListViewModel {
-        override fun getRandomPeopleList(userQuantity: String) = Unit
-    }
-    RandomPeopleNoUsers(viewModel)
-}
-
-@Preview
-@Composable
-fun AppBarPreview() {
-    val viewModel = object : PeopleListViewModel {
-        override fun getRandomPeopleList(userQuantity: String) = Unit
-    }
     RandomPeopleKTheme {
-        RandomPeopleAppBar(viewModel)
+        RandomPeopleNoUsers(onRefreshClick = { })
     }
 }
 
@@ -278,79 +311,66 @@ fun AppBarPreview() {
 @Composable
 fun RandomPeopleListItemPreview() {
     RandomPeopleKTheme {
-        RandomPeopleListItem(user = User(
-            id = "unique_id",
-            name = Name("Ire Test", "Mr. Ire Test"),
-            location = "8400 Jacksonwile road, Raintown, Greenwaland",
-            "email@gmail.com",
-            phone = "+12345678",
-            picture = Picture("", "")
-        ), {})
+        RandomPeopleListItem(
+            user = User(
+                id = "unique_id",
+                name = Name("Ire Test", "Mr. Ire Test"),
+                location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                "email@gmail.com",
+                phone = "+12345678",
+                picture = Picture("", "")
+            ),
+            onItemClick= {}
+        )
     }
 }
 
-@Composable
-fun RandomPeopleListScreen(users: List<User>) {
-    val viewModel = hiltViewModel<RandomPeopleListViewModel>()
-    Scaffold(
-        topBar = { RandomPeopleAppBar(viewModel) },
-        content = { padding ->
-            LazyColumn(modifier = Modifier.padding(padding)) {
-                items(items = users) { user ->
-                    RandomPeopleListItem(user = user) {}
-                }
-            }
-        }
-    )
-}
-
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun RandomPeopleListPreview() {
     RandomPeopleKTheme {
-        RandomPeopleListScreen(
-            listOf(
-                User(
-                    id = "unique_id",
-                    name = Name("Ire Test", "Mr. Ire Test"),
-                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                    "email@gmail.com",
-                    phone = "+12345678",
-                    picture = Picture("", "")
-                ),
-                User(
-                    id = "unique_id",
-                    name = Name("Ire Test", "Mr. Ire Test"),
-                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                    "email@gmail.com",
-                    phone = "+12345678",
-                    picture = Picture("", "")
-                ),
-                User(
-                    id = "unique_id",
-                    name = Name("Ire Test", "Mr. Ire Test"),
-                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                    "email@gmail.com",
-                    phone = "+12345678",
-                    picture = Picture("", "")
-                ),
-                User(
-                    id = "unique_id",
-                    name = Name("Ire Test", "Mr. Ire Test"),
-                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                    "email@gmail.com",
-                    phone = "+12345678",
-                    picture = Picture("", "")
-                ),
-                User(
-                    id = "unique_id",
-                    name = Name("Ire Test", "Mr. Ire Test"),
-                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                    "email@gmail.com",
-                    phone = "+12345678",
-                    picture = Picture("", "")
+        RandomPeopleListScreenRoot(
+            usersResponse = Response.Success(
+                data = listOf(
+                    User(
+                        id = "unique_id",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
+                    ),
+                    User(
+                        id = "unique_id",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
+                    ),
+                    User(
+                        id = "unique_id",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
+                    ),
+                    User(
+                        id = "unique_id",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
+                    )
                 )
-            )
+            ),
+            isRefreshing = false,
+            pullRefreshState = null,
+            onItemClick = {  },
+            onRefreshClick = {  }
         )
     }
 }
