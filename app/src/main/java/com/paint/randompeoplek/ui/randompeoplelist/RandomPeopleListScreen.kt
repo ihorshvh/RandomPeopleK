@@ -334,7 +334,7 @@ fun RandomPeopleListPreview() {
             usersResponse = Response.Success(
                 data = listOf(
                     User(
-                        id = "unique_id",
+                        id = "unique_id_1",
                         name = Name("Ire Test", "Mr. Ire Test"),
                         location = "8400 Jacksonwile road, Raintown, Greenwaland",
                         "email@gmail.com",
@@ -342,7 +342,7 @@ fun RandomPeopleListPreview() {
                         picture = Picture("", "")
                     ),
                     User(
-                        id = "unique_id",
+                        id = "unique_id_2",
                         name = Name("Ire Test", "Mr. Ire Test"),
                         location = "8400 Jacksonwile road, Raintown, Greenwaland",
                         "email@gmail.com",
@@ -350,7 +350,7 @@ fun RandomPeopleListPreview() {
                         picture = Picture("", "")
                     ),
                     User(
-                        id = "unique_id",
+                        id = "unique_id_3",
                         name = Name("Ire Test", "Mr. Ire Test"),
                         location = "8400 Jacksonwile road, Raintown, Greenwaland",
                         "email@gmail.com",
@@ -358,7 +358,47 @@ fun RandomPeopleListPreview() {
                         picture = Picture("", "")
                     ),
                     User(
-                        id = "unique_id",
+                        id = "unique_id_4",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
+                    ),
+                    User(
+                        id = "unique_id_5",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
+                    ),
+                    User(
+                        id = "unique_id_6",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
+                    ),
+                    User(
+                        id = "unique_id_7",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
+                    ),
+                    User(
+                        id = "unique_id_8",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
+                    ),
+                    User(
+                        id = "unique_id_9",
                         name = Name("Ire Test", "Mr. Ire Test"),
                         location = "8400 Jacksonwile road, Raintown, Greenwaland",
                         "email@gmail.com",
@@ -368,7 +408,10 @@ fun RandomPeopleListPreview() {
                 )
             ),
             isRefreshing = false,
-            pullRefreshState = null,
+            pullRefreshState = rememberPullRefreshState(
+                refreshing = false,
+                onRefresh = {}
+            ),
             onItemClick = {  },
             onRefreshClick = {  }
         )
