@@ -53,7 +53,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
-import com.paint.randompeoplek.domain.model.UserResponse
 import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
@@ -137,18 +136,15 @@ fun RandomPeopleListContent(
     onItemClick: (user: User) -> Unit,
     onRefreshClick: () -> Unit
 ) {
-
-    val users = usersResponse.data ?: emptyList()
-    val isInitial = usersResponse is Response.Initial
-
     pullRefreshState?.let {
         Box(modifier.pullRefresh(it)) {
-            if (isInitial) {
-                RandomPeopleInitialLoading()
-            } else {
-                RandomPeopleListUsers(users, onItemClick, onRefreshClick)
+            when (usersResponse) {
+                is Response.Initial<*> -> RandomPeopleInitialLoading()
+                else -> {
+                    val users = usersResponse.data ?: emptyList()
+                    RandomPeopleListUsers(users, onItemClick, onRefreshClick)
+                }
             }
-
             PullRefreshIndicator(isRefreshing, it, modifier.align(Alignment.TopCenter))
         }
     }
