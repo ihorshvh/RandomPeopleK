@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,18 +20,32 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.paint.randompeoplek.R
+import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
 import com.paint.randompeoplek.ui.model.User
 import com.paint.randompeoplek.ui.screen.ScreenInfo
 import com.paint.randompeoplek.ui.screen.rememberScreenInfo
+import com.paint.randompeoplek.ui.theme.RandomPeopleKTheme
 
 @Composable
-fun UserProfileScreen(viewModel: RandomPeopleProfileViewModel = hiltViewModel<RandomPeopleProfileViewModel>(), userId: String, onClick: () -> Unit) {
+fun UserProfileScreen(userId: String, onClick: () -> Unit) {
+    val viewModel: RandomPeopleProfileViewModel = hiltViewModel<RandomPeopleProfileViewModel>()
+
+    LaunchedEffect(true) {
+        viewModel.getUserById(userId)
+    }
+
+    val userResponse by viewModel.userResponseFlow.collectAsStateWithLifecycle()
+    UserProfileScreenRoot(userResponse, onClick)
+}
+
+@Composable
+fun UserProfileScreenRoot(userResponse: Response<User>, onClick: () -> Unit) {
     Scaffold(
         topBar = { AppBar(onClick) },
-        content = { padding -> Content(Modifier.padding(padding), userId, viewModel)}
+        content = { padding -> Content(Modifier.padding(padding), userResponse)}
     )
 }
 
@@ -56,14 +71,8 @@ fun AppBar(onClick: () -> Unit) {
 }
 
 @Composable
-fun Content(modifier: Modifier, userId: String, viewModel: RandomPeopleProfileViewModel) {
+fun Content(modifier: Modifier, userResponse: Response<User>) {
     Surface(modifier = modifier.fillMaxSize()) {
-        val userResponse by viewModel.userResponseFlow.collectAsStateWithLifecycle()
-
-        LaunchedEffect(true) {
-            viewModel.getUserById(userId)
-        }
-
         when(userResponse) {
             is Response.Initial -> ProfileLoading(modifier)
             is Response.Success -> ProfileMapping(modifier, userResponse.data)
@@ -296,44 +305,68 @@ fun ProfileMappingError(modifier: Modifier) {
 
 @Preview
 @Composable
-fun UserLoadingPreview() {
-    val modifier = Modifier
-    ProfileLoading(modifier)
+fun UserProfileScreenRootInitialPreview() {
+    RandomPeopleKTheme {
+        UserProfileScreenRoot(
+            Response.Initial(),
+            onClick = {  }
+        )
+    }
 }
 
 @Preview
 @Composable
-fun UserMappingScreenPortrait() {
-    val modifier = Modifier
-    val user = User(
-        id = "unique_id",
-        name = Name("Ire Test", "Mr. Ire Test"),
-        location = "8400 Jacksonwile road, Raintown, Greenwaland",
-        "email@gmail.com",
-        phone = "+12345678",
-        picture = Picture("", "")
-    )
-    ProfileMappingScreenPortrait(modifier, user)
+fun UserProfileScreenRootErrorPreview() {
+    RandomPeopleKTheme {
+        UserProfileScreenRoot(
+            Response.Error(ErrorEntity.Network),
+            onClick = {  }
+        )
+    }
 }
 
-@Preview
+@Preview(
+    showBackground = true,
+    device = Devices.PIXEL_7
+)
 @Composable
-fun UserMappingScreenLandscape() {
-    val modifier = Modifier
-    val user = User(
-        id = "unique_id",
-        name = Name("Ire Test", "Mr. Ire Test"),
-        location = "8400 Jacksonwile road, Raintown, Greenwaland",
-        "email@gmail.com",
-        phone = "+12345678",
-        picture = Picture("", "")
-    )
-    ProfileMappingScreenLandscape(modifier, user)
+fun UserProfileScreenRootSuccessPortraitPreview() {
+    RandomPeopleKTheme {
+        UserProfileScreenRoot(
+            Response.Success(
+                data = User(
+                    id = "unique_id",
+                    name = Name("Ire Test", "Mr. Ire Test"),
+                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                    "email@gmail.com",
+                    phone = "+12345678",
+                    picture = Picture("", "")
+                )
+            ),
+            onClick = {  }
+        )
+    }
 }
 
-@Preview
+@Preview(
+    showBackground = true,
+    device = "spec:parent=pixel_7,orientation=landscape"
+)
 @Composable
-fun ProfileMappingErrorPreview() {
-    val modifier = Modifier
-    ProfileMappingError(modifier)
+fun UserProfileScreenRootSuccessLandscapePreview() {
+    RandomPeopleKTheme {
+        UserProfileScreenRoot(
+            Response.Success(
+                data = User(
+                    id = "unique_id",
+                    name = Name("Ire Test", "Mr. Ire Test"),
+                    location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                    "email@gmail.com",
+                    phone = "+12345678",
+                    picture = Picture("", "")
+                )
+            ),
+            onClick = {  }
+        )
+    }
 }

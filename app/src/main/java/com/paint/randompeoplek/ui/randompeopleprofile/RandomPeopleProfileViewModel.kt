@@ -23,6 +23,8 @@ class RandomPeopleProfileViewModel @Inject constructor(
     private val _userResponseFlow: MutableStateFlow<Response<User>> = MutableStateFlow(Response.Initial())
     val userResponseFlow: StateFlow<Response<User>> = _userResponseFlow.asStateFlow()
 
+
+
     override fun getUserById(userId: String) {
         viewModelScope.launch {
             val result = runCatching { randomPeopleProfileUseCase.getUserById(userId) }
