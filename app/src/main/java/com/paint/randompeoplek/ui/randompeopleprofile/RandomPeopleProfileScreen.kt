@@ -43,6 +43,7 @@ fun UserProfileScreen(userId: String, onClick: () -> Unit) {
 @Composable
 fun UserProfileScreenRoot(userResponse: Response<User>, onClick: () -> Unit) {
     Scaffold(
+        modifier = Modifier.safeDrawingPadding(),
         topBar = { AppBar(onClick) },
         content = { padding -> Content(Modifier.padding(padding), userResponse)}
     )
