@@ -279,44 +279,40 @@ fun RandomPeopleNoUsers(onRefreshClick: () -> Unit) {
     }
 }
 
-@Preview
-@Composable
-fun AppBarPreview() {
-    RandomPeopleKTheme {
-        RandomPeopleAppBar(onRefreshClick = {  })
-    }
-}
-
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun RandomPeopleInitialLoadingPreview() {
     RandomPeopleKTheme {
-        RandomPeopleInitialLoading()
+        RandomPeopleListScreenRoot(
+            usersResponse = Response.Initial(),
+            isRefreshing = false,
+            pullRefreshState = rememberPullRefreshState(
+                refreshing = false,
+                onRefresh = {}
+            ),
+            onItemClick = {  },
+            onRefreshClick = {  }
+        )
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun RandomPeopleNoUsersPreview() {
     RandomPeopleKTheme {
-        RandomPeopleNoUsers(onRefreshClick = { })
-    }
-}
-
-@Preview
-@Composable
-fun RandomPeopleListItemPreview() {
-    RandomPeopleKTheme {
-        RandomPeopleListItem(
-            user = User(
-                id = "unique_id",
-                name = Name("Ire Test", "Mr. Ire Test"),
-                location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                "email@gmail.com",
-                phone = "+12345678",
-                picture = Picture("", "")
+        RandomPeopleListScreenRoot(
+            usersResponse = Response.Success(
+                data = listOf()
             ),
-            onItemClick= {}
+            isRefreshing = false,
+            pullRefreshState = rememberPullRefreshState(
+                refreshing = false,
+                onRefresh = {}
+            ),
+            onItemClick = {  },
+            onRefreshClick = {  }
         )
     }
 }
@@ -410,6 +406,24 @@ fun RandomPeopleListPreview() {
             ),
             onItemClick = {  },
             onRefreshClick = {  }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun RandomPeopleListItemPreview() {
+    RandomPeopleKTheme {
+        RandomPeopleListItem(
+            user = User(
+                id = "unique_id",
+                name = Name("Ire Test", "Mr. Ire Test"),
+                location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                "email@gmail.com",
+                phone = "+12345678",
+                picture = Picture("", "")
+            ),
+            onItemClick= {}
         )
     }
 }
