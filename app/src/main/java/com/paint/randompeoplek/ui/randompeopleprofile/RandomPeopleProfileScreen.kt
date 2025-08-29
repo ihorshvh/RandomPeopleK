@@ -17,8 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.model.Response
@@ -124,7 +123,6 @@ fun ProfileMappingScreenPortrait(modifier: Modifier, user: User) {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProfileImagePortrait(modifier: Modifier, picture: Picture) {
     Row(
@@ -133,9 +131,11 @@ fun ProfileImagePortrait(modifier: Modifier, picture: Picture) {
             .fillMaxWidth()
             .padding(top = 16.dp, bottom = 24.dp)
     ) {
-        GlideImage(
+        AsyncImage(
             model = picture.medium,
             contentDescription = stringResource(id = R.string.image_description),
+            placeholder = painterResource(R.drawable.ic_user_default_picture),
+            error = painterResource(R.drawable.ic_user_default_picture),
             modifier = modifier
                 .size(160.dp)
                 .clip(CircleShape)
@@ -261,7 +261,6 @@ fun ProfileMappingScreenLandscape(modifier: Modifier, user: User) {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProfileImageLandscape(picture: Picture) {
     Column(
@@ -270,9 +269,11 @@ fun ProfileImageLandscape(picture: Picture) {
             .fillMaxHeight()
             .padding(start = 16.dp, top = 16.dp, end = 16.dp)
     ) {
-        GlideImage(
+        AsyncImage(
             model = picture.medium,
             contentDescription = stringResource(id = R.string.image_description),
+            placeholder = painterResource(R.drawable.ic_user_default_picture),
+            error = painterResource(R.drawable.ic_user_default_picture),
             modifier = Modifier
                 .size(160.dp)
                 .clip(CircleShape)

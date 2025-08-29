@@ -39,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,8 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
 import com.paint.randompeoplek.R
 import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.model.Response
@@ -211,13 +211,14 @@ fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
 
 val listItemImageModifier = Modifier.padding(start = 16.dp, top = 16.dp)
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ListItemImage(user: User) {
     Column(modifier = listItemImageModifier) {
-        GlideImage(
+        AsyncImage(
             model = user.picture.thumbnail,
             contentDescription = stringResource(id = R.string.image_description),
+            placeholder = painterResource(R.drawable.ic_user_default_picture),
+            error = painterResource(R.drawable.ic_user_default_picture),
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
