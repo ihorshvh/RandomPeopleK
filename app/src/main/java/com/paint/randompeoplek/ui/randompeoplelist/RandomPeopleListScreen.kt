@@ -49,7 +49,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.paint.randompeoplek.R
-import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
 import com.paint.randompeoplek.ui.model.User
@@ -63,12 +62,12 @@ fun RandomPeopleListScreen(onItemClick: (user: User) -> Unit) {
 
     val onRefreshClick = { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
 
-    val usersResponse by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
+    val randomPeopleListState by viewModel.randomPeopleListStateFlow.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(isRefreshing, onRefreshClick)
 
     RandomPeopleListScreenRoot(
-        usersResponse = usersResponse,
+        randomPeopleListState = randomPeopleListState,
         snackbarHostState = viewModel.snackbarHostState,
         isRefreshing = isRefreshing,
         pullRefreshState = pullRefreshState,
@@ -80,7 +79,7 @@ fun RandomPeopleListScreen(onItemClick: (user: User) -> Unit) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RandomPeopleListScreenRoot(
-    usersResponse: Response<List<User>>,
+    randomPeopleListState: RandomPeopleListState,
     snackbarHostState: SnackbarHostState,
     isRefreshing: Boolean,
     pullRefreshState: PullRefreshState?,
@@ -95,7 +94,7 @@ fun RandomPeopleListScreenRoot(
             )
         },
         topBar = { RandomPeopleAppBar(onRefreshClick) },
-        content = { padding -> RandomPeopleListContent(Modifier.padding(padding), usersResponse, isRefreshing, pullRefreshState, onItemClick, onRefreshClick) }
+        content = { padding -> RandomPeopleListContent(Modifier.padding(padding), randomPeopleListState, isRefreshing, pullRefreshState, onItemClick, onRefreshClick) }
     )
 }
 
@@ -118,7 +117,7 @@ fun RandomPeopleAppBar(onRefreshClick: () -> Unit) {
 @Composable
 fun RandomPeopleListContent(
     modifier: Modifier,
-    usersResponse: Response<List<User>>,
+    randomPeopleListState: RandomPeopleListState,
     isRefreshing: Boolean,
     pullRefreshState: PullRefreshState?,
     onItemClick: (user: User) -> Unit,
@@ -126,12 +125,10 @@ fun RandomPeopleListContent(
 ) {
     pullRefreshState?.let {
         Box(modifier.pullRefresh(it)) {
-            when (usersResponse) {
-                is Response.Initial<*> -> RandomPeopleInitialLoading()
-                else -> {
-                    val users = usersResponse.data ?: emptyList()
-                    RandomPeopleListUsers(users, onItemClick, onRefreshClick)
-                }
+            when (randomPeopleListState) {
+                is RandomPeopleListState.Initial -> RandomPeopleInitialLoading()
+                is RandomPeopleListState.Success -> RandomPeopleListUsers(randomPeopleListState.users, onItemClick, onRefreshClick)
+                is RandomPeopleListState.Error -> RandomPeopleListUsers(randomPeopleListState.users ?: emptyList(), onItemClick, onRefreshClick)
             }
             PullRefreshIndicator(isRefreshing, it, modifier.align(Alignment.TopCenter))
         }
@@ -274,7 +271,7 @@ fun RandomPeopleNoUsers(onRefreshClick: () -> Unit) {
 fun RandomPeopleInitialLoadingPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
-            usersResponse = Response.Initial(),
+            randomPeopleListState = RandomPeopleListState.Initial,
             snackbarHostState = SnackbarHostState(),
             isRefreshing = false,
             pullRefreshState = rememberPullRefreshState(
@@ -293,8 +290,8 @@ fun RandomPeopleInitialLoadingPreview() {
 fun RandomPeopleNoUsersPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
-            usersResponse = Response.Success(
-                data = listOf()
+            randomPeopleListState = RandomPeopleListState.Success(
+                users = listOf()
             ),
             snackbarHostState = SnackbarHostState(),
             isRefreshing = false,
@@ -314,8 +311,8 @@ fun RandomPeopleNoUsersPreview() {
 fun RandomPeopleListPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
-            usersResponse = Response.Success(
-                data = listOf(
+            randomPeopleListState = RandomPeopleListState.Success(
+                users = listOf(
                     User(
                         id = "unique_id_1",
                         name = Name("Ire Test", "Mr. Ire Test"),

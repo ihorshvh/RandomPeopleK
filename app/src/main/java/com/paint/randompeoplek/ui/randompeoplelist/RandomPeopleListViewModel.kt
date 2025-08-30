@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCase
-import com.paint.randompeoplek.model.Response
-import com.paint.randompeoplek.ui.model.User
 import com.paint.randompeoplek.ui.model.toUiParcelableUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
@@ -37,8 +35,8 @@ class RandomPeopleListViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
-    private val _usersResponseFlow: MutableStateFlow<Response<List<User>>> = MutableStateFlow(Response.Initial())
-    val usersResponseFlow: StateFlow<Response<List<User>>> = _usersResponseFlow.asStateFlow()
+    private val _randomPeopleListStateFlow: MutableStateFlow<RandomPeopleListState> = MutableStateFlow(RandomPeopleListState.Initial)
+    val randomPeopleListStateFlow: StateFlow<RandomPeopleListState> = _randomPeopleListStateFlow.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -51,7 +49,7 @@ class RandomPeopleListViewModel @Inject constructor(
 
     override fun getRandomPeopleList(userQuantity: String) {
         viewModelScope.launch {
-            if (_usersResponseFlow.value !is Response.Initial) {
+            if (_randomPeopleListStateFlow.value !is RandomPeopleListState.Initial) {
                 _isRefreshing.value = true
             }
 
@@ -61,9 +59,9 @@ class RandomPeopleListViewModel @Inject constructor(
                     val errorMessage = errorHandlerUseCase.getErrorMessage(it.networkError)
                     snackbarMessageSharedFlow.emit(errorMessage)
 
-                    _usersResponseFlow.value = Response.Error(errorMessage, it.users.toUiParcelableUsers())
+                    _randomPeopleListStateFlow.value = RandomPeopleListState.Error(it.users.toUiParcelableUsers())
                 } else {
-                    _usersResponseFlow.value = Response.Success(it.users.toUiParcelableUsers())
+                    _randomPeopleListStateFlow.value = RandomPeopleListState.Success(it.users.toUiParcelableUsers())
                 }
 
                 _isRefreshing.value = false

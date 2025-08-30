@@ -5,7 +5,6 @@ import com.paint.randompeoplek.ViewModelCoroutineRule
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCaseImpl
 import com.paint.randompeoplek.domain.model.UserResponse
-import com.paint.randompeoplek.model.Response
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
