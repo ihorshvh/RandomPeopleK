@@ -1,17 +1,18 @@
 package com.paint.randompeoplek.repository.model
 
+import com.paint.randompeoplek.repository.NetworkError
+
 class UserResponse {
-
     val users: List<User>
-
-    var throwable: Throwable? = null
+    val networkError: NetworkError?
 
     constructor(users: List<User>) {
         this.users = users
+        this.networkError = null
     }
 
-    constructor(users: List<User>, throwable: Throwable) {
+    constructor(users: List<User>, networkError: NetworkError) {
         this.users = users
-        this.throwable = throwable
+        this.networkError = networkError
     }
 }

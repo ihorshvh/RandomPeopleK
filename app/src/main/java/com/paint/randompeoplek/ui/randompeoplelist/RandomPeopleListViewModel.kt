@@ -51,8 +51,8 @@ class RandomPeopleListViewModel @Inject constructor(
 
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
             result.onSuccess {
-                if (it.throwable != null) {
-                    val errorEntity = errorHandlerUseCase.getErrorEntity(it.throwable)
+                if (it.networkError != null) {
+                    val errorEntity = errorHandlerUseCase.getErrorEntity(it.networkError)
                     _oneTimeErrorFlow.emit(errorEntity)
 
                     _usersResponseFlow.value = Response.Error(errorEntity, it.users.toUiParcelableUsers())

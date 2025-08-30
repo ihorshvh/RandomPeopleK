@@ -15,20 +15,33 @@ class RandomPeopleListRepository @Inject constructor(
 ) {
 
     suspend fun getUserList(userQuantity: String) : UserResponse {
-
         val freshUsersNumber = userDao.hasUser(getTimeout())
 
         if (freshUsersNumber <= 0) {
             try {
                 val userResponse = randomPeopleService.getUserList(userQuantity)
+                when(userResponse.code()) {
+                    in 200..299 -> {
+                        val body = userResponse.body()
+                        if (body != null && body.users != null) {
+                            userDao.deleteAll()
+                            userDao.insertAll(body.users.toStorageUsers())
+                        } else {
+                            return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.UNKNOWN)
+                        }
+                    }
+                    401 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.UNAUTHORIZED)
+                    409 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.CONFLICT)
+                    408 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.REQUEST_TIMEOUT)
+                    413 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.PAYLOAD_TOO_LARGE)
+                    in 500..599 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.SERVER_ERROR)
+                    else -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.UNKNOWN)
+                }
 
-                userDao.deleteAll()
-                userDao.insertAll(userResponse.users.toStorageUsers())
-            } catch (e : Exception) {
-                return UserResponse(userDao.getAll().toRepositoryUsers(), e)
+            } catch (_ : Exception) {
+                return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.NO_INTERNET)
             }
         }
-
         return UserResponse(userDao.getAll().toRepositoryUsers())
     }
 
@@ -37,9 +50,7 @@ class RandomPeopleListRepository @Inject constructor(
     }
 
     companion object {
-
         private val FRESH_TIMEOUT = TimeUnit.SECONDS.toMillis(15)
-
         fun getTimeout() = Date(Calendar.getInstance().time.time - FRESH_TIMEOUT)
     }
 }

@@ -27,8 +27,8 @@ fun User.toMediatorUser() = com.paint.randompeoplek.domain.model.User(
 private fun List<User>.toRepositoryUsers() = this.map { it.toMediatorUser() }
 
 fun UserResponse.toMediatorUserResponse(): com.paint.randompeoplek.domain.model.UserResponse {
-    return if (this.throwable != null) {
-        com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers(), this.throwable)
+    return if (this.networkError != null) {
+        com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers(), this.networkError)
     } else {
         com.paint.randompeoplek.domain.model.UserResponse(this.users.toRepositoryUsers())
     }
