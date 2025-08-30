@@ -60,33 +60,26 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.lifecycle.livedata.ktx) 
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.bundles.lifecycle)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.coordinatorlayout)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.fragment.ktx)
 
-    implementation(libs.retrofit.core) // Corrected line
-    implementation(libs.retrofit.converter.gson)
+    implementation(libs.bundles.retrofit)
 
     implementation(libs.hilt.android)
     implementation(libs.material.components)
     ksp(libs.hilt.compiler)
 
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
+    implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.androidx.arch.core.testing)
 
     // navigation
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.bundles.navigation)
     implementation(libs.androidx.navigation.dynamic.features.fragment)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     androidTestImplementation(libs.androidx.navigation.testing)
 
@@ -94,22 +87,18 @@ dependencies {
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
-    implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.activity)
+    implementation(libs.bundles.compose.ui)
     // Android Studio Preview support
-    implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.coil.compose)
     // compose
 
-    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.bundles.coroutines)
 
     testImplementation(libs.junit)
-    testImplementation(libs.mockk.android)
+    testImplementation(libs.bundles.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
 
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.bundles.androidx.test)
 }
