@@ -35,16 +35,16 @@ fun UserProfileScreen(userId: String, onClick: () -> Unit) {
         viewModel.getUserById(userId)
     }
 
-    val userResponse by viewModel.userResponseFlow.collectAsStateWithLifecycle()
-    UserProfileScreenRoot(userResponse, onClick)
+    val randomPeopleProfileState by viewModel.randomPeopleProfileStateFlow.collectAsStateWithLifecycle()
+    UserProfileScreenRoot(randomPeopleProfileState, onClick)
 }
 
 @Composable
-fun UserProfileScreenRoot(userResponse: Response<User>, onClick: () -> Unit) {
+fun UserProfileScreenRoot(randomPeopleProfileState: RandomPeopleProfileState, onClick: () -> Unit) {
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         topBar = { AppBar(onClick) },
-        content = { padding -> Content(Modifier.padding(padding), userResponse)}
+        content = { padding -> Content(Modifier.padding(padding), randomPeopleProfileState)}
     )
 }
 
@@ -70,11 +70,11 @@ fun AppBar(onClick: () -> Unit) {
 }
 
 @Composable
-fun Content(modifier: Modifier, userResponse: Response<User>) {
+fun Content(modifier: Modifier, randomPeopleProfileState: RandomPeopleProfileState) {
     Surface(modifier = modifier.fillMaxSize()) {
-        when(userResponse) {
-            is Response.Initial -> ProfileLoading(modifier)
-            is Response.Success -> ProfileMapping(modifier, userResponse.data)
+        when(randomPeopleProfileState) {
+            is RandomPeopleProfileState.Initial -> ProfileLoading(modifier)
+            is RandomPeopleProfileState.Success -> ProfileMapping(modifier, randomPeopleProfileState.user)
             else -> ProfileMappingError(modifier)
         }
     }
@@ -309,7 +309,7 @@ fun ProfileMappingError(modifier: Modifier) {
 fun UserProfileScreenRootInitialPreview() {
     RandomPeopleKTheme {
         UserProfileScreenRoot(
-            Response.Initial(),
+            RandomPeopleProfileState.Initial,
             onClick = {  }
         )
     }
@@ -320,7 +320,7 @@ fun UserProfileScreenRootInitialPreview() {
 fun UserProfileScreenRootErrorPreview() {
     RandomPeopleKTheme {
         UserProfileScreenRoot(
-            Response.Error("error"),
+            RandomPeopleProfileState.Error(),
             onClick = {  }
         )
     }
@@ -334,8 +334,8 @@ fun UserProfileScreenRootErrorPreview() {
 fun UserProfileScreenRootSuccessPortraitPreview() {
     RandomPeopleKTheme {
         UserProfileScreenRoot(
-            Response.Success(
-                data = User(
+            RandomPeopleProfileState.Success(
+                user = User(
                     id = "unique_id",
                     name = Name("Ire Test", "Mr. Ire Test"),
                     location = "8400 Jacksonwile road, Raintown, Greenwaland",
@@ -357,8 +357,8 @@ fun UserProfileScreenRootSuccessPortraitPreview() {
 fun UserProfileScreenRootSuccessLandscapePreview() {
     RandomPeopleKTheme {
         UserProfileScreenRoot(
-            Response.Success(
-                data = User(
+            RandomPeopleProfileState.Success(
+                user = User(
                     id = "unique_id",
                     name = Name("Ire Test", "Mr. Ire Test"),
                     location = "8400 Jacksonwile road, Raintown, Greenwaland",
