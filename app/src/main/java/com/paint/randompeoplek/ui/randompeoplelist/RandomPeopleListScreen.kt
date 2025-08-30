@@ -1,7 +1,5 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +25,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -35,24 +35,20 @@ import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getString
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.paint.randompeoplek.R
-import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
@@ -65,14 +61,6 @@ import com.paint.randompeoplek.ui.theme.grey
 fun RandomPeopleListScreen(onItemClick: (user: User) -> Unit) {
     val viewModel = hiltViewModel<RandomPeopleListViewModel>()
 
-    val context = LocalContext.current
-    LaunchedEffect(key1 = true) {
-        viewModel.oneTimeErrorFlow.collect {
-            val oneTimeErrorMessage = getOneTimeErrorMessage(context, it)
-            Toast.makeText(context, oneTimeErrorMessage, Toast.LENGTH_LONG).show()
-        }
-    }
-
     val onRefreshClick = { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
 
     val usersResponse by viewModel.usersResponseFlow.collectAsStateWithLifecycle()
@@ -81,6 +69,7 @@ fun RandomPeopleListScreen(onItemClick: (user: User) -> Unit) {
 
     RandomPeopleListScreenRoot(
         usersResponse = usersResponse,
+        snackbarHostState = viewModel.snackbarHostState,
         isRefreshing = isRefreshing,
         pullRefreshState = pullRefreshState,
         onItemClick = onItemClick,
@@ -88,18 +77,11 @@ fun RandomPeopleListScreen(onItemClick: (user: User) -> Unit) {
     )
 }
 
-private fun getOneTimeErrorMessage(context: Context, error: ErrorEntity) : String {
-    return when (error) {
-        is ErrorEntity.Network -> getString(context, R.string.error_outdated_users_loaded)
-        is ErrorEntity.ServiceUnavailable -> getString(context, R.string.error_unknown)
-        else -> getString(context, R.string.error_unknown)
-    }
-}
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RandomPeopleListScreenRoot(
     usersResponse: Response<List<User>>,
+    snackbarHostState: SnackbarHostState,
     isRefreshing: Boolean,
     pullRefreshState: PullRefreshState?,
     onItemClick: (user: User) -> Unit,
@@ -107,6 +89,11 @@ fun RandomPeopleListScreenRoot(
 ) {
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState
+            )
+        },
         topBar = { RandomPeopleAppBar(onRefreshClick) },
         content = { padding -> RandomPeopleListContent(Modifier.padding(padding), usersResponse, isRefreshing, pullRefreshState, onItemClick, onRefreshClick) }
     )
@@ -288,6 +275,7 @@ fun RandomPeopleInitialLoadingPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
             usersResponse = Response.Initial(),
+            snackbarHostState = SnackbarHostState(),
             isRefreshing = false,
             pullRefreshState = rememberPullRefreshState(
                 refreshing = false,
@@ -308,6 +296,7 @@ fun RandomPeopleNoUsersPreview() {
             usersResponse = Response.Success(
                 data = listOf()
             ),
+            snackbarHostState = SnackbarHostState(),
             isRefreshing = false,
             pullRefreshState = rememberPullRefreshState(
                 refreshing = false,
@@ -401,6 +390,7 @@ fun RandomPeopleListPreview() {
                     )
                 )
             ),
+            snackbarHostState = SnackbarHostState(),
             isRefreshing = false,
             pullRefreshState = rememberPullRefreshState(
                 refreshing = false,

@@ -31,9 +31,7 @@ class RandomPeopleListRepository @Inject constructor(
                         }
                     }
                     401 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.UNAUTHORIZED)
-                    409 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.CONFLICT)
                     408 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.REQUEST_TIMEOUT)
-                    413 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.PAYLOAD_TOO_LARGE)
                     in 500..599 -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.SERVER_ERROR)
                     else -> return UserResponse(userDao.getAll().toRepositoryUsers(), NetworkError.UNKNOWN)
                 }

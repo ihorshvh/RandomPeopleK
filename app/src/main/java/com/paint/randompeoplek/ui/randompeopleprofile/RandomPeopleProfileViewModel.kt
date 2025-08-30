@@ -32,7 +32,7 @@ class RandomPeopleProfileViewModel @Inject constructor(
                 _userResponseFlow.value = Response.Success(it.toUiParcelableUser())
             }
             result.onFailure {
-                val errorEntity = errorHandlerUseCase.getErrorEntity(it)
+                val errorEntity = errorHandlerUseCase.getErrorMessage(it)
                 _userResponseFlow.value = Response.Error(errorEntity)
             }
         }

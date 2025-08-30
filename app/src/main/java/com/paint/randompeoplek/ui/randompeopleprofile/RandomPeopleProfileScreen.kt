@@ -19,7 +19,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.paint.randompeoplek.R
-import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.Name
 import com.paint.randompeoplek.ui.model.Picture
@@ -321,7 +320,7 @@ fun UserProfileScreenRootInitialPreview() {
 fun UserProfileScreenRootErrorPreview() {
     RandomPeopleKTheme {
         UserProfileScreenRoot(
-            Response.Error(ErrorEntity.Network),
+            Response.Error("error"),
             onClick = {  }
         )
     }

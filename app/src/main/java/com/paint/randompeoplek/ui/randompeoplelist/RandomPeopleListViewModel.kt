@@ -1,9 +1,9 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
+import androidx.compose.material.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
-import com.paint.randompeoplek.domain.errorhandler.ErrorEntity
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCase
 import com.paint.randompeoplek.model.Response
 import com.paint.randompeoplek.ui.model.User
@@ -12,10 +12,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,13 +25,14 @@ class RandomPeopleListViewModel @Inject constructor(
     private val errorHandlerUseCase: ErrorHandlerUseCase
 ) : ViewModel(), PeopleListViewModel {
 
-    private val _oneTimeErrorFlow: MutableSharedFlow<ErrorEntity> =
+    private val snackbarMessageSharedFlow: MutableSharedFlow<String> =
         MutableSharedFlow(
             replay = ONE_TIME_ERROR_REPLAY,
             extraBufferCapacity = ONE_TIME_ERROR_EXTRA_BUFFER_CAPACITY,
             onBufferOverflow = BufferOverflow.DROP_OLDEST
         )
-    val oneTimeErrorFlow: SharedFlow<ErrorEntity> = _oneTimeErrorFlow.asSharedFlow()
+
+    val snackbarHostState = SnackbarHostState()
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
@@ -40,6 +41,11 @@ class RandomPeopleListViewModel @Inject constructor(
     val usersResponseFlow: StateFlow<Response<List<User>>> = _usersResponseFlow.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            snackbarMessageSharedFlow.asSharedFlow().collectLatest { snackbarMessage ->
+                snackbarHostState.showSnackbar(snackbarMessage)
+            }
+        }
         getRandomPeopleList(USER_QUANTITY)
     }
 
@@ -52,10 +58,10 @@ class RandomPeopleListViewModel @Inject constructor(
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
             result.onSuccess {
                 if (it.networkError != null) {
-                    val errorEntity = errorHandlerUseCase.getErrorEntity(it.networkError)
-                    _oneTimeErrorFlow.emit(errorEntity)
+                    val errorMessage = errorHandlerUseCase.getErrorMessage(it.networkError)
+                    snackbarMessageSharedFlow.emit(errorMessage)
 
-                    _usersResponseFlow.value = Response.Error(errorEntity, it.users.toUiParcelableUsers())
+                    _usersResponseFlow.value = Response.Error(errorMessage, it.users.toUiParcelableUsers())
                 } else {
                     _usersResponseFlow.value = Response.Success(it.users.toUiParcelableUsers())
                 }
@@ -64,8 +70,8 @@ class RandomPeopleListViewModel @Inject constructor(
             }
 
             result.onFailure {
-                val errorEntity = errorHandlerUseCase.getErrorEntity(it)
-                _oneTimeErrorFlow.emit(errorEntity)
+                val errorMessage = errorHandlerUseCase.getErrorMessage(it)
+                snackbarMessageSharedFlow.emit(errorMessage)
             }
         }
     }

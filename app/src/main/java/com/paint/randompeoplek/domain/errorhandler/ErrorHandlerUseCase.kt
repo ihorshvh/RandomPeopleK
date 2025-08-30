@@ -1,28 +1,48 @@
 package com.paint.randompeoplek.domain.errorhandler
 
+import com.paint.randompeoplek.R
 import com.paint.randompeoplek.repository.NetworkError
-import retrofit2.HttpException
-import java.io.IOException
+import com.paint.randompeoplek.resourceprovider.ResourceProvider
 import javax.inject.Inject
 
 interface ErrorHandlerUseCase {
 
-    fun getErrorEntity(throwable: Throwable?): ErrorEntity
-    fun getErrorEntity(networkError: NetworkError?): ErrorEntity
+    fun getErrorMessage(throwable: Throwable?): String
 
+    fun getErrorMessage(networkError: NetworkError?): String
 }
 
-class ErrorHandlerUseCaseImpl @Inject constructor() : ErrorHandlerUseCase {
+class ErrorHandlerUseCaseImpl @Inject constructor(
+    private val resourceProvider: ResourceProvider
+) : ErrorHandlerUseCase {
 
-    override fun getErrorEntity(throwable: Throwable?): ErrorEntity {
-        return when(throwable) {
-            is IOException -> ErrorEntity.Network
-            is HttpException -> ErrorEntity.ServiceUnavailable
-            else -> ErrorEntity.Unknown
-        }
+    override fun getErrorMessage(throwable: Throwable?): String {
+        return getErrorMessage(NetworkError.UNKNOWN)
     }
 
-    override fun getErrorEntity(networkError: NetworkError?): ErrorEntity {
-        return ErrorEntity.Unknown
+    override fun getErrorMessage(networkError: NetworkError?): String {
+        return when (networkError?.name) {
+            NetworkError.REQUEST_TIMEOUT.name -> {
+                resourceProvider.getString(R.string.error_timeout)
+            }
+            NetworkError.UNAUTHORIZED.name -> {
+                resourceProvider.getString(R.string.error_unauthorized)
+            }
+            NetworkError.NO_INTERNET.name -> {
+                resourceProvider.getString(R.string.error_no_internet)
+            }
+
+            NetworkError.SERVER_ERROR.name -> {
+                resourceProvider.getString(R.string.error_server)
+            }
+
+            NetworkError.UNKNOWN.name -> {
+                resourceProvider.getString(R.string.error_unknown)
+            }
+
+            else -> {
+                resourceProvider.getString(R.string.error_unknown)
+            }
+        }
     }
 }

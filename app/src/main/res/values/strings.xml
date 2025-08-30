@@ -8,11 +8,13 @@
     <string name="users_loading">Profiles fetching…</string>
 
     <!--Error messages-->
+    <string name="error_timeout">Slow internet! Try later</string>
+    <string name="error_unauthorized">You are not authorized to access the information from the server</string>
+    <string name="error_no_internet">Invoking local storage! Check the internet connection</string>
+    <string name="error_server">Server error</string>
     <string name="error_unknown">Unknown error</string>
-    <string name="error_outdated_users_loaded">Invoking local storage! Check the internet connection</string>
     <string name="error_mapping_profile">Unexpected error while the profile loading! \n Try later!</string>
-    <!--Server errors-->
-    <string name="error_lost_connection">Unable to resolve host</string>
+
     <!--Resource descriptions-->
     <string name="image_description">Profile image</string>
     <string name="description_no_users_image">To refresh the user list</string>
