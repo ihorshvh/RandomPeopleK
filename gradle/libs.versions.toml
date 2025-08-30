@@ -159,3 +159,37 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
+[bundles]
+lifecycle = [
+    "androidx-lifecycle-viewmodel-ktx",
+    "androidx-lifecycle-runtime-ktx",
+    "androidx-lifecycle-livedata-ktx",
+    "androidx-lifecycle-viewmodel-compose",
+    "androidx-lifecycle-runtime-compose",
+]
+room = ["androidx-room-runtime", "androidx-room-ktx"]
+navigation = [
+    "androidx-navigation-fragment-ktx",
+    "androidx-navigation-ui-ktx",
+    "androidx-navigation-compose",
+]
+# Consider if you use Material or Material3 primarily for compose-ui
+compose-ui = [
+    "androidx-compose-activity",
+    "androidx-compose-material", # or "androidx-compose-material3"
+    "androidx-compose-ui",
+    "androidx-compose-ui-tooling-preview",
+    "androidx-compose-foundation",
+]
+coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]
+retrofit = ["retrofit-core", "retrofit-converter-gson"]
+okhttp = ["okhttp", "okhttp-logging-interceptor"] # These use the OkHttp BOM for versions
+
+# Testing Bundles
+androidx-test = [
+    "androidx-test-core",
+    "androidx-test-ext-junit",
+    "androidx-test-runner",
+    "androidx-test-espresso-core",
+]
+mockk = ["mockk-android", "mockk-agent"] # mockk-agent is often for JVM tests specifically
