@@ -3,15 +3,11 @@ package com.paint.randompeoplek.domain
 import com.paint.randompeoplek.repository.RandomPeopleListRepository
 import io.mockk.coEvery
 import io.mockk.mockk
-import junit.framework.TestCase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 
-@ExperimentalCoroutinesApi
-@RunWith(JUnit4::class)
 class RandomPeopleProfileUseCaseTest {
 
     @Test
@@ -28,8 +24,8 @@ class RandomPeopleProfileUseCaseTest {
 
         val returnedUser = randomPeopleProfileUseCase.getUserById("test_user_id")
 
-        TestCase.assertNotNull(returnedUser)
-        TestCase.assertNotNull(returnedUser.id)
-        TestCase.assertEquals("test_user_id", returnedUser.id)
+        assertNotNull(returnedUser)
+        assertNotNull(returnedUser.id)
+        assertEquals("test_user_id", returnedUser.id)
     }
 }

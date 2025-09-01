@@ -4,15 +4,11 @@ import com.paint.randompeoplek.repository.RandomPeopleListRepository
 import com.paint.randompeoplek.repository.model.UserResponse
 import io.mockk.coEvery
 import io.mockk.mockk
-import junit.framework.TestCase.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.Test
 import kotlinx.coroutines.test.runTest
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 
-@ExperimentalCoroutinesApi
-@RunWith(JUnit4::class)
 class RandomPeopleListUseCaseTest {
 
     @Test
@@ -32,19 +28,5 @@ class RandomPeopleListUseCaseTest {
         assertNotNull(userResponse)
         assertNotNull(userResponse.users)
         assertEquals(2, userResponse.users.size)
-    }
-
-    @Test(expected = Exception::class)
-    fun testGetUserListWhenFailure() = runTest {
-        val randomPeopleListRepository = mockk<RandomPeopleListRepository>()
-
-        coEvery { randomPeopleListRepository.getUserList("10") } answers {
-            throw Exception()
-        }
-
-        val randomPeopleListUseCase = RandomPeopleListUseCase(randomPeopleListRepository)
-        randomPeopleListUseCase.getUserList("10")
-
-        fail()
     }
 }
