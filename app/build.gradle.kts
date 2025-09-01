@@ -1,4 +1,5 @@
 plugins {
+    alias(libs.plugins.android.junit5)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
@@ -92,13 +93,13 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.coil.compose)
     // compose
-
     implementation(libs.bundles.coroutines)
 
-    testImplementation(libs.junit)
     testImplementation(libs.bundles.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation(libs.bundles.junit.jupiter)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     androidTestImplementation(libs.bundles.androidx.test)
 }

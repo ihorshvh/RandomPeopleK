@@ -1,6 +1,7 @@
 [versions]
 # Core Gradle & Android
 androidGradlePlugin = "8.9.2"
+jUnit5Plugin = "1.9.3.0"
 kotlin = "2.1.10"
 ksp = "2.0.21-1.0.27" # Ensure this aligns with your Kotlin version; KSP version format is <kotlin-version>-<ksp-version>
 hilt = "2.52"
@@ -55,7 +56,7 @@ material = "1.12.0" # Material Components for Android (XML views)
 kotlinxCoroutines = "1.9.0-RC" # Or latest stable, for -core, -android, -test
 
 # Testing
-junit = "4.13.2"
+junitJupiter = "5.9.3"
 mockK = "1.13.12"
 testRunner = "1.6.1" # androidx.test:runner
 espresso = "3.6.1" # androidx.test.espresso:espresso-core
@@ -128,7 +129,9 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 
 # Testing
-junit = { group = "junit", name = "junit", version.ref = "junit" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junitJupiter" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junitJupiter" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junitJupiter" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
@@ -138,6 +141,7 @@ mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockK" 
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 [plugins]
+android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "jUnit5Plugin" }
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -178,4 +182,5 @@ androidx-test = [
     "androidx-test-runner",
     "androidx-test-espresso-core",
 ]
-mockk = ["mockk-android", "mockk-agent"] # mockk-agent is often for JVM tests specifically
+mockk = ["mockk-android", "mockk-agent"]
+junit-jupiter = ["junit-jupiter-api", "junit-jupiter-params"]
