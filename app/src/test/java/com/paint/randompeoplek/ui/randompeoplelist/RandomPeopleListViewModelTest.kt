@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -25,21 +26,13 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(ViewModelCoroutineExtension::class)
 class RandomPeopleListViewModelTest {
 
-//    @get:Rule
-//    val viewModelCoroutineRule = ViewModelCoroutineRule()
+    private lateinit var resourceProvider: ResourceProvider
 
-//    private lateinit var scheduler: TestCoroutineScheduler
-//
-//    @BeforeEach
-//    fun setUp() {
-//        scheduler = TestCoroutineScheduler()
-//        Dispatchers.setMain(StandardTestDispatcher(scheduler))
-//    }
-//
-//    @AfterEach
-//    fun tearDown() {
-//        Dispatchers.resetMain()
-//    }
+    @BeforeEach
+    fun setUp() {
+        resourceProvider = mockk<ResourceProvider>()
+        every { resourceProvider.getString(any()) } returns "error"
+    }
 
     @Test
     fun testGetUserListWhenSuccess(scheduler: TestCoroutineScheduler) {
@@ -50,8 +43,6 @@ class RandomPeopleListViewModelTest {
             UserResponse(users)
         }
 
-        val resourceProvider = mockk<ResourceProvider>()
-        every { resourceProvider.getString(any()) } returns "error"
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl(resourceProvider))
 
         assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Initial::class.java))
@@ -83,8 +74,6 @@ class RandomPeopleListViewModelTest {
             UserResponse(users, NetworkError.NO_INTERNET)
         }
 
-        val resourceProvider = mockk<ResourceProvider>()
-        every { resourceProvider.getString(any()) } returns "error"
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl(resourceProvider))
 
         assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Initial::class.java))
@@ -116,8 +105,6 @@ class RandomPeopleListViewModelTest {
             throw exception
         }
 
-        val resourceProvider = mockk<ResourceProvider>()
-        every { resourceProvider.getString(any()) } returns "error"
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl(resourceProvider))
 
         assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Initial::class.java))
