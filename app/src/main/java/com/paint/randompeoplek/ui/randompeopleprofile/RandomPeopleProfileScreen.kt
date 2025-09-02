@@ -3,7 +3,7 @@ package com.paint.randompeoplek.ui.randompeopleprofile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +38,7 @@ fun UserProfileScreen(userId: String, onClick: () -> Unit) {
     UserProfileScreenRoot(randomPeopleProfileState, onClick)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileScreenRoot(randomPeopleProfileState: RandomPeopleProfileState, onClick: () -> Unit) {
     Scaffold(
@@ -47,6 +48,7 @@ fun UserProfileScreenRoot(randomPeopleProfileState: RandomPeopleProfileState, on
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(onClick: () -> Unit) {
     val modifier = Modifier.height(56.dp)
@@ -157,7 +159,7 @@ fun ProfileName(modifier: Modifier, name: Name){
         {
             Text(
                 text = name.fullName,
-                style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 modifier = modifier.padding(horizontal = 8.dp)
             )
         }
@@ -179,7 +181,7 @@ fun ProfileLocation(modifier: Modifier, location: String) {
         {
             Text(
                 text = location,
-                style = MaterialTheme.typography.h3,
+                style = MaterialTheme.typography.titleSmall,
                 modifier = modifier.padding(horizontal = 8.dp)
             )
         }
@@ -190,7 +192,7 @@ fun ProfileLocation(modifier: Modifier, location: String) {
 fun ProfileContactInformation(modifier: Modifier, phone: String, email: String) {
     Text(
         text = stringResource(R.string.label_contact_info),
-        style = MaterialTheme.typography.h3.copy(fontWeight = FontWeight.Bold),
+        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
         modifier = modifier.padding(start = 16.dp, top = 32.dp, end = 16.dp)
     )
     TextWithTheImageToTheLeft(
@@ -206,7 +208,7 @@ fun ProfileContactInformation(modifier: Modifier, phone: String, email: String) 
         {
             Text(
                 text = phone,
-                style = MaterialTheme.typography.h3,
+                style = MaterialTheme.typography.titleSmall,
                 modifier = modifier.padding(horizontal = 8.dp)
             )
         }
@@ -224,7 +226,7 @@ fun ProfileContactInformation(modifier: Modifier, phone: String, email: String) 
         {
             Text(
                 text = email,
-                style = MaterialTheme.typography.h3,
+                style = MaterialTheme.typography.titleSmall,
                 modifier = modifier.padding(horizontal = 8.dp)
             )
         }
@@ -297,7 +299,7 @@ fun ProfileMappingError(modifier: Modifier) {
             Text(
                 text = stringResource(R.string.error_mapping_profile),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold)
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
     }
