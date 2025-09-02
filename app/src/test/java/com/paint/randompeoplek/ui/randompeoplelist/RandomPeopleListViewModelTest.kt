@@ -1,5 +1,6 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
+import com.paint.randompeoplek.ViewModelCoroutineExtension
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCaseImpl
 import com.paint.randompeoplek.domain.model.UserResponse
@@ -8,44 +9,40 @@ import com.paint.randompeoplek.resourceprovider.ResourceProvider
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@ExtendWith(ViewModelCoroutineExtension::class)
 class RandomPeopleListViewModelTest {
 
 //    @get:Rule
 //    val viewModelCoroutineRule = ViewModelCoroutineRule()
 
-    private lateinit var scheduler: TestCoroutineScheduler
-
-    @BeforeEach
-    fun setUp() {
-        scheduler = TestCoroutineScheduler()
-        Dispatchers.setMain(StandardTestDispatcher(scheduler))
-    }
-
-    @AfterEach
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
+//    private lateinit var scheduler: TestCoroutineScheduler
+//
+//    @BeforeEach
+//    fun setUp() {
+//        scheduler = TestCoroutineScheduler()
+//        Dispatchers.setMain(StandardTestDispatcher(scheduler))
+//    }
+//
+//    @AfterEach
+//    fun tearDown() {
+//        Dispatchers.resetMain()
+//    }
 
     @Test
-    fun testGetUserListWhenSuccess() {
+    fun testGetUserListWhenSuccess(scheduler: TestCoroutineScheduler) {
         val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
         val users = getUsers()
 
@@ -78,7 +75,7 @@ class RandomPeopleListViewModelTest {
     }
 
     @Test
-    fun testGetRandomPeopleListWhenSuccessButWithError() {
+    fun testGetRandomPeopleListWhenSuccessButWithError(scheduler: TestCoroutineScheduler) {
         val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
         val users = getUsers()
 
@@ -112,7 +109,7 @@ class RandomPeopleListViewModelTest {
     }
 
     @Test
-    fun testGetRandomPeopleListWhenFailure() {
+    fun testGetRandomPeopleListWhenFailure(scheduler: TestCoroutineScheduler) {
         val exception = Throwable("exception")
         val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
         coEvery { randomPeopleListMediator.getUserList("10") } answers {

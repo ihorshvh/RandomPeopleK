@@ -1,6 +1,5 @@
 package com.paint.randompeoplek.ui.randompeopleprofile
 
-import com.paint.randompeoplek.ViewModelCoroutineRule
 import com.paint.randompeoplek.domain.RandomPeopleProfileUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCaseImpl
 import com.paint.randompeoplek.domain.getUser
