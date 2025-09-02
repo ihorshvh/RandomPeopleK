@@ -5,7 +5,6 @@ import com.paint.randompeoplek.resourceprovider.ResourceProvider
 import io.mockk.mockk
 import io.mockk.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import java.io.IOException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
