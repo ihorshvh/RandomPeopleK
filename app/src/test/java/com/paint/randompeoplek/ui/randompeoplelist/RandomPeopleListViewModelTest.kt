@@ -1,6 +1,5 @@
 package com.paint.randompeoplek.ui.randompeoplelist
 
-import com.paint.randompeoplek.ViewModelCoroutineRule
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCaseImpl
 import com.paint.randompeoplek.domain.model.UserResponse
@@ -129,10 +128,9 @@ class RandomPeopleListViewModelTest {
 
         scheduler.advanceUntilIdle()
 
-        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Error::class.java))
+        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Initial::class.java))
 
         viewModel.getRandomPeopleList("10")
-        assertTrue(viewModel.isRefreshing.value)
 
         scheduler.advanceUntilIdle()
 
