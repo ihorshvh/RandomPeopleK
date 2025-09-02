@@ -97,7 +97,6 @@ dependencies {
 
     testImplementation(libs.bundles.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.turbine)
     testImplementation(libs.bundles.junit.jupiter)
     testRuntimeOnly(libs.junit.jupiter.engine)
 

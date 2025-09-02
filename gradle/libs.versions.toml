@@ -60,7 +60,6 @@ junitJupiter = "5.9.3"
 mockK = "1.13.12"
 testRunner = "1.6.1" # androidx.test:runner
 espresso = "3.6.1" # androidx.test.espresso:espresso-core
-turbine = "1.1.0"
 androidxTestExtJunit = "1.2.1"
 androidxTestCore = "1.6.1"
 
@@ -138,7 +137,6 @@ androidx-test-runner = { group = "androidx.test", name = "runner", version.ref =
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockK" }
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockK" } # For JVM tests if needed
-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 [plugins]
 android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "jUnit5Plugin" }
