@@ -48,11 +48,11 @@ class RandomPeopleListViewModel @Inject constructor(
     }
 
     override fun getRandomPeopleList(userQuantity: String) {
-        viewModelScope.launch {
-            if (_randomPeopleListStateFlow.value !is RandomPeopleListState.Initial) {
-                _isRefreshing.value = true
-            }
+        if (_randomPeopleListStateFlow.value !is RandomPeopleListState.Initial) {
+            _isRefreshing.value = true
+        }
 
+        viewModelScope.launch {
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
             result.onSuccess {
                 if (it.networkError != null) {
