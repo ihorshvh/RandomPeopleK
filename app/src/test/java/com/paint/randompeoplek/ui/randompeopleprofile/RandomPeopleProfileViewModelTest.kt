@@ -1,72 +1,78 @@
 package com.paint.randompeoplek.ui.randompeopleprofile
 
+import com.paint.randompeoplek.ViewModelCoroutineExtension
 import com.paint.randompeoplek.domain.RandomPeopleProfileUseCase
-import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCaseImpl
 import com.paint.randompeoplek.domain.getUser
 import com.paint.randompeoplek.domain.model.toMediatorUser
+import com.paint.randompeoplek.resourceprovider.ResourceProvider
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@ExtendWith(ViewModelCoroutineExtension::class)
 class RandomPeopleProfileViewModelTest {
-    // Todo fix tests
-//
-//    @get:Rule
-//    val viewModelCoroutineRule = ViewModelCoroutineRule()
-//
-//    @Test
-//    fun testGetUserByIdWhenSuccess() {
-//        val randomPeopleProfileMediator = mockk<RandomPeopleProfileUseCase>()
-//        val user = getUser().toMediatorUser()
-//
-//        coEvery { randomPeopleProfileMediator.getUserById("test_user_id") } answers {
-//            user
-//        }
-//
-//        val viewModel = RandomPeopleProfileViewModel(randomPeopleProfileMediator, ErrorHandlerUseCaseImpl())
-//
-//        assertThat(viewModel.userResponseFlow.value, instanceOf(Response.Initial::class.java))
-//
-//        viewModel.getUserById("test_user_id")
-//
-//        viewModelCoroutineRule.scheduler.advanceUntilIdle()
-//
-//        val userResponse = viewModel.userResponseFlow.value
-//        assertThat(userResponse, instanceOf(Response.Success::class.java))
-//        assertNotNull(userResponse.data)
-//        assertEquals("test_user_id", userResponse.data?.id)
-//        assertNull(userResponse.errorEntity)
-//    }
-//
-//    @Test
-//    fun testGetUserByIdWhenFailure() {
-//        val randomPeopleProfileMediator = mockk<RandomPeopleProfileUseCase>()
-//
-//        val exception = Throwable("exception")
-//        coEvery { randomPeopleProfileMediator.getUserById("test_user_id") } answers {
-//            throw exception
-//        }
-//
-//        val viewModel = RandomPeopleProfileViewModel(randomPeopleProfileMediator, ErrorHandlerUseCaseImpl())
-//
-//        assertThat(viewModel.userResponseFlow.value, instanceOf(Response.Initial::class.java))
-//
-//        viewModel.getUserById("test_user_id")
-//
-//        viewModelCoroutineRule.scheduler.advanceUntilIdle()
-//
-//        val userResponse = viewModel.userResponseFlow.value
-//        assertThat(userResponse, instanceOf(Response.Error::class.java))
-//        assertNull(userResponse.data)
-//        assertNotNull(userResponse.errorEntity)
-//        assertThat(userResponse.errorEntity, instanceOf(ErrorEntity.Unknown::class.java))
-//    }
+
+    private lateinit var resourceProvider: ResourceProvider
+
+    @BeforeEach
+    fun setUp() {
+        resourceProvider = mockk<ResourceProvider>()
+        every { resourceProvider.getString(any()) } returns "error"
+    }
+
+    @Test
+    fun testGetUserByIdWhenSuccess(scheduler: TestCoroutineScheduler) {
+        val randomPeopleProfileMediator = mockk<RandomPeopleProfileUseCase>()
+        val user = getUser().toMediatorUser()
+
+        coEvery { randomPeopleProfileMediator.getUserById("test_user_id") } answers {
+            user
+        }
+
+        val viewModel = RandomPeopleProfileViewModel(randomPeopleProfileMediator)
+
+        assertThat(viewModel.randomPeopleProfileStateFlow.value, instanceOf(RandomPeopleProfileState.Initial::class.java))
+        viewModel.getUserById("test_user_id")
+
+        scheduler.advanceUntilIdle()
+
+        val userResponse = viewModel.randomPeopleProfileStateFlow.value
+        assertThat(userResponse, instanceOf(RandomPeopleProfileState.Success::class.java))
+        val userSuccess = (userResponse as RandomPeopleProfileState.Success)
+        assertNotNull(userSuccess)
+        assertEquals("test_user_id", userSuccess.user.id)
+    }
+
+    @Test
+    fun testGetUserByIdWhenFailure(scheduler: TestCoroutineScheduler) {
+        val randomPeopleProfileMediator = mockk<RandomPeopleProfileUseCase>()
+
+        val exception = Throwable("exception")
+        coEvery { randomPeopleProfileMediator.getUserById("test_user_id") } answers {
+            throw exception
+        }
+
+        val viewModel = RandomPeopleProfileViewModel(randomPeopleProfileMediator)
+
+        assertThat(viewModel.randomPeopleProfileStateFlow.value, instanceOf(RandomPeopleProfileState.Initial::class.java))
+        viewModel.getUserById("test_user_id")
+
+        scheduler.advanceUntilIdle()
+
+        val userResponse = viewModel.randomPeopleProfileStateFlow.value
+        assertThat(userResponse, instanceOf(RandomPeopleProfileState.Error::class.java))
+        val userError = (userResponse as RandomPeopleProfileState.Error)
+        assertNull(userError.user)
+    }
 }
