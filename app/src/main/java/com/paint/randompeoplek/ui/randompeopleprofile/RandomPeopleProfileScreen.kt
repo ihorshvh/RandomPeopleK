@@ -42,21 +42,24 @@ fun UserProfileScreen(userId: String, onClick: () -> Unit) {
 @Composable
 fun UserProfileScreenRoot(randomPeopleProfileState: RandomPeopleProfileState, onClick: () -> Unit) {
     Scaffold(
-        modifier = Modifier.safeDrawingPadding(),
         topBar = { AppBar(onClick) },
-        content = { padding -> Content(Modifier.padding(padding), randomPeopleProfileState)}
+        content = { paddingValues ->
+            Content(
+                Modifier.padding(paddingValues),
+                randomPeopleProfileState
+            )
+        }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(onClick: () -> Unit) {
-    val modifier = Modifier.height(56.dp)
     TopAppBar(
         title = {
             Text(text = "")
         },
-        modifier = modifier,
+        windowInsets = TopAppBarDefaults.windowInsets,
         navigationIcon = {
             IconButton(
                 onClick = onClick,
@@ -74,22 +77,22 @@ fun AppBar(onClick: () -> Unit) {
 fun Content(modifier: Modifier, randomPeopleProfileState: RandomPeopleProfileState) {
     Surface(modifier = modifier.fillMaxSize()) {
         when(randomPeopleProfileState) {
-            is RandomPeopleProfileState.Initial -> ProfileLoading(modifier)
-            is RandomPeopleProfileState.Success -> ProfileMapping(modifier, randomPeopleProfileState.user)
-            else -> ProfileMappingError(modifier)
+            is RandomPeopleProfileState.Initial -> ProfileLoading(modifier = Modifier.fillMaxSize())
+            is RandomPeopleProfileState.Success -> ProfileMapping(modifier = Modifier.fillMaxSize(), randomPeopleProfileState.user)
+            else -> ProfileMappingError(modifier = Modifier.fillMaxSize())
         }
     }
 }
 
 @Composable
 fun ProfileLoading(modifier: Modifier) {
-    Surface(modifier = modifier.fillMaxSize()) {
+    Surface(modifier = modifier) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CircularProgressIndicator(
-                modifier = modifier.size(160.dp)
+                modifier = Modifier.size(160.dp)
             )
         }
     }
@@ -116,19 +119,19 @@ fun ProfileMappingScreen(modifier: Modifier, user: User) {
 
 @Composable
 fun ProfileMappingScreenPortrait(modifier: Modifier, user: User) {
-    Column {
-        ProfileImagePortrait(modifier, user.picture)
-        ProfileName(modifier, user.name)
-        ProfileLocation(modifier, user.location)
-        ProfileContactInformation(modifier, user.phone, user.email)
+    Column(modifier = modifier) {
+        ProfileImagePortrait(user.picture)
+        ProfileName(user.name)
+        ProfileLocation(user.location)
+        ProfileContactInformation(user.phone, user.email)
     }
 }
 
 @Composable
-fun ProfileImagePortrait(modifier: Modifier, picture: Picture) {
+fun ProfileImagePortrait(picture: Picture) {
     Row(
         horizontalArrangement = Arrangement.Center,
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp, bottom = 24.dp)
     ) {
@@ -137,7 +140,7 @@ fun ProfileImagePortrait(modifier: Modifier, picture: Picture) {
             contentDescription = stringResource(id = R.string.image_description),
             placeholder = painterResource(R.drawable.ic_user_default_picture),
             error = painterResource(R.drawable.ic_user_default_picture),
-            modifier = modifier
+            modifier = Modifier
                 .size(160.dp)
                 .clip(CircleShape)
         )
@@ -145,89 +148,89 @@ fun ProfileImagePortrait(modifier: Modifier, picture: Picture) {
 }
 
 @Composable
-fun ProfileName(modifier: Modifier, name: Name){
+fun ProfileName(name: Name){
     TextWithTheImageToTheLeft(
-        {
+        image = {
             Image(
                 painter = painterResource(R.drawable.ic_user_img),
                 contentDescription = null,
-                modifier = modifier
+                modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
             )
         },
-        {
+        text = {
             Text(
                 text = name.fullName,
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
     )
 }
 
 @Composable
-fun ProfileLocation(modifier: Modifier, location: String) {
+fun ProfileLocation(location: String) {
     TextWithTheImageToTheLeft(
-        {
+        image = {
             Image(
                 painter = painterResource(R.drawable.ic_location_img),
                 contentDescription = null,
-                modifier = modifier
+                modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
             )
         },
-        {
+        text = {
             Text(
                 text = location,
                 style = MaterialTheme.typography.titleSmall,
-                modifier = modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
     )
 }
 
 @Composable
-fun ProfileContactInformation(modifier: Modifier, phone: String, email: String) {
+fun ProfileContactInformation(phone: String, email: String) {
     Text(
         text = stringResource(R.string.label_contact_info),
         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-        modifier = modifier.padding(start = 16.dp, top = 32.dp, end = 16.dp)
+        modifier = Modifier.padding(start = 16.dp, top = 32.dp, end = 16.dp)
     )
     TextWithTheImageToTheLeft(
-        {
+        image = {
             Image(
                 painter = painterResource(R.drawable.ic_phone_img),
                 contentDescription = null,
-                modifier = modifier
+                modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
             )
         },
-        {
+        text = {
             Text(
                 text = phone,
                 style = MaterialTheme.typography.titleSmall,
-                modifier = modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
     )
     TextWithTheImageToTheLeft(
-        {
+        image = {
             Image(
                 painter = painterResource(R.drawable.ic_email_img),
                 contentDescription = null,
-                modifier = modifier
+                modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
             )
         },
-        {
+        text = {
             Text(
                 text = email,
                 style = MaterialTheme.typography.titleSmall,
-                modifier = modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
     )
@@ -246,18 +249,18 @@ fun TextWithTheImageToTheLeft(image: @Composable () -> Unit, text: @Composable (
 
 @Composable
 fun ProfileMappingScreenLandscape(modifier: Modifier, user: User) {
-    Row {
+    Row(modifier = modifier) {
         ProfileImageLandscape(user.picture)
         Column(
             verticalArrangement = Arrangement.Top,
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxHeight()
-                .fillMaxWidth()
+                .weight(1f)
                 .padding(top = 16.dp, end = 16.dp)
         ) {
-            ProfileName(modifier, user.name)
-            ProfileLocation(modifier, user.location)
-            ProfileContactInformation(modifier, user.phone, user.email)
+            ProfileName(user.name)
+            ProfileLocation(user.location)
+            ProfileContactInformation(user.phone, user.email)
         }
     }
 }
@@ -267,7 +270,6 @@ fun ProfileImageLandscape(picture: Picture) {
     Column(
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
-            .fillMaxHeight()
             .padding(start = 16.dp, top = 16.dp, end = 16.dp)
     ) {
         AsyncImage(
@@ -292,7 +294,7 @@ fun ProfileMappingError(modifier: Modifier) {
             Image(
                 painter = painterResource(R.drawable.ic_profile_load_error),
                 contentDescription = null,
-                modifier = modifier
+                modifier = Modifier
                     .size(150.dp)
                     .padding(start = 16.dp)
             )

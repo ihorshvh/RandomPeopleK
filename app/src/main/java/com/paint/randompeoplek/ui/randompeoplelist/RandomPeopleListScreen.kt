@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -88,16 +88,15 @@ fun RandomPeopleListScreenRoot(
     onRefreshClick: () -> Unit
 ) {
     Scaffold(
-        modifier = Modifier.safeDrawingPadding(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackbarHostState
             )
         },
         topBar = { RandomPeopleAppBar(onRefreshClick) },
-        content = { padding ->
+        content = { innerPadding ->
             RandomPeopleListContent(
-                Modifier.padding(padding),
+                Modifier.padding(innerPadding),
                 randomPeopleListState,
                 isRefreshing,
                 pullRefreshState,
@@ -115,7 +114,6 @@ fun RandomPeopleAppBar(onRefreshClick: () -> Unit) {
         title = {
             Text(text = stringResource(id = R.string.app_name))
         },
-        modifier = Modifier.height(56.dp),
         actions = {
             IconButton(onClick = { onRefreshClick.invoke() }) {
                 Icon(painterResource(R.drawable.ic_update_img), "To refresh the user list")
@@ -138,7 +136,8 @@ fun RandomPeopleListContent(
         isRefreshing = isRefreshing,
         onRefresh = onRefreshClick,
         state = pullRefreshState,
-        modifier = modifier.fillMaxSize()) {
+        modifier = modifier.fillMaxSize()
+    ) {
         when (randomPeopleListState) {
             is RandomPeopleListState.Initial -> RandomPeopleInitialLoading()
             is RandomPeopleListState.Success -> RandomPeopleListUsers(randomPeopleListState.users, onItemClick, onRefreshClick)
@@ -174,7 +173,9 @@ fun RandomPeopleInitialLoading() {
 @Composable
 fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, onRefreshClick: () -> Unit) {
     if (users.isNotEmpty()) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.navigationBarsPadding()
+        ) {
             items(
                 items = users,
                 key = { user -> user.id }
