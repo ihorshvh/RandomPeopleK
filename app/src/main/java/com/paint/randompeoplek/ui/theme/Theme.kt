@@ -18,13 +18,12 @@ private val LightColorScheme = lightColorScheme(
     surface = Color.White.copy(alpha = .85f),
     onPrimary = Color.White,
     onSecondary = Color.White,
-    onBackground = white800, // M3 uses onBackground for text/icons on background
-    onSurface = gray900.copy(alpha = 0.8f), // M3 uses onSurface for text/icons on surface
-    // Add other M3 colors as needed, mapping from your M2 palette
-//    tertiary = limeA200, // Example, adjust as needed
-//    surfaceVariant = white900, // Example, adjust as needed
-//    onSurfaceVariant = gray900, // Example, adjust as needed
-//    outline = gray500 // Example for borders/dividers
+    onBackground = white800,
+    onSurface = gray900.copy(alpha = 0.8f),
+    tertiary = lime500,
+    surfaceVariant = Color.White,
+    onSurfaceVariant = gray900,
+    outline = gray900
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -36,16 +35,15 @@ private val DarkColorScheme = darkColorScheme(
     onSecondary = gray900,
     onBackground = white800,
     onSurface = Color.White.copy(alpha = .8f),
-//    tertiary = limeA400, // Example
-//    surfaceVariant = gray800, // Example
-//    onSurfaceVariant = white900, // Example
-//    outline = gray600 // Example
+    tertiary = lime700,
+    surfaceVariant = gray900,
+    onSurfaceVariant = Color.White,
+    outline = gray900
 )
 
 @Composable
 fun RandomPeopleKTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android S+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
@@ -60,8 +58,8 @@ fun RandomPeopleKTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = typography, // Assuming 'typography' is M3 compatible or will be updated
-        shapes = shapes, // Assuming 'shapes' are M3 compatible or will be updated
+        typography = typography,
+        shapes = shapes,
         content = content
     )
 }
