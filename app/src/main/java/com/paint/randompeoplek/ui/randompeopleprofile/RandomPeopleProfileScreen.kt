@@ -59,7 +59,11 @@ fun AppBar(onClick: () -> Unit) {
         title = {
             Text(text = "")
         },
-        windowInsets = TopAppBarDefaults.windowInsets,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
         navigationIcon = {
             IconButton(
                 onClick = onClick,

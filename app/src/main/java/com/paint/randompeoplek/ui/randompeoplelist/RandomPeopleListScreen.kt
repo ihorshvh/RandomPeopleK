@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,6 +28,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -114,6 +114,11 @@ fun RandomPeopleAppBar(onRefreshClick: () -> Unit) {
         title = {
             Text(text = stringResource(id = R.string.app_name))
         },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+        ),
         actions = {
             IconButton(onClick = { onRefreshClick.invoke() }) {
                 Icon(painterResource(R.drawable.ic_update_img), "To refresh the user list")
@@ -173,9 +178,7 @@ fun RandomPeopleInitialLoading() {
 @Composable
 fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, onRefreshClick: () -> Unit) {
     if (users.isNotEmpty()) {
-        LazyColumn(
-            modifier = Modifier.navigationBarsPadding()
-        ) {
+        LazyColumn {
             items(
                 items = users,
                 key = { user -> user.id }
