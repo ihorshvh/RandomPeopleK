@@ -41,15 +41,12 @@ coreTesting = "2.2.0" # For arch.core:core-testing
 composeBom = "2024.06.00" # Check for the latest stable BOM
 composeCompilerExtension = "1.5.11" # This needs to be compatible with your Kotlin version
 composeActivity = "1.10.1" # androidx.activity:activity-compose
-composeMaterial = "1.6.8" # androidx.compose.material:material (Compose M2 - consider M3 if starting new)
 
 # Networking
 retrofit = "2.9.0" # Core Retrofit
 retrofitConverterGson = "2.9.0" # Gson converter for Retrofit
-okhttpBom = "4.12.0" # OkHttp Bill of Materials
 
 # UI & Image Loading
-glide = "4.16.0" # Check for latest Glide version
 coilCompose = "2.7.0"
 material = "1.12.0" # Material Components for Android (XML views)
 
@@ -103,7 +100,6 @@ androidx-navigation-testing = { group = "androidx.navigation", name = "navigatio
 # Compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
-androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }  # No version, uses BOM
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" } # No version, uses BOM
