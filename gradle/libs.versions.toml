@@ -1,6 +1,6 @@
 [versions]
 # Core Gradle & Android
-androidGradlePlugin = "8.9.2"
+androidGradlePlugin = "8.13.0"
 jUnit5Plugin = "1.9.3.0"
 kotlin = "2.1.10"
 ksp = "2.0.21-1.0.27" # Ensure this aligns with your Kotlin version; KSP version format is <kotlin-version>-<ksp-version>
