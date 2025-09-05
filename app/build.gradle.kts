@@ -91,6 +91,7 @@ dependencies {
     implementation(libs.bundles.compose.ui)
     // Android Studio Preview support
     debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.manifest)
     implementation(libs.coil.compose)
     // compose
     implementation(libs.bundles.coroutines)

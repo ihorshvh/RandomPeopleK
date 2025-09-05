@@ -104,6 +104,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }  # No version, uses BOM
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" } # No version, uses BOM
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" } # No version, uses BOM
+androidx-compose-ui-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" } # No version, uses BOM
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" } # No version, uses BOM
 
 
@@ -132,6 +133,7 @@ androidx-test-core = { group = "androidx.test", name = "core", version.ref = "an
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockK" }
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockK" } # For JVM tests if needed
 
@@ -175,6 +177,9 @@ androidx-test = [
     "androidx-test-ext-junit",
     "androidx-test-runner",
     "androidx-test-espresso-core",
+    "androidx-ui-test-junit4",
+    "mockk-android",
+    "kotlinx-coroutines-test"
 ]
 mockk = ["mockk-android", "mockk-agent"]
 junit-jupiter = ["junit-jupiter-api", "junit-jupiter-params"]
