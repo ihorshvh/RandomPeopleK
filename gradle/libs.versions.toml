@@ -19,7 +19,7 @@ versionName = "1.0"
 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
 # JVM
-jvmTarget = "17"
+jvmTarget = "21"
 
 # Jetpack Libraries
 appcompat = "1.7.1"
