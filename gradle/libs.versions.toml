@@ -16,7 +16,7 @@ compileSdk = "36"
 applicationId = "com.paint.randompeoplek"
 versionCode = "1"
 versionName = "1.0"
-testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+testInstrumentationRunner = "com.paint.randompeoplek.HiltJUnitRunner"
 
 # JVM
 jvmTarget = "21"
@@ -134,6 +134,7 @@ androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockK" }
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockK" } # For JVM tests if needed
 
@@ -179,7 +180,8 @@ androidx-test = [
     "androidx-test-espresso-core",
     "androidx-ui-test-junit4",
     "mockk-android",
-    "kotlinx-coroutines-test"
+    "kotlinx-coroutines-test",
+    "hilt-android-testing"
 ]
 mockk = ["mockk-android", "mockk-agent"]
 junit-jupiter = ["junit-jupiter-api", "junit-jupiter-params"]

@@ -102,4 +102,5 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     androidTestImplementation(libs.bundles.androidx.test)
+    kspAndroidTest(libs.hilt.compiler)
 }
