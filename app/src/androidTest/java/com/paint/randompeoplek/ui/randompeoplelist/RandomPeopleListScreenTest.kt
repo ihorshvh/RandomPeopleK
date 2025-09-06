@@ -95,12 +95,12 @@ class RandomPeopleListScreenTest {
         }
 
         composeRule.onNodeWithText("Ire Test").assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("Profile image").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Profile image Mr. Ire Test").assertIsDisplayed()
         composeRule.onNodeWithText("8400 Jacksonwile road, Raintown, Greenwaland").assertIsDisplayed()
 
         composeRule.onNodeWithText("John Test").assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("Profile image").assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("800 Perth road, Raintown, Greenwaland").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Profile image Mr. John Test").assertIsDisplayed()
+        composeRule.onNodeWithText("800 Perth road, Raintown, Greenwaland").assertIsDisplayed()
     }
 
 //    @Test

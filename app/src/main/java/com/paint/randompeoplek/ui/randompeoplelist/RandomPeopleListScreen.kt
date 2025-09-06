@@ -218,7 +218,7 @@ fun ListItemImage(user: User) {
     Column(modifier = listItemImageModifier) {
         AsyncImage(
             model = user.picture.thumbnail,
-            contentDescription = stringResource(id = R.string.image_description),
+            contentDescription = "${stringResource(id = R.string.image_description)} ${user.name.fullName}",
             placeholder = painterResource(R.drawable.ic_user_default_picture),
             error = painterResource(R.drawable.ic_user_default_picture),
             modifier = Modifier
