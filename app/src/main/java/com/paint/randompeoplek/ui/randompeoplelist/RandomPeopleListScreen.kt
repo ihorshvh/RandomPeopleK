@@ -180,7 +180,9 @@ fun RandomPeopleInitialLoading() {
 @Composable
 fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, onRefreshClick: () -> Unit) {
     if (users.isNotEmpty()) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.testTag("random_people_list_users")
+        ) {
             items(
                 items = users,
                 key = { user -> user.id }
