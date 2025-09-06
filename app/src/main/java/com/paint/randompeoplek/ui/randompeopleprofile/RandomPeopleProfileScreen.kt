@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -97,6 +98,7 @@ fun ProfileLoading(modifier: Modifier) {
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(160.dp)
+                .testTag("loading_indicator"),
             )
         }
     }
@@ -147,6 +149,7 @@ fun ProfileImagePortrait(picture: Picture) {
             modifier = Modifier
                 .size(160.dp)
                 .clip(CircleShape)
+                .testTag("user_image")
         )
     }
 }
@@ -161,6 +164,7 @@ fun ProfileName(name: Name){
                 modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
+                    .testTag("user_name_icon")
             )
         },
         text = {
@@ -183,6 +187,7 @@ fun ProfileLocation(location: String) {
                 modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
+                    .testTag("user_location_icon")
             )
         },
         text = {
@@ -210,6 +215,7 @@ fun ProfileContactInformation(phone: String, email: String) {
                 modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
+                    .testTag("user_phone_icon")
             )
         },
         text = {
@@ -228,6 +234,7 @@ fun ProfileContactInformation(phone: String, email: String) {
                 modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
+                    .testTag("user_email_icon")
             )
         },
         text = {
@@ -297,7 +304,7 @@ fun ProfileMappingError(modifier: Modifier) {
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_profile_load_error),
-                contentDescription = null,
+                contentDescription = stringResource(id = R.string.image_description_profile_error),
                 modifier = Modifier
                     .size(150.dp)
                     .padding(start = 16.dp)
