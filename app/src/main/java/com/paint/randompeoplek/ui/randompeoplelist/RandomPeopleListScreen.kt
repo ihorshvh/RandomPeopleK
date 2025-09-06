@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -161,7 +162,8 @@ fun RandomPeopleInitialLoading() {
             CircularProgressIndicator(
                 modifier = Modifier
                     .width(128.dp)
-                    .height(128.dp),
+                    .height(128.dp)
+                    .testTag("loading_indicator"),
                 strokeWidth = 10.dp
             )
             Spacer(Modifier.height(30.dp))
@@ -275,6 +277,7 @@ fun RandomPeopleNoUsers(onRefreshClick: () -> Unit) {
                     .width(100.dp)
                     .height(100.dp)
                     .clickable { onRefreshClick.invoke() }
+                    .testTag("no_users_image")
             )
         }
     }
