@@ -103,46 +103,38 @@ class RandomPeopleListScreenTest {
         composeRule.onNodeWithText("800 Perth road, Raintown, Greenwaland").assertIsDisplayed()
     }
 
-//    @Test
-//    fun testRandomPeopleListScreen_EmptyState_DisplaysEmptyMessage() {
-//        composeRule.setContent {
-//            RandomPeopleKTheme {
-//                RandomPeopleListScreenRoot(
-//                    randomPeopleListState = RandomPeopleListState.Success(emptyList()),
-//                    snackbarHostState = SnackbarHostState(),
-//                    isRefreshing = false,
-//                    pullRefreshState = PullToRefreshState(),
-//                    onItemClick = {  },
-//                    onRefreshClick = {  }
-//                )
-//            }
-//        }
-//
-//        composeRule.onNodeWithText("No profiles found").assertIsDisplayed()
-//        composeRule.onNodeWithText("Refresh").assertIsDisplayed() // Check for the button
-//    }
-//
-//    @Test
-//    fun testRandomPeopleListScreen_ErrorState_DisplaysSnackbarMessage() {
-//        val errorMessage = "An unexpected error occurred"
-//        // Note: For error states with lists, you might still display old data.
-//        // This test assumes an empty screen with an error.
-//        composeRule.setContent {
-//            RandomPeopleKTheme {
-//                RandomPeopleListScreenRoot(
-//                    randomPeopleListState = RandomPeopleListState.Error(errorMessage, null),
-//                    snackbarHostState = SnackbarHostState(),
-//                    isRefreshing = false,
-//                    pullRefreshState = PullToRefreshState(),
-//                    onItemClick = { },
-//                    onRefreshClick = { }
-//                )
-//            }
-//        }
-//
-//        // In a real app, the error is shown in a Snackbar.
-//        // Testing Snackbars requires a bit more setup (launching a coroutine, etc.).
-//        // For simplicity, if the error was displayed directly on screen, you would do:
-//        // composeRule.onNodeWithText(errorMessage).assertIsDisplayed()
-//    }
+    @Test
+    fun testRandomPeopleListScreenError() {
+        val fakeUsers = listOf(
+            User(
+                id = "unique_id_1",
+                name = Name("Ire Test", "Mr. Ire Test"),
+                location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                "email@gmail.com",
+                phone = "+12345678",
+                picture = Picture("", "")
+            ),
+            User(
+                id = "unique_id_2",
+                name = Name("John Test", "Mr. John Test"),
+                location = "800 Perth road, Raintown, Greenwaland",
+                "email@gmail.com",
+                phone = "+12345678",
+                picture = Picture("", "")
+            )
+        )
+
+        composeRule.setContent {
+            RandomPeopleKTheme {
+                RandomPeopleListScreenRoot(
+                    randomPeopleListState = RandomPeopleListState.Error(fakeUsers),
+                    snackbarHostState = SnackbarHostState(),
+                    isRefreshing = false,
+                    pullRefreshState = PullToRefreshState(),
+                    onItemClick = { },
+                    onRefreshClick = { }
+                )
+            }
+        }
+    }
 }
