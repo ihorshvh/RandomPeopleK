@@ -98,7 +98,7 @@ fun ProfileLoading(modifier: Modifier) {
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(160.dp)
-                .testTag("loading_indicator"),
+                .testTag(TEST_TAG_LOADING_INDICATOR),
             )
         }
     }
@@ -149,7 +149,7 @@ fun ProfileImagePortrait(picture: Picture) {
             modifier = Modifier
                 .size(160.dp)
                 .clip(CircleShape)
-                .testTag("user_image")
+                .testTag(TEST_TAG_USER_IMAGE)
         )
     }
 }
@@ -164,7 +164,7 @@ fun ProfileName(name: Name){
                 modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
-                    .testTag("user_name_icon")
+                    .testTag(TEST_TAG_USER_NAME_ICON)
             )
         },
         text = {
@@ -187,7 +187,7 @@ fun ProfileLocation(location: String) {
                 modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
-                    .testTag("user_location_icon")
+                    .testTag(TEST_TAG_USER_LOCATION_ICON)
             )
         },
         text = {
@@ -215,7 +215,7 @@ fun ProfileContactInformation(phone: String, email: String) {
                 modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
-                    .testTag("user_phone_icon")
+                    .testTag(TEST_TAG_USER_PHONE_ICON)
             )
         },
         text = {
@@ -234,7 +234,7 @@ fun ProfileContactInformation(phone: String, email: String) {
                 modifier = Modifier
                     .size(38.dp)
                     .padding(start = 16.dp)
-                    .testTag("user_email_icon")
+                    .testTag(TEST_TAG_USER_EMAIL_ICON)
             )
         },
         text = {
@@ -385,3 +385,10 @@ fun UserProfileScreenRootSuccessLandscapePreview() {
         )
     }
 }
+
+const val TEST_TAG_LOADING_INDICATOR = "loading_indicator"
+const val TEST_TAG_USER_IMAGE = "user_image"
+const val TEST_TAG_USER_NAME_ICON = "user_name_icon"
+const val TEST_TAG_USER_LOCATION_ICON = "user_location_icon"
+const val TEST_TAG_USER_PHONE_ICON = "user_phone_icon"
+const val TEST_TAG_USER_EMAIL_ICON = "user_email_icon"

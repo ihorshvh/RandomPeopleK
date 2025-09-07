@@ -12,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_LOADING_INDICATOR
 import dagger.hilt.android.testing.HiltAndroidRule
 import org.junit.Test
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -32,7 +33,7 @@ class RandomPeopleMainActivityTest {
         hiltRule.inject()
 
         composeRule.onNodeWithText("Random People").assertIsDisplayed()
-        composeRule.onNodeWithTag("loading_indicator").assertIsNotDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_LOADING_INDICATOR).assertIsNotDisplayed()
         composeRule.onNodeWithTag("random_people_list_users").assertIsDisplayed()
         composeRule.onNodeWithTag("random_people_list_users")
             .performScrollToNode(
@@ -46,7 +47,7 @@ class RandomPeopleMainActivityTest {
 
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithTag("loading_indicator").assertIsNotDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_LOADING_INDICATOR).assertIsNotDisplayed()
 
         composeRule.onNodeWithTag("user_image").assertIsDisplayed()
         composeRule.onNodeWithTag("user_name_icon").assertIsDisplayed()

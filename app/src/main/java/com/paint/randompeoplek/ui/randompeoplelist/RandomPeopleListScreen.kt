@@ -163,7 +163,7 @@ fun RandomPeopleInitialLoading() {
                 modifier = Modifier
                     .width(128.dp)
                     .height(128.dp)
-                    .testTag("loading_indicator"),
+                    .testTag(TEST_TAG_LOADING_INDICATOR),
                 strokeWidth = 10.dp
             )
             Spacer(Modifier.height(30.dp))
@@ -185,14 +185,14 @@ val itemModifier = Modifier
 fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, onRefreshClick: () -> Unit) {
     if (users.isNotEmpty()) {
         LazyColumn(
-            modifier = Modifier.testTag("random_people_list_users")
+            modifier = Modifier.testTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS)
         ) {
             itemsIndexed(
                 items = users,
                 key = { index, user: User -> user.id + index }
             )
             { index, user ->
-                val testTag = if (index == users.size - 1) { "random_people_list_user_last" } else { "random_people_list_user" }
+                val testTag = if (index == users.size - 1) { TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER } else { TEST_TAG_RANDOM_PEOPLE_LIST_USER }
                 RandomPeopleListItem(
                     modifier = itemModifier.testTag(testTag),
                     user = user,
@@ -285,7 +285,7 @@ fun RandomPeopleNoUsers(onRefreshClick: () -> Unit) {
                     .width(100.dp)
                     .height(100.dp)
                     .clickable { onRefreshClick.invoke() }
-                    .testTag("no_users_image")
+                    .testTag(TEST_TAG_NO_USERS_IMAGE)
             )
         }
     }
@@ -370,3 +370,9 @@ fun RandomPeopleListItemPreview() {
         )
     }
 }
+
+const val TEST_TAG_LOADING_INDICATOR = "loading_indicator"
+const val TEST_TAG_RANDOM_PEOPLE_LIST_USERS = "random_people_list_users"
+const val TEST_TAG_RANDOM_PEOPLE_LIST_USER = "random_people_list_user"
+const val TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER = "random_people_list_user_last"
+const val TEST_TAG_NO_USERS_IMAGE = "no_users_image"
