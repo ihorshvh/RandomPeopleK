@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -177,18 +177,27 @@ fun RandomPeopleInitialLoading() {
     }
 }
 
+val itemModifier = Modifier
+    .fillMaxWidth()
+    .heightIn(min = 88.dp)
+
 @Composable
 fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, onRefreshClick: () -> Unit) {
     if (users.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.testTag("random_people_list_users")
         ) {
-            items(
+            itemsIndexed(
                 items = users,
-                key = { user -> user.id }
+                key = { index, user: User -> user.id + index }
             )
-            { user ->
-                RandomPeopleListItem(user = user, onItemClick = { onItemClick(user) })
+            { index, user ->
+                val testTag = if (index == users.size - 1) { "random_people_list_user_last" } else { "random_people_list_user" }
+                RandomPeopleListItem(
+                    modifier = itemModifier.testTag(testTag),
+                    user = user,
+                    onItemClick = { onItemClick(user) }
+                )
             }
         }
     } else {
@@ -196,15 +205,12 @@ fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, 
     }
 }
 
-val itemModifier = Modifier
-    .fillMaxWidth()
-    .heightIn(min = 88.dp)
-
 @Composable
-fun RandomPeopleListItem(user: User, onItemClick: (user: User) -> Unit) {
+fun RandomPeopleListItem(modifier: Modifier, user: User, onItemClick: (user: User) -> Unit) {
     Surface {
         Row(
-            modifier = itemModifier.clickable { onItemClick(user) }
+            modifier = modifier
+                .clickable { onItemClick(user) }
         ) {
             ListItemImage(user = user)
             ListItemDescription(user = user)
@@ -351,6 +357,7 @@ fun RandomPeopleListPreview() {
 fun RandomPeopleListItemPreview() {
     RandomPeopleKTheme {
         RandomPeopleListItem(
+            modifier = itemModifier,
             user = User(
                 id = "unique_id",
                 name = Name("Ire Test", "Mr. Ire Test"),
