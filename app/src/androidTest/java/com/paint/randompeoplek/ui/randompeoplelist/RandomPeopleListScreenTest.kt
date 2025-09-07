@@ -38,7 +38,7 @@ class RandomPeopleListScreenTest {
 
         composeRule.onNodeWithText("Random People").assertIsDisplayed()
         composeRule.onNodeWithText("Profiles fetching…").assertIsDisplayed()
-        composeRule.onNodeWithTag("loading_indicator").assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_LOADING_INDICATOR).assertIsDisplayed()
     }
 
     @Test
@@ -57,7 +57,7 @@ class RandomPeopleListScreenTest {
         }
 
         composeRule.onNodeWithText("Push update button in order to obtain your random users list!").assertIsDisplayed()
-        composeRule.onNodeWithTag("no_users_image").assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_NO_USERS_IMAGE).assertIsDisplayed()
     }
 
     @Test

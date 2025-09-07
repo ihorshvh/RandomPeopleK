@@ -23,7 +23,7 @@ class RandomPeopleProfileScreenTest {
         composeRule.setContent {
             UserProfileScreenRoot(RandomPeopleProfileState.Initial, {})
         }
-        composeRule.onNodeWithTag("loading_indicator").assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_LOADING_INDICATOR).assertIsDisplayed()
     }
 
     @Test
@@ -51,16 +51,16 @@ class RandomPeopleProfileScreenTest {
             UserProfileScreenRoot(RandomPeopleProfileState.Success(user), {})
         }
 
-        composeRule.onNodeWithTag("user_image").assertIsDisplayed()
-        composeRule.onNodeWithTag("user_name_icon").assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_IMAGE).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_NAME_ICON).assertIsDisplayed()
         composeRule.onNodeWithText("Mr. Ire Test").assertIsDisplayed()
-        composeRule.onNodeWithTag("user_location_icon").assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_LOCATION_ICON).assertIsDisplayed()
         composeRule.onNodeWithText("8400 Jacksonwile road, Raintown, Greenwaland").assertIsDisplayed()
 
-        composeRule.onNodeWithTag("user_phone_icon").assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_PHONE_ICON).assertIsDisplayed()
         composeRule.onNodeWithText("+12345678").assertIsDisplayed()
 
-        composeRule.onNodeWithTag("user_email_icon").assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_EMAIL_ICON).assertIsDisplayed()
         composeRule.onNodeWithText("email@gmail.com").assertIsDisplayed()
     }
 }

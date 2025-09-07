@@ -13,6 +13,14 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_LOADING_INDICATOR
+import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER
+import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_USER
+import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_USERS
+import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_EMAIL_ICON
+import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_IMAGE
+import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_LOCATION_ICON
+import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_NAME_ICON
+import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_PHONE_ICON
 import dagger.hilt.android.testing.HiltAndroidRule
 import org.junit.Test
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -33,32 +41,32 @@ class RandomPeopleMainActivityTest {
         hiltRule.inject()
 
         composeRule.onNodeWithText("Random People").assertIsDisplayed()
-        composeRule.onNodeWithTag(TEST_TAG_LOADING_INDICATOR).assertIsNotDisplayed()
-        composeRule.onNodeWithTag("random_people_list_users").assertIsDisplayed()
-        composeRule.onNodeWithTag("random_people_list_users")
+
+        composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS)
             .performScrollToNode(
-                hasTestTag("random_people_list_user_last")
+                hasTestTag(TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER)
             )
-        composeRule.onAllNodesWithTag("random_people_list_user")
+        composeRule.onAllNodesWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USER)
             .assertCountEquals(9)
-        composeRule.onAllNodesWithTag("random_people_list_user_last")
+        composeRule.onAllNodesWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER)
             .assertCountEquals(1)
-        composeRule.onNodeWithTag("random_people_list_users").onChildAt(1).performClick()
+        composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS).onChildAt(1).performClick()
 
         composeRule.waitForIdle()
 
         composeRule.onNodeWithTag(TEST_TAG_LOADING_INDICATOR).assertIsNotDisplayed()
 
-        composeRule.onNodeWithTag("user_image").assertIsDisplayed()
-        composeRule.onNodeWithTag("user_name_icon").assertIsDisplayed()
-        composeRule.onNodeWithTag("user_location_icon").assertIsDisplayed()
-        composeRule.onNodeWithTag("user_phone_icon").assertIsDisplayed()
-        composeRule.onNodeWithTag("user_email_icon").assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_IMAGE).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_NAME_ICON).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_LOCATION_ICON).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_PHONE_ICON).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_USER_EMAIL_ICON).assertIsDisplayed()
 
         composeRule.onNodeWithContentDescription("Navigation image").performClick()
 
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithTag("random_people_list_users").assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS).assertIsDisplayed()
     }
 }
