@@ -94,7 +94,7 @@ class RandomPeopleListViewModelTest {
         assertFalse(viewModel.isRefreshing.value)
         assertEquals(2, (viewModel.randomPeopleListStateFlow.value as RandomPeopleListState.Error).users?.size)
         assertNotNull(viewModel.snackbarHostState.currentSnackbarData)
-        assertEquals("error", viewModel.snackbarHostState.currentSnackbarData?.message)
+        assertEquals("error", viewModel.snackbarHostState.currentSnackbarData?.visuals?.message)
     }
 
     @Test
@@ -120,6 +120,6 @@ class RandomPeopleListViewModelTest {
 
         assertFalse(viewModel.isRefreshing.value)
         assertNotNull(viewModel.snackbarHostState.currentSnackbarData)
-        assertEquals("error", viewModel.snackbarHostState.currentSnackbarData?.message)
+        assertEquals("error", viewModel.snackbarHostState.currentSnackbarData?.visuals?.message)
     }
 }

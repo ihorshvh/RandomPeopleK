@@ -1,13 +1,13 @@
 package com.paint.randompeoplek.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val LightColorPalette = lightColors(
+private val LightColorScheme = lightColorScheme(
     primary = lime500,
     secondary = lime700,
     background = white800,
@@ -18,7 +18,7 @@ private val LightColorPalette = lightColors(
     onSurface = gray900.copy(alpha = 0.8f)
 )
 
-private val DarkColorPalette = darkColors(
+private val DarkColorScheme = darkColorScheme(
     primary = lime700,
     secondary = lime900,
     background = gray900,
@@ -30,15 +30,18 @@ private val DarkColorPalette = darkColors(
 )
 
 @Composable
-fun RandomPeopleKTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() () -> Unit) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
+fun RandomPeopleKTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colorScheme = if (darkTheme) {
+        DarkColorScheme
     } else {
-        LightColorPalette
+        LightColorScheme
     }
 
     MaterialTheme(
-        colors = colors,
+        colorScheme = colorScheme,
         typography = typography,
         shapes = shapes,
         content = content

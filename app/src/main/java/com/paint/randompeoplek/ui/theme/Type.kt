@@ -1,7 +1,6 @@
 package com.paint.randompeoplek.ui.theme
 
-
-import androidx.compose.material.Typography
+import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -34,35 +33,36 @@ private val fontFamilyLato = FontFamily(
 )
 
 val typography = Typography(
-    defaultFontFamily = fontFamilyLato,
-    h1 = TextStyle(
+    titleLarge = TextStyle(
         fontFamily = fontFamilyKulim,
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp,
         letterSpacing = (1.15).sp
     ),
-    h2 = TextStyle(
+    titleMedium = TextStyle(
         fontFamily = fontFamilyKulim,
         fontSize = 16.sp,
         letterSpacing = (1.15).sp
     ),
-    h3 = TextStyle(
-        fontWeight = FontWeight.Normal,
+    titleSmall = TextStyle(
+        fontFamily = fontFamilyLato,
         fontSize = 14.sp,
         letterSpacing = 0.sp
     ),
-    body1 = TextStyle(
+    bodyLarge = TextStyle(
+        fontFamily = fontFamilyLato,
         fontSize = 14.sp,
         letterSpacing = 0.sp
     ),
-    button = TextStyle(
+    labelLarge = TextStyle(
+        fontFamily = fontFamilyLato,
         fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
         letterSpacing = (1.15).sp
     ),
-    caption = TextStyle(
+    bodySmall = TextStyle(
         fontFamily = fontFamilyKulim,
         fontSize = 12.sp,
         letterSpacing = (1.15).sp
-    ),
+    )
 )

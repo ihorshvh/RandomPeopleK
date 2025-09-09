@@ -1,6 +1,6 @@
 [versions]
 # Core Gradle & Android
-androidGradlePlugin = "8.9.2"
+androidGradlePlugin = "8.13.0"
 jUnit5Plugin = "1.9.3.0"
 kotlin = "2.1.10"
 ksp = "2.0.21-1.0.27" # Ensure this aligns with your Kotlin version; KSP version format is <kotlin-version>-<ksp-version>
@@ -16,10 +16,10 @@ compileSdk = "36"
 applicationId = "com.paint.randompeoplek"
 versionCode = "1"
 versionName = "1.0"
-testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+testInstrumentationRunner = "com.paint.randompeoplek.HiltJUnitRunner"
 
 # JVM
-jvmTarget = "17"
+jvmTarget = "21"
 
 # Jetpack Libraries
 appcompat = "1.7.1"
@@ -41,15 +41,12 @@ coreTesting = "2.2.0" # For arch.core:core-testing
 composeBom = "2024.06.00" # Check for the latest stable BOM
 composeCompilerExtension = "1.5.11" # This needs to be compatible with your Kotlin version
 composeActivity = "1.10.1" # androidx.activity:activity-compose
-composeMaterial = "1.6.8" # androidx.compose.material:material (Compose M2 - consider M3 if starting new)
 
 # Networking
 retrofit = "2.9.0" # Core Retrofit
 retrofitConverterGson = "2.9.0" # Gson converter for Retrofit
-okhttpBom = "4.12.0" # OkHttp Bill of Materials
 
 # UI & Image Loading
-glide = "4.16.0" # Check for latest Glide version
 coilCompose = "2.7.0"
 material = "1.12.0" # Material Components for Android (XML views)
 
@@ -103,11 +100,11 @@ androidx-navigation-testing = { group = "androidx.navigation", name = "navigatio
 # Compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
-androidx-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }  # No version, uses BOM
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" } # No version, uses BOM
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" } # No version, uses BOM
+androidx-compose-ui-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" } # No version, uses BOM
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" } # No version, uses BOM
 
 
@@ -136,6 +133,8 @@ androidx-test-core = { group = "androidx.test", name = "core", version.ref = "an
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockK" }
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockK" } # For JVM tests if needed
 
@@ -179,6 +178,10 @@ androidx-test = [
     "androidx-test-ext-junit",
     "androidx-test-runner",
     "androidx-test-espresso-core",
+    "androidx-ui-test-junit4",
+    "mockk-android",
+    "kotlinx-coroutines-test",
+    "hilt-android-testing"
 ]
 mockk = ["mockk-android", "mockk-agent"]
 junit-jupiter = ["junit-jupiter-api", "junit-jupiter-params"]

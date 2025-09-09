@@ -44,8 +44,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlinOptions {
@@ -91,6 +91,7 @@ dependencies {
     implementation(libs.bundles.compose.ui)
     // Android Studio Preview support
     debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.manifest)
     implementation(libs.coil.compose)
     // compose
     implementation(libs.bundles.coroutines)
@@ -101,4 +102,5 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     androidTestImplementation(libs.bundles.androidx.test)
+    kspAndroidTest(libs.hilt.compiler)
 }
