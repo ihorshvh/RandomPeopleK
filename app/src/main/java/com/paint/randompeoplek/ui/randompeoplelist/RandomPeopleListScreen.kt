@@ -122,7 +122,7 @@ fun RandomPeopleAppBar(onRefreshClick: () -> Unit) {
         ),
         actions = {
             IconButton(onClick = { onRefreshClick.invoke() }) {
-                Icon(painterResource(R.drawable.ic_update_img), "To refresh the user list")
+                Icon(painterResource(R.drawable.ic_search_img), "To search for the user")
             }
         }
     )
