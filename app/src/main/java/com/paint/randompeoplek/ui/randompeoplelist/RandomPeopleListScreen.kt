@@ -28,6 +28,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -134,7 +136,14 @@ fun RandomPeopleAppBar(randomPeopleListState: RandomPeopleListScreenState, onAct
                                 contentDescription = "Close search"
                             )
                         }
-                    }
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    )
                 )
             } else {
                 Text(text = stringResource(R.string.app_name))
@@ -146,10 +155,12 @@ fun RandomPeopleAppBar(randomPeopleListState: RandomPeopleListScreenState, onAct
             actionIconContentColor = MaterialTheme.colorScheme.onPrimary
         ),
         actions = {
-            IconButton(
-                onClick = { onAction.invoke(RandomPeopleListAction.OnSearchButtonClick) }
-            ) {
-                Icon(painterResource(R.drawable.ic_search_img), "To search for the user")
+            if (!randomPeopleListState.isSearchVisible) {
+                IconButton(
+                    onClick = { onAction.invoke(RandomPeopleListAction.OnSearchButtonClick) }
+                ) {
+                    Icon(painterResource(R.drawable.ic_search_img), "To search for the user")
+                }
             }
         }
     )
@@ -361,6 +372,8 @@ fun RandomPeopleListPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
             randomPeopleListScreenState = RandomPeopleListScreenState(
+                isSearchVisible = true,
+                searchText = "test",
                 randomPeopleListState = RandomPeopleListState.Success(
                     users = listOf(
                         User(

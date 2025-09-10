@@ -9,6 +9,8 @@ import androidx.compose.ui.graphics.Color
 
 private val LightColorScheme = lightColorScheme(
     primary = lime500,
+    onSurfaceVariant = Color.White,
+    outline = Color.White,
     secondary = lime700,
     background = white800,
     surface = Color.White.copy(alpha = .85f),
@@ -20,6 +22,8 @@ private val LightColorScheme = lightColorScheme(
 
 private val DarkColorScheme = darkColorScheme(
     primary = lime700,
+    onSurfaceVariant = Color.White,
+    outline = Color.White,
     secondary = lime900,
     background = gray900,
     surface = Color.White.copy(alpha = 0.15f),
