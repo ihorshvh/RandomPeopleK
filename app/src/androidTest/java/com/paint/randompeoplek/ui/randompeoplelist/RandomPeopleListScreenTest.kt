@@ -26,7 +26,7 @@ class RandomPeopleListScreenTest {
         composeRule.setContent {
             RandomPeopleKTheme {
                 RandomPeopleListScreenRoot(
-                    randomPeopleListState = RandomPeopleListState.Initial,
+                    randomPeopleListScreenState = RandomPeopleListScreenState.Initial,
                     snackbarHostState = SnackbarHostState(),
                     isRefreshing = false,
                     pullRefreshState = PullToRefreshState(),
@@ -46,7 +46,7 @@ class RandomPeopleListScreenTest {
         composeRule.setContent {
             RandomPeopleKTheme {
                 RandomPeopleListScreenRoot(
-                    randomPeopleListState = RandomPeopleListState.Success(emptyList()),
+                    randomPeopleListScreenState = RandomPeopleListScreenState.Success(emptyList()),
                     snackbarHostState = SnackbarHostState(),
                     isRefreshing = false,
                     pullRefreshState = PullToRefreshState(),
@@ -84,7 +84,7 @@ class RandomPeopleListScreenTest {
         composeRule.setContent {
             RandomPeopleKTheme {
                 RandomPeopleListScreenRoot(
-                    randomPeopleListState = RandomPeopleListState.Success(fakeUsers),
+                    randomPeopleListScreenState = RandomPeopleListScreenState.Success(fakeUsers),
                     snackbarHostState = SnackbarHostState(),
                     isRefreshing = false,
                     pullRefreshState = PullToRefreshState(),
@@ -127,7 +127,7 @@ class RandomPeopleListScreenTest {
         composeRule.setContent {
             RandomPeopleKTheme {
                 RandomPeopleListScreenRoot(
-                    randomPeopleListState = RandomPeopleListState.Error(fakeUsers),
+                    randomPeopleListScreenState = RandomPeopleListScreenState.Error(fakeUsers),
                     snackbarHostState = SnackbarHostState(),
                     isRefreshing = false,
                     pullRefreshState = PullToRefreshState(),

@@ -45,23 +45,23 @@ class RandomPeopleListViewModelTest {
 
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl(resourceProvider))
 
-        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Initial::class.java))
+        assertThat(viewModel.randomPeopleListScreenStateFlow.value, instanceOf(RandomPeopleListScreenState.Initial::class.java))
         assertFalse(viewModel.isRefreshing.value)
 
         scheduler.advanceUntilIdle()
 
-        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Success::class.java))
+        assertThat(viewModel.randomPeopleListScreenStateFlow.value, instanceOf(RandomPeopleListScreenState.Success::class.java))
         assertFalse(viewModel.isRefreshing.value)
-        assertEquals(2, (viewModel.randomPeopleListStateFlow.value as RandomPeopleListState.Success).users.size)
+        assertEquals(2, (viewModel.randomPeopleListScreenStateFlow.value as RandomPeopleListScreenState.Success).users.size)
 
         viewModel.getRandomPeopleList("10")
         assertTrue(viewModel.isRefreshing.value)
 
         scheduler.advanceUntilIdle()
 
-        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Success::class.java))
+        assertThat(viewModel.randomPeopleListScreenStateFlow.value, instanceOf(RandomPeopleListScreenState.Success::class.java))
         assertFalse(viewModel.isRefreshing.value)
-        assertEquals(2, (viewModel.randomPeopleListStateFlow.value as RandomPeopleListState.Success).users.size)
+        assertEquals(2, (viewModel.randomPeopleListScreenStateFlow.value as RandomPeopleListScreenState.Success).users.size)
         assertNull(viewModel.snackbarHostState.currentSnackbarData)
     }
 
@@ -76,23 +76,23 @@ class RandomPeopleListViewModelTest {
 
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl(resourceProvider))
 
-        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Initial::class.java))
+        assertThat(viewModel.randomPeopleListScreenStateFlow.value, instanceOf(RandomPeopleListScreenState.Initial::class.java))
         assertFalse(viewModel.isRefreshing.value)
 
         scheduler.advanceUntilIdle()
 
-        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Error::class.java))
+        assertThat(viewModel.randomPeopleListScreenStateFlow.value, instanceOf(RandomPeopleListScreenState.Error::class.java))
         assertFalse(viewModel.isRefreshing.value)
-        assertEquals(2, (viewModel.randomPeopleListStateFlow.value as RandomPeopleListState.Error).users?.size)
+        assertEquals(2, (viewModel.randomPeopleListScreenStateFlow.value as com.paint.randompeoplek.ui.randompeoplelist.RandomPeopleListState.Error).users?.size)
 
         viewModel.getRandomPeopleList("10")
         assertTrue(viewModel.isRefreshing.value)
 
         scheduler.advanceUntilIdle()
 
-        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Error::class.java))
+        assertThat(viewModel.randomPeopleListScreenStateFlow.value, instanceOf(RandomPeopleListScreenState.Error::class.java))
         assertFalse(viewModel.isRefreshing.value)
-        assertEquals(2, (viewModel.randomPeopleListStateFlow.value as RandomPeopleListState.Error).users?.size)
+        assertEquals(2, (viewModel.randomPeopleListScreenStateFlow.value as com.paint.randompeoplek.ui.randompeoplelist.RandomPeopleListState.Error).users?.size)
         assertNotNull(viewModel.snackbarHostState.currentSnackbarData)
         assertEquals("error", viewModel.snackbarHostState.currentSnackbarData?.visuals?.message)
     }
@@ -107,12 +107,12 @@ class RandomPeopleListViewModelTest {
 
         val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl(resourceProvider))
 
-        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Initial::class.java))
+        assertThat(viewModel.randomPeopleListScreenStateFlow.value, instanceOf(RandomPeopleListScreenState.Initial::class.java))
         assertFalse(viewModel.isRefreshing.value)
 
         scheduler.advanceUntilIdle()
 
-        assertThat(viewModel.randomPeopleListStateFlow.value, instanceOf(RandomPeopleListState.Initial::class.java))
+        assertThat(viewModel.randomPeopleListScreenStateFlow.value, instanceOf(RandomPeopleListScreenState.Initial::class.java))
 
         viewModel.getRandomPeopleList("10")
 

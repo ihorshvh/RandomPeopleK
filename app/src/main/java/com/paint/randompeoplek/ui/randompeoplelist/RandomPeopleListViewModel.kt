@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,8 +37,9 @@ class RandomPeopleListViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
-    private val _randomPeopleListStateFlow: MutableStateFlow<RandomPeopleListState> = MutableStateFlow(RandomPeopleListState.Initial)
-    val randomPeopleListStateFlow: StateFlow<RandomPeopleListState> = _randomPeopleListStateFlow.asStateFlow()
+    private val _randomPeopleListScreenStateFlow: MutableStateFlow<RandomPeopleListScreenState>
+        = MutableStateFlow(RandomPeopleListScreenState(randomPeopleListState = RandomPeopleListState.Initial))
+    val randomPeopleListScreenStateFlow: StateFlow<RandomPeopleListScreenState> = _randomPeopleListScreenStateFlow.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -49,7 +51,7 @@ class RandomPeopleListViewModel @Inject constructor(
     }
 
     override fun getRandomPeopleList(userQuantity: String) {
-        if (_randomPeopleListStateFlow.value !is RandomPeopleListState.Initial) {
+        if (_randomPeopleListScreenStateFlow.value.randomPeopleListState !is RandomPeopleListState.Initial) {
             _isRefreshing.value = true
         }
 
@@ -60,9 +62,13 @@ class RandomPeopleListViewModel @Inject constructor(
                     val errorMessage = errorHandlerUseCase.getErrorMessage(it.networkError)
                     snackbarMessageSharedFlow.emit(errorMessage)
 
-                    _randomPeopleListStateFlow.value = RandomPeopleListState.Error(it.users.toUiParcelableUsers())
+                    _randomPeopleListScreenStateFlow.value = RandomPeopleListScreenState(
+                        randomPeopleListState = RandomPeopleListState.Error(it.users.toUiParcelableUsers())
+                    )
                 } else {
-                    _randomPeopleListStateFlow.value = RandomPeopleListState.Success(it.users.toUiParcelableUsers())
+                    _randomPeopleListScreenStateFlow.value = RandomPeopleListScreenState(
+                        randomPeopleListState = RandomPeopleListState.Success(it.users.toUiParcelableUsers())
+                    )
                 }
 
                 // Workaround to fix the material pull refresh bug. When the data is taken from cache it happens to fast.
@@ -79,6 +85,29 @@ class RandomPeopleListViewModel @Inject constructor(
                 // As the result the refresh indicator of PullToRefreshBox remains on the screen as it's state corrupts
                 delay(REFRESHING_STATE_DELAY)
                 _isRefreshing.value = false
+            }
+        }
+    }
+
+    fun onAction(action: RandomPeopleListAction) {
+        when (action) {
+            is RandomPeopleListAction.OnSearchTextChange -> {
+                _randomPeopleListScreenStateFlow.update {
+                    it.copy( searchText = action.newSearchText )
+                }
+            }
+            is RandomPeopleListAction.OnSearchButtonClick -> {
+                _randomPeopleListScreenStateFlow.update {
+                    it.copy( isSearchVisible = true )
+                }
+            }
+            is RandomPeopleListAction.OnCloseSearchButtonClick -> {
+                _randomPeopleListScreenStateFlow.update {
+                    it.copy( isSearchVisible = false )
+                }
+            }
+            is RandomPeopleListAction.OnRefreshClick -> {
+                getRandomPeopleList(USER_QUANTITY)
             }
         }
     }

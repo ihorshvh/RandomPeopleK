@@ -20,4 +20,5 @@
     <string name="image_description_profile_error">User profile error</string>
     <string name="description_no_users_image">To refresh the user list</string>
     <string name="description_navigation_image">Navigation image</string>
+    <string name="placeholder_user_search">Enter the user\'s first or last name</string>
 </resources>

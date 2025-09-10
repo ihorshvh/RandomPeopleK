@@ -27,6 +27,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -60,33 +61,31 @@ import com.paint.randompeoplek.ui.theme.grey
 fun RandomPeopleListScreen(onItemClick: (user: User) -> Unit) {
     val viewModel = hiltViewModel<RandomPeopleListViewModel>()
 
-    val onRefreshClick = { viewModel.getRandomPeopleList(RandomPeopleListViewModel.USER_QUANTITY) }
-
-    val randomPeopleListState by viewModel.randomPeopleListStateFlow.collectAsStateWithLifecycle()
+    val randomPeopleListState by viewModel.randomPeopleListScreenStateFlow.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullToRefreshState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
     RandomPeopleListScreenRoot(
-        randomPeopleListState = randomPeopleListState,
+        randomPeopleListScreenState = randomPeopleListState,
         snackbarHostState = snackbarHostState,
         isRefreshing = isRefreshing,
         pullRefreshState = pullRefreshState,
         onItemClick = onItemClick,
-        onRefreshClick = onRefreshClick
+        onAction = viewModel::onAction
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RandomPeopleListScreenRoot(
-    randomPeopleListState: RandomPeopleListState,
+    randomPeopleListScreenState: RandomPeopleListScreenState,
     snackbarHostState: SnackbarHostState,
     isRefreshing: Boolean,
     pullRefreshState: PullToRefreshState,
     onItemClick: (user: User) -> Unit,
-    onRefreshClick: () -> Unit
+    onAction: (RandomPeopleListAction) -> Unit
 ) {
     Scaffold(
         snackbarHost = {
@@ -94,15 +93,15 @@ fun RandomPeopleListScreenRoot(
                 hostState = snackbarHostState
             )
         },
-        topBar = { RandomPeopleAppBar(onRefreshClick) },
+        topBar = { RandomPeopleAppBar(randomPeopleListScreenState, onAction) },
         content = { innerPadding ->
             RandomPeopleListContent(
                 Modifier.padding(innerPadding),
-                randomPeopleListState,
+                randomPeopleListScreenState,
                 isRefreshing,
                 pullRefreshState,
                 onItemClick,
-                onRefreshClick
+                onAction
             )
         }
     )
@@ -110,10 +109,36 @@ fun RandomPeopleListScreenRoot(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RandomPeopleAppBar(onRefreshClick: () -> Unit) {
+fun RandomPeopleAppBar(randomPeopleListState: RandomPeopleListScreenState, onAction: (RandomPeopleListAction) -> Unit) {
     TopAppBar(
         title = {
-            Text(text = stringResource(id = R.string.app_name))
+            if (randomPeopleListState.isSearchVisible) {
+                TextField(
+                    value = randomPeopleListState.searchText,
+                    onValueChange = { newText ->
+                        onAction(RandomPeopleListAction.OnSearchTextChange(newText))
+                    },
+                    placeholder = { Text(stringResource(R.string.placeholder_user_search)) },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                        //.focusRequester(focusRequester),
+                    singleLine = true,
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                onAction(RandomPeopleListAction.OnCloseSearchButtonClick)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_close_img),
+                                contentDescription = "Close search"
+                            )
+                        }
+                    }
+                )
+            } else {
+                Text(text = stringResource(R.string.app_name))
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -121,7 +146,9 @@ fun RandomPeopleAppBar(onRefreshClick: () -> Unit) {
             actionIconContentColor = MaterialTheme.colorScheme.onPrimary
         ),
         actions = {
-            IconButton(onClick = { onRefreshClick.invoke() }) {
+            IconButton(
+                onClick = { onAction.invoke(RandomPeopleListAction.OnSearchButtonClick) }
+            ) {
                 Icon(painterResource(R.drawable.ic_search_img), "To search for the user")
             }
         }
@@ -132,22 +159,22 @@ fun RandomPeopleAppBar(onRefreshClick: () -> Unit) {
 @Composable
 fun RandomPeopleListContent(
     modifier: Modifier,
-    randomPeopleListState: RandomPeopleListState,
+    randomPeopleListScreenState: RandomPeopleListScreenState,
     isRefreshing: Boolean,
     pullRefreshState: PullToRefreshState,
     onItemClick: (user: User) -> Unit,
-    onRefreshClick: () -> Unit
+    onAction: (RandomPeopleListAction) -> Unit
 ) {
     PullToRefreshBox(
         isRefreshing = isRefreshing,
-        onRefresh = onRefreshClick,
+        onRefresh = { onAction.invoke(RandomPeopleListAction.OnRefreshClick) },
         state = pullRefreshState,
         modifier = modifier.fillMaxSize()
     ) {
-        when (randomPeopleListState) {
+        when (randomPeopleListScreenState.randomPeopleListState) {
             is RandomPeopleListState.Initial -> RandomPeopleInitialLoading()
-            is RandomPeopleListState.Success -> RandomPeopleListUsers(randomPeopleListState.users, onItemClick, onRefreshClick)
-            is RandomPeopleListState.Error -> RandomPeopleListUsers(randomPeopleListState.users ?: emptyList(), onItemClick, onRefreshClick)
+            is RandomPeopleListState.Success -> RandomPeopleListUsers(randomPeopleListScreenState.randomPeopleListState.users, onItemClick, onAction)
+            is RandomPeopleListState.Error -> RandomPeopleListUsers(randomPeopleListScreenState.randomPeopleListState.users ?: emptyList(), onItemClick, onAction)
         }
     }
 }
@@ -182,7 +209,7 @@ val itemModifier = Modifier
     .heightIn(min = 88.dp)
 
 @Composable
-fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, onRefreshClick: () -> Unit) {
+fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, onAction: (RandomPeopleListAction) -> Unit) {
     if (users.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.testTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS)
@@ -201,7 +228,7 @@ fun RandomPeopleListUsers(users: List<User>, onItemClick: (user: User) -> Unit, 
             }
         }
     } else {
-        RandomPeopleNoUsers(onRefreshClick)
+        RandomPeopleNoUsers(onAction)
     }
 }
 
@@ -266,7 +293,7 @@ fun DividerRow() {
 }
 
 @Composable
-fun RandomPeopleNoUsers(onRefreshClick: () -> Unit) {
+fun RandomPeopleNoUsers(onAction: (RandomPeopleListAction) -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -284,7 +311,7 @@ fun RandomPeopleNoUsers(onRefreshClick: () -> Unit) {
                 modifier = Modifier
                     .width(100.dp)
                     .height(100.dp)
-                    .clickable { onRefreshClick.invoke() }
+                    .clickable { onAction(RandomPeopleListAction.OnRefreshClick) }
                     .testTag(TEST_TAG_NO_USERS_IMAGE)
             )
         }
@@ -297,12 +324,12 @@ fun RandomPeopleNoUsers(onRefreshClick: () -> Unit) {
 fun RandomPeopleInitialLoadingPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
-            randomPeopleListState = RandomPeopleListState.Initial,
+            randomPeopleListScreenState = RandomPeopleListScreenState(randomPeopleListState = RandomPeopleListState.Initial),
             snackbarHostState = remember { SnackbarHostState() },
             isRefreshing = false,
             pullRefreshState = PullToRefreshState(),
             onItemClick = {  },
-            onRefreshClick = {  }
+            onAction = {  }
         )
     }
 }
@@ -313,14 +340,16 @@ fun RandomPeopleInitialLoadingPreview() {
 fun RandomPeopleNoUsersPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
-            randomPeopleListState = RandomPeopleListState.Success(
-                users = listOf()
+            randomPeopleListScreenState = RandomPeopleListScreenState(
+                randomPeopleListState = RandomPeopleListState.Success(
+                    users = listOf()
+                )
             ),
             snackbarHostState = remember { SnackbarHostState() },
             isRefreshing = false,
             pullRefreshState = PullToRefreshState(),
             onItemClick = {  },
-            onRefreshClick = {  }
+            onAction = {  }
         )
     }
 }
@@ -331,15 +360,17 @@ fun RandomPeopleNoUsersPreview() {
 fun RandomPeopleListPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
-            randomPeopleListState = RandomPeopleListState.Success(
-                users = listOf(
-                    User(
-                        id = "unique_id_1",
-                        name = Name("Ire Test", "Mr. Ire Test"),
-                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                        "email@gmail.com",
-                        phone = "+12345678",
-                        picture = Picture("", "")
+            randomPeopleListScreenState = RandomPeopleListScreenState(
+                randomPeopleListState = RandomPeopleListState.Success(
+                    users = listOf(
+                        User(
+                            id = "unique_id_1",
+                            name = Name("Ire Test", "Mr. Ire Test"),
+                            location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                            "email@gmail.com",
+                            phone = "+12345678",
+                            picture = Picture("", "")
+                        )
                     )
                 )
             ),
@@ -347,7 +378,7 @@ fun RandomPeopleListPreview() {
             isRefreshing = false,
             pullRefreshState = PullToRefreshState(),
             onItemClick = {  },
-            onRefreshClick = {  }
+            onAction = {  }
         )
     }
 }
