@@ -22,8 +22,8 @@ private val LightColorScheme = lightColorScheme(
 
 private val DarkColorScheme = darkColorScheme(
     primary = lime700,
-    onSurfaceVariant = Color.White,
-    outline = Color.White,
+    onSurfaceVariant = gray900,
+    outline = gray900,
     secondary = lime900,
     background = gray900,
     surface = Color.White.copy(alpha = 0.15f),

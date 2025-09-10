@@ -143,6 +143,9 @@ fun RandomPeopleAppBar(randomPeopleListState: RandomPeopleListScreenState, onAct
                         disabledContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = MaterialTheme.colorScheme.outline,
+                        focusedTextColor = MaterialTheme.colorScheme.outline,
+                        unfocusedTextColor = MaterialTheme.colorScheme.outline
                     )
                 )
             } else {
