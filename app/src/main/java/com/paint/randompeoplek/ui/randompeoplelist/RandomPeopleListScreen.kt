@@ -48,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -120,7 +121,12 @@ fun RandomPeopleAppBar(randomPeopleListState: RandomPeopleListScreenState, onAct
                     onValueChange = { newText ->
                         onAction(RandomPeopleListAction.OnSearchTextChange(newText))
                     },
-                    placeholder = { Text(stringResource(R.string.placeholder_user_search)) },
+                    placeholder = {
+                        Text(
+                            style = MaterialTheme.typography.titleSmall.copy(fontSize = 18.sp),
+                            text = stringResource(R.string.placeholder_user_search)
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth(),
                         //.focusRequester(focusRequester),
@@ -143,13 +149,18 @@ fun RandomPeopleAppBar(randomPeopleListState: RandomPeopleListScreenState, onAct
                         disabledContainerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
+                        focusedPlaceholderColor = MaterialTheme.colorScheme.onSecondary,
+                        unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSecondary,
                         cursorColor = MaterialTheme.colorScheme.outline,
                         focusedTextColor = MaterialTheme.colorScheme.outline,
                         unfocusedTextColor = MaterialTheme.colorScheme.outline
                     )
                 )
             } else {
-                Text(text = stringResource(R.string.app_name))
+                Text(
+                    style = MaterialTheme.typography.titleLarge,
+                    text = stringResource(R.string.app_name)
+                )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
