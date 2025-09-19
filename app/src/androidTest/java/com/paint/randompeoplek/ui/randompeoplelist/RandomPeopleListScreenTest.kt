@@ -26,12 +26,12 @@ class RandomPeopleListScreenTest {
         composeRule.setContent {
             RandomPeopleKTheme {
                 RandomPeopleListScreenRoot(
-                    randomPeopleListScreenState = RandomPeopleListScreenState.Initial,
+                    randomPeopleListScreenState = RandomPeopleListScreenState(),
                     snackbarHostState = SnackbarHostState(),
                     isRefreshing = false,
                     pullRefreshState = PullToRefreshState(),
                     onItemClick = {  },
-                    onRefreshClick = {  }
+                    onAction = {  }
                 )
             }
         }
@@ -46,12 +46,12 @@ class RandomPeopleListScreenTest {
         composeRule.setContent {
             RandomPeopleKTheme {
                 RandomPeopleListScreenRoot(
-                    randomPeopleListScreenState = RandomPeopleListScreenState.Success(emptyList()),
+                    randomPeopleListScreenState = RandomPeopleListScreenState(users = emptyList()),
                     snackbarHostState = SnackbarHostState(),
                     isRefreshing = false,
                     pullRefreshState = PullToRefreshState(),
                     onItemClick = {  },
-                    onRefreshClick = {  }
+                    onAction = {  }
                 )
             }
         }
@@ -84,12 +84,12 @@ class RandomPeopleListScreenTest {
         composeRule.setContent {
             RandomPeopleKTheme {
                 RandomPeopleListScreenRoot(
-                    randomPeopleListScreenState = RandomPeopleListScreenState.Success(fakeUsers),
+                    randomPeopleListScreenState = RandomPeopleListScreenState(users = fakeUsers),
                     snackbarHostState = SnackbarHostState(),
                     isRefreshing = false,
                     pullRefreshState = PullToRefreshState(),
                     onItemClick = { },
-                    onRefreshClick = { }
+                    onAction = { }
                 )
             }
         }
@@ -127,12 +127,12 @@ class RandomPeopleListScreenTest {
         composeRule.setContent {
             RandomPeopleKTheme {
                 RandomPeopleListScreenRoot(
-                    randomPeopleListScreenState = RandomPeopleListScreenState.Error(fakeUsers),
+                    randomPeopleListScreenState = RandomPeopleListScreenState(users = fakeUsers),
                     snackbarHostState = SnackbarHostState(),
                     isRefreshing = false,
                     pullRefreshState = PullToRefreshState(),
                     onItemClick = { },
-                    onRefreshClick = { }
+                    onAction = { }
                 )
             }
         }
