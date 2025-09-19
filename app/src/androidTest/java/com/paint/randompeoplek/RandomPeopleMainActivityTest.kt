@@ -13,6 +13,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
+import com.paint.randompeoplek.di.RandomPeopleServiceModule
+import com.paint.randompeoplek.service.RandomPeopleService
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_LOADING_INDICATOR
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_USER
@@ -25,13 +27,17 @@ import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_IMAGE
 import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_LOCATION_ICON
 import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_NAME_ICON
 import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_PHONE_ICON
+import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import org.junit.Test
 import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.UninstallModules
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
+import retrofit2.Response
 
 @HiltAndroidTest
+@UninstallModules(RandomPeopleServiceModule::class)
 class RandomPeopleMainActivityTest {
 
     @get:Rule(order = 0)
@@ -40,12 +46,20 @@ class RandomPeopleMainActivityTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<RandomPeopleMainActivity>()
 
+    @BindValue
+    @JvmField
+    val randomPeopleService: RandomPeopleService = object : RandomPeopleService {
+        override suspend fun getUserList(userQuantity: String): Response<com.paint.randompeoplek.service.model.UserResponse> {
+            return Response.success(
+                200,
+                getUserResponse()
+            )
+        }
+    }
+
     @Test
     fun testSuccessScenario() = runBlocking<Unit> {
-        hiltRule.inject()
-
         composeRule.onNodeWithText("Random People").assertIsDisplayed()
-
         composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS).assertIsDisplayed()
         composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS)
             .performScrollToNode(
@@ -76,8 +90,6 @@ class RandomPeopleMainActivityTest {
 
     @Test
     fun testSearchBar() {
-        hiltRule.inject()
-
         composeRule.onNodeWithText("Random People").assertIsDisplayed()
 
         composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS).assertIsDisplayed()
