@@ -3,6 +3,7 @@ package com.paint.randompeoplek.ui.randompeoplelist
 import com.paint.randompeoplek.ViewModelCoroutineExtension
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCaseImpl
+import com.paint.randompeoplek.domain.model.Name
 import com.paint.randompeoplek.domain.model.UserResponse
 import com.paint.randompeoplek.repository.NetworkError
 import com.paint.randompeoplek.resourceprovider.ResourceProvider
@@ -119,5 +120,65 @@ class RandomPeopleListViewModelTest {
         assertFalse(viewModel.isRefreshing.value)
         assertNotNull(viewModel.snackbarHostState.currentSnackbarData)
         assertEquals("error", viewModel.snackbarHostState.currentSnackbarData?.visuals?.message)
+    }
+
+    @Test
+    fun testGetUserListWithSearchSuccess(scheduler: TestCoroutineScheduler) {
+        val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
+        val users = mutableListOf<com.paint.randompeoplek.domain.model.User>().apply {
+            addAll(getUsers())
+            add(getUser("test_id_3").copy(name = Name("John Smith", "Mr John Smith")))
+        }
+
+        coEvery { randomPeopleListMediator.getUserList("10") } answers {
+            UserResponse(users)
+        }
+
+        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl(resourceProvider))
+
+        assertNull(viewModel.randomPeopleListScreenStateFlow.value.users)
+        assertFalse(viewModel.isRefreshing.value)
+
+        scheduler.advanceUntilIdle()
+
+        viewModel.onAction(RandomPeopleListAction.OnSearchTextChange("John"))
+
+        scheduler.advanceUntilIdle()
+
+        assertNotNull(viewModel.randomPeopleListScreenStateFlow.value.users)
+        assertFalse(viewModel.isRefreshing.value)
+        assertEquals(1, viewModel.randomPeopleListScreenStateFlow.value.users?.size)
+
+        val user = viewModel.randomPeopleListScreenStateFlow.value.users?.first()
+        assertEquals("John Smith", user?.name?.shortName)
+    }
+
+
+    @Test
+    fun testGetUserListWithSearchNoUsers(scheduler: TestCoroutineScheduler) {
+        val randomPeopleListMediator = mockk<RandomPeopleListUseCase>()
+        val users = mutableListOf<com.paint.randompeoplek.domain.model.User>().apply {
+            addAll(getUsers())
+            add(getUser("test_id_3").copy(name = Name("John Smith", "Mr John Smith")))
+        }
+
+        coEvery { randomPeopleListMediator.getUserList("10") } answers {
+            UserResponse(users)
+        }
+
+        val viewModel = RandomPeopleListViewModel(randomPeopleListMediator, ErrorHandlerUseCaseImpl(resourceProvider))
+
+        assertNull(viewModel.randomPeopleListScreenStateFlow.value.users)
+        assertFalse(viewModel.isRefreshing.value)
+
+        scheduler.advanceUntilIdle()
+
+        viewModel.onAction(RandomPeopleListAction.OnSearchTextChange("Alex"))
+
+        scheduler.advanceUntilIdle()
+
+        assertNotNull(viewModel.randomPeopleListScreenStateFlow.value.users)
+        assertFalse(viewModel.isRefreshing.value)
+        assertEquals(0, viewModel.randomPeopleListScreenStateFlow.value.users?.size)
     }
 }
