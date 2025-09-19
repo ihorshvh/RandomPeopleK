@@ -5,11 +5,5 @@ import com.paint.randompeoplek.ui.model.User
 data class RandomPeopleListScreenState(
     val isSearchVisible: Boolean = false,
     val searchText: String = "",
-    val randomPeopleListState: RandomPeopleListState
+    val users: List<User>? = null,
 )
-
-sealed class RandomPeopleListState {
-    object Initial : RandomPeopleListState()
-    class Success(val users: List<User>) : RandomPeopleListState()
-    class Error(val users: List<User>? = null) : RandomPeopleListState()
-}

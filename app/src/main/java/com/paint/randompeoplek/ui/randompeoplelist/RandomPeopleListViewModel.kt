@@ -40,8 +40,7 @@ class RandomPeopleListViewModel @Inject constructor(
 
     private val _randomPeopleList: MutableStateFlow<List<User>> = MutableStateFlow(emptyList())
 
-    private val _randomPeopleListScreenStateFlow: MutableStateFlow<RandomPeopleListScreenState>
-        = MutableStateFlow(RandomPeopleListScreenState(randomPeopleListState = RandomPeopleListState.Initial))
+    private val _randomPeopleListScreenStateFlow: MutableStateFlow<RandomPeopleListScreenState> = MutableStateFlow(RandomPeopleListScreenState())
     val randomPeopleListScreenStateFlow: StateFlow<RandomPeopleListScreenState> = _randomPeopleListScreenStateFlow.asStateFlow()
 
     init {
@@ -54,7 +53,7 @@ class RandomPeopleListViewModel @Inject constructor(
     }
 
     override fun getRandomPeopleList(userQuantity: String) {
-        if (_randomPeopleListScreenStateFlow.value.randomPeopleListState !is RandomPeopleListState.Initial) {
+        if (_randomPeopleListScreenStateFlow.value.users != null) {
             _isRefreshing.value = true
         }
 
@@ -68,13 +67,11 @@ class RandomPeopleListViewModel @Inject constructor(
                 if (it.networkError != null) {
                     val errorMessage = errorHandlerUseCase.getErrorMessage(it.networkError)
                     snackbarMessageSharedFlow.emit(errorMessage)
+                }
 
-                    _randomPeopleListScreenStateFlow.value = RandomPeopleListScreenState(
-                        randomPeopleListState = RandomPeopleListState.Error(getFilteredUsers(searchQuery))
-                    )
-                } else {
-                    _randomPeopleListScreenStateFlow.value = RandomPeopleListScreenState(
-                        randomPeopleListState = RandomPeopleListState.Success(getFilteredUsers(searchQuery))
+                _randomPeopleListScreenStateFlow.update { state ->
+                    state.copy(
+                        users = getFilteredUsers(searchQuery)
                     )
                 }
 
@@ -107,7 +104,7 @@ class RandomPeopleListViewModel @Inject constructor(
                     val searchQuery = action.newSearchText
                     it.copy(
                         searchText = searchQuery,
-                        randomPeopleListState = RandomPeopleListState.Success(getFilteredUsers(searchQuery))
+                        users = getFilteredUsers(searchQuery)
                     )
                 }
             }
@@ -118,7 +115,11 @@ class RandomPeopleListViewModel @Inject constructor(
             }
             is RandomPeopleListAction.OnCloseSearchButtonClick -> {
                 _randomPeopleListScreenStateFlow.update {
-                    it.copy( isSearchVisible = false, searchText = "" )
+                    it.copy(
+                        isSearchVisible = false,
+                        searchText = "",
+                        _randomPeopleList.value
+                    )
                 }
             }
             is RandomPeopleListAction.OnRefreshClick -> {

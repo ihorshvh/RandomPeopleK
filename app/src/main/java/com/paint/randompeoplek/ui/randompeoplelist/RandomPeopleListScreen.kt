@@ -195,10 +195,10 @@ fun RandomPeopleListContent(
         state = pullRefreshState,
         modifier = modifier.fillMaxSize()
     ) {
-        when (randomPeopleListScreenState.randomPeopleListState) {
-            is RandomPeopleListState.Initial -> RandomPeopleInitialLoading()
-            is RandomPeopleListState.Success -> RandomPeopleListUsers(randomPeopleListScreenState.randomPeopleListState.users, onItemClick, onAction)
-            is RandomPeopleListState.Error -> RandomPeopleListUsers(randomPeopleListScreenState.randomPeopleListState.users ?: emptyList(), onItemClick, onAction)
+        if (randomPeopleListScreenState.users == null) {
+            RandomPeopleInitialLoading()
+        } else {
+            RandomPeopleListUsers(randomPeopleListScreenState.users, onItemClick, onAction)
         }
     }
 }
@@ -348,7 +348,7 @@ fun RandomPeopleNoUsers(onAction: (RandomPeopleListAction) -> Unit) {
 fun RandomPeopleInitialLoadingPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
-            randomPeopleListScreenState = RandomPeopleListScreenState(randomPeopleListState = RandomPeopleListState.Initial),
+            randomPeopleListScreenState = RandomPeopleListScreenState(),
             snackbarHostState = remember { SnackbarHostState() },
             isRefreshing = false,
             pullRefreshState = PullToRefreshState(),
@@ -365,9 +365,7 @@ fun RandomPeopleNoUsersPreview() {
     RandomPeopleKTheme {
         RandomPeopleListScreenRoot(
             randomPeopleListScreenState = RandomPeopleListScreenState(
-                randomPeopleListState = RandomPeopleListState.Success(
-                    users = listOf()
-                )
+                users = listOf()
             ),
             snackbarHostState = remember { SnackbarHostState() },
             isRefreshing = false,
@@ -387,16 +385,14 @@ fun RandomPeopleListPreview() {
             randomPeopleListScreenState = RandomPeopleListScreenState(
                 isSearchVisible = true,
                 searchText = "test",
-                randomPeopleListState = RandomPeopleListState.Success(
-                    users = listOf(
-                        User(
-                            id = "unique_id_1",
-                            name = Name("Ire Test", "Mr. Ire Test"),
-                            location = "8400 Jacksonwile road, Raintown, Greenwaland",
-                            "email@gmail.com",
-                            phone = "+12345678",
-                            picture = Picture("", "")
-                        )
+                users = listOf(
+                    User(
+                        id = "unique_id_1",
+                        name = Name("Ire Test", "Mr. Ire Test"),
+                        location = "8400 Jacksonwile road, Raintown, Greenwaland",
+                        "email@gmail.com",
+                        phone = "+12345678",
+                        picture = Picture("", "")
                     )
                 )
             ),
