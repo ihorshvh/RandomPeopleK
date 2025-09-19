@@ -128,10 +128,13 @@ fun RandomPeopleAppBar(randomPeopleListState: RandomPeopleListScreenState, onAct
                         )
                     },
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .testTag(TEST_TAG_SEARCH_TEXT_FILED),
                     singleLine = true,
                     trailingIcon = {
                         IconButton(
+                            modifier = Modifier
+                                .testTag(TEST_TAG_SEARCH_CLOSE_ICON),
                             onClick = {
                                 onAction(RandomPeopleListAction.OnCloseSearchButtonClick)
                             }
@@ -170,6 +173,8 @@ fun RandomPeopleAppBar(randomPeopleListState: RandomPeopleListScreenState, onAct
         actions = {
             if (!randomPeopleListState.isSearchVisible) {
                 IconButton(
+                    modifier = Modifier
+                        .testTag(TEST_TAG_SEARCH_ICON),
                     onClick = { onAction.invoke(RandomPeopleListAction.OnSearchButtonClick) }
                 ) {
                     Icon(painterResource(R.drawable.ic_search_img), "To search for the user")
@@ -429,3 +434,7 @@ const val TEST_TAG_RANDOM_PEOPLE_LIST_USERS = "random_people_list_users"
 const val TEST_TAG_RANDOM_PEOPLE_LIST_USER = "random_people_list_user"
 const val TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER = "random_people_list_user_last"
 const val TEST_TAG_NO_USERS_IMAGE = "no_users_image"
+const val TEST_TAG_SEARCH_ICON = "search_icon"
+const val TEST_TAG_SEARCH_CLOSE_ICON = "search_close_icon"
+
+const val TEST_TAG_SEARCH_TEXT_FILED = "search_text_field"

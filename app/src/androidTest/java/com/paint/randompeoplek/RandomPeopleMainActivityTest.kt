@@ -1,5 +1,7 @@
 package com.paint.randompeoplek
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -12,10 +14,14 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTextReplacement
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_LOADING_INDICATOR
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_USER
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_USERS
+import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_SEARCH_CLOSE_ICON
+import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_SEARCH_ICON
+import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_SEARCH_TEXT_FILED
 import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_EMAIL_ICON
 import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_IMAGE
 import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_LOCATION_ICON
@@ -68,5 +74,32 @@ class RandomPeopleMainActivityTest {
         composeRule.waitForIdle()
 
         composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS).assertIsDisplayed()
+    }
+
+    @Test
+    fun testSearchScenarioSuccess() = runBlocking<Unit> {
+        hiltRule.inject()
+
+        composeRule.onNodeWithText("Random People").assertIsDisplayed()
+
+        composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS)
+            .performScrollToNode(
+                hasTestTag(TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER)
+            )
+        composeRule.onAllNodesWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USER)
+            .assertCountEquals(9)
+        composeRule.onAllNodesWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER)
+            .assertCountEquals(1)
+
+        composeRule.onNodeWithTag(TEST_TAG_SEARCH_ICON).performClick()
+        composeRule.onNodeWithTag(TEST_TAG_SEARCH_CLOSE_ICON).performClick()
+        composeRule.onNodeWithTag(TEST_TAG_SEARCH_ICON).performClick()
+
+        val nodeInteraction = composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS).onChildAt(1)
+        val node = nodeInteraction.fetchSemanticsNode()
+        node.config.getOrNull(SemanticsProperties.Text)
+
+        composeRule.onNodeWithTag(TEST_TAG_SEARCH_TEXT_FILED).performTextReplacement("Test")
     }
 }
