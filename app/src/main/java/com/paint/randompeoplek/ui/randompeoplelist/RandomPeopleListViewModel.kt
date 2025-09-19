@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paint.randompeoplek.domain.RandomPeopleListUseCase
 import com.paint.randompeoplek.domain.errorhandler.ErrorHandlerUseCase
+import com.paint.randompeoplek.ui.model.User
 import com.paint.randompeoplek.ui.model.toUiParcelableUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.BufferOverflow
@@ -37,6 +38,8 @@ class RandomPeopleListViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
 
+    private val _randomPeopleList: MutableStateFlow<List<User>> = MutableStateFlow(emptyList())
+
     private val _randomPeopleListScreenStateFlow: MutableStateFlow<RandomPeopleListScreenState>
         = MutableStateFlow(RandomPeopleListScreenState(randomPeopleListState = RandomPeopleListState.Initial))
     val randomPeopleListScreenStateFlow: StateFlow<RandomPeopleListScreenState> = _randomPeopleListScreenStateFlow.asStateFlow()
@@ -58,16 +61,20 @@ class RandomPeopleListViewModel @Inject constructor(
         viewModelScope.launch {
             val result = runCatching { randomPeopleListUseCase.getUserList(userQuantity) }
             result.onSuccess {
+                _randomPeopleList.value = it.users.toUiParcelableUsers()
+
+                val searchQuery = _randomPeopleListScreenStateFlow.value.searchText
+
                 if (it.networkError != null) {
                     val errorMessage = errorHandlerUseCase.getErrorMessage(it.networkError)
                     snackbarMessageSharedFlow.emit(errorMessage)
 
                     _randomPeopleListScreenStateFlow.value = RandomPeopleListScreenState(
-                        randomPeopleListState = RandomPeopleListState.Error(it.users.toUiParcelableUsers())
+                        randomPeopleListState = RandomPeopleListState.Error(getFilteredUsers(searchQuery))
                     )
                 } else {
                     _randomPeopleListScreenStateFlow.value = RandomPeopleListScreenState(
-                        randomPeopleListState = RandomPeopleListState.Success(it.users.toUiParcelableUsers())
+                        randomPeopleListState = RandomPeopleListState.Success(getFilteredUsers(searchQuery))
                     )
                 }
 
@@ -89,11 +96,19 @@ class RandomPeopleListViewModel @Inject constructor(
         }
     }
 
+    private fun getFilteredUsers(searchQuery: String): List<User> {
+        return _randomPeopleList.value.filter { it.name.shortName.contains(searchQuery, ignoreCase = true) }
+    }
+
     fun onAction(action: RandomPeopleListAction) {
         when (action) {
             is RandomPeopleListAction.OnSearchTextChange -> {
                 _randomPeopleListScreenStateFlow.update {
-                    it.copy( searchText = action.newSearchText )
+                    val searchQuery = action.newSearchText
+                    it.copy(
+                        searchText = searchQuery,
+                        randomPeopleListState = RandomPeopleListState.Success(getFilteredUsers(searchQuery))
+                    )
                 }
             }
             is RandomPeopleListAction.OnSearchButtonClick -> {
