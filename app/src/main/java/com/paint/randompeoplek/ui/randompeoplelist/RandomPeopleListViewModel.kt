@@ -103,7 +103,7 @@ class RandomPeopleListViewModel @Inject constructor(
             }
             is RandomPeopleListAction.OnCloseSearchButtonClick -> {
                 _randomPeopleListScreenStateFlow.update {
-                    it.copy( isSearchVisible = false )
+                    it.copy( isSearchVisible = false, searchText = "" )
                 }
             }
             is RandomPeopleListAction.OnRefreshClick -> {

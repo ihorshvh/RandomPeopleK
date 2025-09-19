@@ -129,7 +129,6 @@ fun RandomPeopleAppBar(randomPeopleListState: RandomPeopleListScreenState, onAct
                     },
                     modifier = Modifier
                         .fillMaxWidth(),
-                        //.focusRequester(focusRequester),
                     singleLine = true,
                     trailingIcon = {
                         IconButton(
