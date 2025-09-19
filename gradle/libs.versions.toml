@@ -180,6 +180,7 @@ androidx-test = [
     "androidx-test-espresso-core",
     "androidx-ui-test-junit4",
     "mockk-android",
+    "mockk-agent",
     "kotlinx-coroutines-test",
     "hilt-android-testing"
 ]

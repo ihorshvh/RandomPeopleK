@@ -1,7 +1,5 @@
 package com.paint.randompeoplek
 
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -15,6 +13,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
+import com.paint.randompeoplek.domain.RandomPeopleListUseCase
+import com.paint.randompeoplek.domain.model.Name
+import com.paint.randompeoplek.domain.model.Picture
+import com.paint.randompeoplek.domain.model.User
+import com.paint.randompeoplek.domain.model.UserResponse
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_LOADING_INDICATOR
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_LAST_USER
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_RANDOM_PEOPLE_LIST_USER
@@ -27,10 +30,14 @@ import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_IMAGE
 import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_LOCATION_ICON
 import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_NAME_ICON
 import com.paint.randompeoplek.ui.randompeopleprofile.TEST_TAG_USER_PHONE_ICON
+import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import org.junit.Test
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 
 @HiltAndroidTest
@@ -42,9 +49,34 @@ class RandomPeopleMainActivityTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<RandomPeopleMainActivity>()
 
+    @BindValue
+    @JvmField // JvmField is necessary for Hilt to correctly process the @BindValue field
+    val mockUseCase: RandomPeopleListUseCase = mockk()
+
+    private fun getFakeUserResponse(count: Int = 10): UserResponse {
+        val users = List(count) { i ->
+            User(
+                id = "id$i",
+                name = Name(shortName = "First$i", fullName = "Last$i"),
+                location = "Location $i",
+                email = "email$i@example.com",
+                phone = "123-456-789$i",
+                picture = Picture(
+                    medium = "https://randomuser.me/api/portraits/med/men/${i + 1}.jpg",
+                    thumbnail = "https://randomuser.me/api/portraits/thumb/men/${i + 1}.jpg"
+                )
+            )
+        }
+        return UserResponse(users = users, networkError = null)
+    }
+
     @Test
     fun testSuccessScenario() = runBlocking<Unit> {
+        // Configure the mock to return a successful response with fake data
+        coEvery { mockUseCase.getUserList(any()) } returns getFakeUserResponse(10)
+
         hiltRule.inject()
+
 
         composeRule.onNodeWithText("Random People").assertIsDisplayed()
 
@@ -98,7 +130,7 @@ class RandomPeopleMainActivityTest {
 
         val nodeInteraction = composeRule.onNodeWithTag(TEST_TAG_RANDOM_PEOPLE_LIST_USERS).onChildAt(1)
         val node = nodeInteraction.fetchSemanticsNode()
-        node.config.getOrNull(SemanticsProperties.Text)
+        //node.config.getOrNull(SemanticsProperties.Text)
 
         composeRule.onNodeWithTag(TEST_TAG_SEARCH_TEXT_FILED).performTextReplacement("Test")
     }
