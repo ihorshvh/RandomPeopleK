@@ -13,6 +13,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
+import com.google.gson.GsonBuilder
 import com.paint.randompeoplek.di.RandomPeopleServiceModule
 import com.paint.randompeoplek.service.RandomPeopleService
 import com.paint.randompeoplek.ui.randompeoplelist.TEST_TAG_LOADING_INDICATOR
@@ -34,7 +35,8 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
-import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @HiltAndroidTest
 @UninstallModules(RandomPeopleServiceModule::class)
@@ -48,13 +50,17 @@ class RandomPeopleMainActivityTest {
 
     @BindValue
     @JvmField
-    val randomPeopleService: RandomPeopleService = object : RandomPeopleService {
-        override suspend fun getUserList(userQuantity: String): Response<com.paint.randompeoplek.service.model.UserResponse> {
-            return Response.success(
-                200,
-                getUserResponse()
-            )
-        }
+    val randomPeopleService: RandomPeopleService = getRandomPeopleService()
+
+    private fun getRandomPeopleService() : RandomPeopleService {
+        val gson = GsonBuilder().create()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+
+        return retrofit.create(RandomPeopleService::class.java) as RandomPeopleService
     }
 
     @Test
@@ -107,5 +113,9 @@ class RandomPeopleMainActivityTest {
         composeRule.onNodeWithTag(TEST_TAG_SEARCH_ICON).performClick()
 
         composeRule.onNodeWithTag(TEST_TAG_SEARCH_TEXT_FILED).performTextReplacement("Test")
+    }
+
+    companion object {
+        private const val BASE_URL = "https://randomuser.me/api/1.3/"
     }
 }
