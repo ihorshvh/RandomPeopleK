@@ -68,11 +68,9 @@ fun RandomPeopleListScreen(onItemClick: (user: User) -> Unit) {
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullToRefreshState()
 
-    val snackbarHostState = remember { SnackbarHostState() }
-
     RandomPeopleListScreenRoot(
         randomPeopleListScreenState = randomPeopleListState,
-        snackbarHostState = snackbarHostState,
+        snackbarHostState = viewModel.snackbarHostState,
         isRefreshing = isRefreshing,
         pullRefreshState = pullRefreshState,
         onItemClick = onItemClick,
