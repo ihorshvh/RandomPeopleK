@@ -31,7 +31,7 @@ import retrofit2.Response
 
 @HiltAndroidTest
 @UninstallModules(RandomPeopleServiceModule::class)
-class RandomPeopleMainActivityMockTest {
+class RandomPeopleMainActivitySearchTest {
 
     @get:Rule(order = 0)
     var hiltRule = HiltAndroidRule(this)
